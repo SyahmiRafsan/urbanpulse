@@ -19,7 +19,8 @@
     "react-dom": "^18",
     "slugify": "^1.6.6",
     "tailwind-merge": "^2.3.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "typescript": "^5",

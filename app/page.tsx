@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { dummyRecommendations } from "@/services/recommendation";
+import LocationButton from "@/components/LocationButton";
 
 export default function Home() {
   const modes = [
@@ -20,8 +21,6 @@ export default function Home() {
     { label: "Monorail", icon: "/icons/bus.png" },
     { label: "KTM", icon: "/icons/bus.png" },
   ];
-
-
 
   return (
     <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24">
@@ -46,10 +45,7 @@ export default function Home() {
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
-            <div className="flex flex-row gap-1 items-center text-muted-foreground text-sm">
-              <DrawingPinIcon className="w-5 h-5" />
-              <p>Wangsa Maju</p>
-            </div>
+            <LocationButton />
           </div>
           <div className="flex flex-row gap-2 items-center overflow-x-auto pl-4">
             <Button className="rounded-full" size={"sm"}>
