@@ -40,7 +40,6 @@ export default function LocationButton() {
     <button
       onClick={handleClick}
       disabled={loading}
-      variant={"outline"}
       className="flex gap-1 items-center text-muted-foreground text-sm"
     >
       <DrawingPinIcon className="w-5 h-5" />
