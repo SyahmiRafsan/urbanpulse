@@ -1,6 +1,6 @@
 import slugify from "slugify";
 
-export const dummyRecommendations = [
+export const dummyRecommendations: Recommendation[] = [
   {
     id: "r1",
     stationName: "Bus Stop SMK Sungai Soi",

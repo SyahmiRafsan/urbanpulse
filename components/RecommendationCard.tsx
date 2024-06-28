@@ -4,7 +4,7 @@ import { ChatBubbleIcon, ThickArrowUpIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import slugify from "slugify";
 
-export default function RecommendationCard({ recommendation }) {
+export default function RecommendationCard({ recommendation }:{recommendation: Recommendation}) {
   return (
     <div className="px-4 border-b py-4">
       <Link
