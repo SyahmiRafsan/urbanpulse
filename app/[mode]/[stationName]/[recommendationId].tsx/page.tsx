@@ -1,5 +1,118 @@
+import Nav from "@/components/Nav";
+import { Button } from "@/components/ui/button";
+import {
+ 
+  getRecommendation,
+} from "@/services/recommendation";
+import {
+  ArrowLeftIcon,
+
+  PlusIcon,
+} from "@radix-ui/react-icons";
+import Link from "next/link";
 import React from "react";
 
-export default function RecommendationPage() {
-  return <div>RecommendationPage</div>;
+import slugify from "slugify";
+import { Badge } from "@/components/ui/badge";
+import CommentCard from "@/components/CommentCard";
+
+export default function RecommendationPage({
+  params,
+}: {
+  params: { stationName: string };
+}) {
+  const recommendation = getRecommendation(params.stationName);
+
+  return (
+    <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24">
+      <div className="max-w-[700px] border-x w-full min-h-screen bg-background gap-5 bg-neutral-50">
+        <Nav />
+        <div className="flex flex-col gap-5">
+          {/* Start Recommendation */}
+          <div className="bg-card border-b py-4 flex flex-col gap-4">
+            {/* Start Top */}
+            <div className="items-start flex-col flex bg-card px-4">
+              <div className="flex flex-row px-4 items-center gap-4 pb-4 relative justify-center w-full">
+                <Link href={"/"} className="absolute left-0">
+                  <ArrowLeftIcon className="w-5 h-5" />
+                </Link>
+                <div className="flex flex-row gap-1 items-center text-sm w-fit">
+                  <h1 className="text-lg font-semibold">Recommendation</h1>
+                </div>
+              </div>
+
+              <Badge variant={"outline"} className="w-fit">
+                <Link
+                  href={`/${recommendation.mode}/${slugify(
+                    recommendation.stationName,
+                    {
+                      lower: true,
+                    }
+                  )}`}
+                  className="flex flex-row gap-1 items-center py-1 text-sm w-fit"
+                >
+                  <img src="/icons/bus.png" className="w-5 h-5" />
+                  <p>{recommendation.stationName}</p>
+                </Link>
+              </Badge>
+            </div>
+            {/* End Top */}
+
+            <div className="flex flex-row gap-2 items-center px-4">
+              <img
+                src="https://ui-avatars.com/api/?name=Syahmi+Rafsan"
+                className="rounded-full w-5 h-5"
+              />
+              <p className="font-medium">SyahmiRafsan</p>
+              <p className="text-muted-foreground text-sm">• 4h ago</p>
+            </div>
+            <div className="flex flex-col gap-2 px-4">
+              <p className="font-bold text-lg">{recommendation.title}</p>
+              <p className="">
+                Please add ramps to help wheel-chaired people like my grandma.
+              </p>
+            </div>
+            <div className="flex flex-row gap-1 flex-wrap px-4">
+              <Badge variant={"muted"}>Quality of Life</Badge>
+              <Badge variant={"muted"}>Safety</Badge>
+              <Badge variant={"muted"}>Connectivity</Badge>
+            </div>
+            <div className="flex flex-row gap-4 overflow-x-auto px-4">
+              {[1, 2, 3].map((img) => (
+                <img
+                  src={recommendation.image}
+                  key={img}
+                  className="rounded-lg max-h-[200px]"
+                />
+              ))}
+            </div>
+          </div>
+          {/* End Recommendation */}
+          {/* Start Comments */}
+          <div className="bg-card border-t pt-4">
+            <h2 className="text-lg font-semibold px-4">
+              Comments ({recommendation.commentsCount})
+            </h2>
+            <div>
+              <CommentCard />
+              <CommentCard />
+              <CommentCard />
+            </div>
+          </div>
+          {/* End Comments */}
+          {/* Start CTA */}
+          <div className="bg-card p-4 py-6 border-y flex flex-col gap-4 items-center">
+            <p className="font-medium">
+              Share your thoughts on this recommendation
+            </p>
+            <Button>
+              <PlusIcon className="mr-1" />
+              Add Comment
+            </Button>
+          </div>
+          {/* End CTA */}
+        </div>
+      </div>
+    </main>
+  );
 }

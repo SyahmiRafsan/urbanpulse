@@ -21,7 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export default function Stationpage({
+export default function StationPage({
   params,
 }: {
   params: { stationName: string };
@@ -30,14 +30,14 @@ export default function Stationpage({
 
   return (
     <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24">
-      <div className="max-w-[700px] border w-full min-h-screen bg-background gap-5 bg-neutral-50">
+      <div className="max-w-[700px] border-x w-full min-h-screen bg-background gap-5 bg-neutral-50">
         <Nav />
         <div className="flex flex-col gap-5">
           {/* Start Station */}
           <div className="bg-card pt-4">
             {/* Start Top */}
-            <div className="flex flex-row px-4 items-center gap-4 pb-4">
-              <Link href={"/"}>
+            <div className="flex flex-row px-4 items-center gap-4 pb-4 relative justify-center w-full">
+              <Link href={"/"} className="absolute left-4">
                 <ArrowLeftIcon className="w-5 h-5" />
               </Link>
               <div className="flex flex-row gap-1 items-center text-sm w-fit">
@@ -52,10 +52,10 @@ export default function Stationpage({
               src={recommendation.image}
               className="max-h-[175px] md:max-h-[250px] object-cover w-full"
             />
-            <div className="p-4  border-b">
+            <div className="border-b">
               <img
                 src="https://media.wired.com/photos/59269cd37034dc5f91bec0f1/191:100/w_1280,c_limit/GoogleMapTA.jpg"
-                className="max-h-[175px] md:max-h-[250px] object-cover w-full rounded-lg"
+                className="max-h-[175px] md:max-h-[250px] object-cover w-full"
               />
             </div>
           </div>
