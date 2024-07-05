@@ -13,7 +13,7 @@ export default function LocationButton() {
     try {
       setLoading(true);
 
-      if (!coordinates?.latitude && !coordinates?.longitude) {
+      if (!coordinates?.lat && !coordinates?.lon) {
         const position = await getCurrentPosition();
         const { latitude, longitude } = position.coords;
 
@@ -22,10 +22,7 @@ export default function LocationButton() {
         const district = await fetchDistrict(latitude, longitude);
         setDistrict(district);
       } else {
-        const district = await fetchDistrict(
-          coordinates.latitude,
-          coordinates.longitude
-        );
+        const district = await fetchDistrict(coordinates.lat, coordinates.lon);
         setDistrict(district);
       }
     } catch (error) {

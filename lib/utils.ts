@@ -26,7 +26,7 @@ export function metersToDegreeChange(
 
 // TODO category as Category below
 export function getIconByStopCategory(category: string) {
-  const imgUrl = `/icons/${category}.svg`;
+  const imgUrl = `/icons/${category.toLowerCase()}.svg`;
   return imgUrl;
 }
 
@@ -43,4 +43,48 @@ export function truncateString(str: string, maxLength: number): string {
   }
 
   return str.substring(0, maxLength - 3).trimEnd() + "...";
+}
+
+interface Coordinates {
+  lat: number;
+  lon: number;
+}
+
+export function haversineDistance(
+  coord1: Coordinates,
+  coord2: Coordinates
+): number {
+  const toRadians = (degrees: number) => degrees * (Math.PI / 180);
+
+  const R = 6371e3; // Radius of the Earth in meters
+  const lat1 = toRadians(coord1.lat);
+  const lon1 = toRadians(coord1.lon);
+  const lat2 = toRadians(coord2.lat);
+  const lon2 = toRadians(coord2.lon);
+
+  const dLat = lat2 - lat1;
+  const dLon = lon2 - lon1;
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  const distance = R * c; // Distance in meters
+  return distance;
+}
+
+export function filterStopsByRadius(
+  userCoordinates: Coordinates,
+  stops: Stop[],
+  radiusInMeters: number = 250
+): Stop[] {
+  return stops.filter((stop) => {
+    const stopCoordinates: Coordinates = {
+      lat: stop.stop_lat,
+      lon: stop.stop_lon,
+    };
+    const distance = haversineDistance(userCoordinates, stopCoordinates);
+    return distance <= radiusInMeters;
+  });
 }

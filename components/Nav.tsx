@@ -15,7 +15,7 @@ export default function Nav() {
     { label: "Map", url: "/map", icon: <DrawingPinIcon className="w-5 h-5" /> },
     {
       label: "Recommend",
-      url: "/recommend",
+      url: "/recommendation/create?mode=searching",
       icon: <PlusIcon className="w-5 h-5" />,
     },
     {

@@ -50,10 +50,8 @@ export default function StopPage({
               src={`/dummy/${stop.category}.png`}
               className="max-h-[175px] md:max-h-[250px] object-cover w-full"
             />
-            <div className="border-b">
-              <div className="h-full h-[175px] md:h-[250px] object-cover w-full">
-                <StopMap stop={stop} />
-              </div>
+            <div className="border-b p-4">
+              <StopMap stop={stop} />
             </div>
             {/* <p>{stop.stop_id}</p> */}
           </div>

@@ -4,11 +4,13 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import MapController from "./MapController";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Badge } from "./ui/badge";
 import Link from "next/link";
 import slugify from "slugify";
 import { getIconByStopCategory } from "@/lib/utils";
+import { useSearchParams } from "next/navigation";
+import { useStopSearchStore } from "@/stores/StopSearchStore";
 
 export default function StopsMap({
   stops,
@@ -31,7 +33,7 @@ export default function StopsMap({
   // Create a custom icon based on category
   const getCategoryIcon = (category: Category) => {
     return new L.Icon({
-      iconUrl: `/icons/${categoryColors[category]}.svg`, // Provide your icon URL or path
+      iconUrl: `/icons/${categoryColors[category]}.svg`,
       // iconUrl: "/icons/bus.svg",
       iconSize: [20, 20],
       iconAnchor: [12, 41],
@@ -42,28 +44,46 @@ export default function StopsMap({
 
   const getCategoryIconBig = (category: Category) => {
     return new L.Icon({
-      iconUrl: `/icons/${categoryColors[category]}.svg`, // Provide your icon URL or path
+      // iconUrl: `/icons/${categoryColors[category]}.svg`,
+      iconUrl: `/icons/location_dot.svg`,
       // iconUrl: "/icons/bus.svg",
       iconSize: [25, 25],
       iconAnchor: [12, 41],
       popupAnchor: [1, -34],
       shadowSize: [41, 41],
-      className: "border-2 border-red-600 rounded-md overflow-hidden",
+      className: "",
     });
   };
 
   const [stopsShown, setStopsShown] = useState<Stop[]>([]);
 
+  const searchParams = useSearchParams();
+  const mode = searchParams.get("mode");
+  const { filteredStops, isFullscreen, query } = useStopSearchStore();
+
   const handleMapMove = async (bounds: L.LatLngBounds, zoom: number) => {
-    const filteredStops = filterStopsByBounds(stops, bounds);
+    const moveFilteredStops = filterStopsByBounds(stops, bounds);
     // const fetchedStopsData = await fetchStopsData(bounds, zoom);
     if (stop) {
-      setStopsShown(filteredStops.filter((st) => st.stop_id !== stop.stop_id));
+      setStopsShown(
+        moveFilteredStops.filter((st) => st.stop_id !== stop.stop_id)
+      );
     } else {
-      setStopsShown(filteredStops);
+      if (mode !== "searching") {
+        setStopsShown(moveFilteredStops);
+      }
+
+      if (mode == "searching" && isFullscreen) {
+        setStopsShown(moveFilteredStops);
+      }
     }
+    console.log("rerendered");
     console.log({ bounds, zoom });
   };
+
+  useEffect(() => {
+    setStopsShown(filteredStops);
+  }, [filteredStops]);
 
   // Filter stops based on bounds and zoom level
   const filterStopsByBounds = (allStops: Stop[], bounds: L.LatLngBounds) => {
@@ -157,7 +177,16 @@ export default function StopsMap({
         <Marker
           key={idx}
           position={[stop.stop_lat, stop.stop_lon]}
-          icon={getCategoryIcon(stop.category.toLocaleLowerCase() as Category)}
+          icon={
+            isFullscreen &&
+            query !== "" &&
+            (stop.stop_name.toLowerCase().includes(query.toLowerCase()) ||
+              String(stop.stop_id).toLowerCase().includes(query.toLowerCase()))
+              ? getCategoryIconBig(
+                  stop.category.toLocaleLowerCase() as Category
+                )
+              : getCategoryIcon(stop.category.toLocaleLowerCase() as Category)
+          }
           // eventHandlers={{
           //   click: () => alert(stop.stop_name),
           // }}
@@ -169,16 +198,20 @@ export default function StopsMap({
                 <img src={getIconByStopCategory(stop.category)} />
                 <b className="pr-2 whitespace-nowrap">{stop.stop_name}</b>
               </div>
-              <Link
-                href={`/${stop.category}/${slugify(stop.stop_name, {
-                  lower: true,
-                  strict: true,
-                })}-${stop.stop_id}`}
-              >
-                <Badge variant={"default"} className="mt-2">
-                  View
-                </Badge>
-              </Link>
+              {mode !== "searching" ? (
+                <Link
+                  href={`/${stop.category}/${slugify(stop.stop_name, {
+                    lower: true,
+                    strict: true,
+                  })}-${stop.stop_id}`}
+                >
+                  <Badge variant={"default"} className="mt-2">
+                    View
+                  </Badge>
+                </Link>
+              ) : (
+                <Badge className="mt-1">Select Stop</Badge>
+              )}
             </div>
           </Popup>
         </Marker>

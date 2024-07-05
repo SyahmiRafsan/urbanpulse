@@ -1,16 +1,15 @@
-import {create} from "zustand";
+import { create } from "zustand";
 
 interface UserState {
-  coordinates: { latitude: number; longitude: number } | null;
+  coordinates: { lat: number; lon: number };
   district: string | null;
-  setCoordinates: (latitude: number, longitude: number) => void;
+  setCoordinates: (lat: number, lon: number) => void;
   setDistrict: (district: string) => void;
 }
 
 export const useUserStore = create<UserState>((set) => ({
-  coordinates: null,
+  coordinates: { lat: 3.1582, lon: 101.7122 },
   district: null,
-  setCoordinates: (latitude, longitude) =>
-    set({ coordinates: { latitude, longitude } }),
+  setCoordinates: (lat, lon) => set({ coordinates: { lat, lon } }),
   setDistrict: (district) => set({ district }),
 }));
