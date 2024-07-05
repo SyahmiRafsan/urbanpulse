@@ -39,7 +39,7 @@ const dummyStops = [
   },
 ];
 export function getStop(id: string) {
-  const stop = ALL_STOPS.filter((st) => String(st.stop_id) == String(id))[0];
+  const stop = ALL_STOPS.filter((st) => String(st.stop_id) == id)[0];
 
   return stop;
 }

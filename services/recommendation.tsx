@@ -60,7 +60,7 @@ export const dummyRecommendations: Recommendation[] = [
 
 export function getRecommendation(id: string) {
   const recommendation = dummyRecommendations.filter(
-    (rec) => rec.stop_id == id
+    (rec) => String(rec.stop_id) == id
   )[0];
 
   return recommendation;
