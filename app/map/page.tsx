@@ -1,8 +1,6 @@
-"use client";
-
 import Nav from "@/components/Nav";
-import StopsMap from "@/components/StopsMap";
 import { ALL_STOPS } from "@/lib/stops/all_stops";
+import dynamic from "next/dynamic";
 import React from "react";
 
 export default function MapPage() {
@@ -10,6 +8,10 @@ export default function MapPage() {
     lat: 3.1582,
     lon: 101.7122,
   };
+
+  const StopsMap = dynamic(() => import("@/components/StopsMap"), {
+    ssr: false,
+  });
 
   return (
     <div className="h-[100svh]">

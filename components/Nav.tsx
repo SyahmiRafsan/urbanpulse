@@ -1,7 +1,5 @@
-import { cn } from "@/lib/utils";
 import {
   BellIcon,
-  CardStackIcon,
   DrawingPinIcon,
   HomeIcon,
   PersonIcon,

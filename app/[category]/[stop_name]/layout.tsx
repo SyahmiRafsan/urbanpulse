@@ -1,12 +1,4 @@
-import { getRecommendation } from "@/services/recommendation";
 import { getStop } from "@/services/stop";
-import type { Metadata } from "next";
-
-// export const metadata: Metadata = {
-//   title: "UrbanPulse - Transforming Urban Living Together",
-//   description:
-//     "UrbanPulse is a community-driven platform designed to empower citizens to improve their urban environment, starting with public transport.",
-// };
 
 export async function generateMetadata({
   params,

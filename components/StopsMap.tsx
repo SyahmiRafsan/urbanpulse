@@ -1,10 +1,10 @@
+"use client";
+
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import MapController from "./MapController";
 import { useState } from "react";
-import { Button } from "./ui/button";
-import { ChevronRightIcon } from "@radix-ui/react-icons";
 import { Badge } from "./ui/badge";
 import Link from "next/link";
 import slugify from "slugify";

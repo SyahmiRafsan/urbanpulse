@@ -1,3 +1,5 @@
+"use client"
+
 import { metersToDegreeChange } from "@/lib/utils";
 import { useEffect } from "react";
 import { useMap, useMapEvents } from "react-leaflet";
