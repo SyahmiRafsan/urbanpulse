@@ -1,27 +1,24 @@
 import Nav from "@/components/Nav";
 import { Button } from "@/components/ui/button";
-import {
- 
-  getRecommendation,
-} from "@/services/recommendation";
-import {
-  ArrowLeftIcon,
-
-  PlusIcon,
-} from "@radix-ui/react-icons";
+import { getRecommendation } from "@/services/recommendation";
+import { ArrowLeftIcon, PlusIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import React from "react";
 
 import slugify from "slugify";
 import { Badge } from "@/components/ui/badge";
 import CommentCard from "@/components/CommentCard";
+import { getIconByStopCategory } from "@/lib/utils";
+import BackButton from "@/components/BackButton";
 
 export default function RecommendationPage({
   params,
 }: {
-  params: { stationName: string };
+  params: { stop_name: string };
 }) {
-  const recommendation = getRecommendation(params.stationName);
+  const stopId = params.stop_name.split("-").slice(-1)[0];
+
+  const recommendation = getRecommendation(stopId);
 
   return (
     <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24">
@@ -32,10 +29,8 @@ export default function RecommendationPage({
           <div className="bg-card border-b py-4 flex flex-col gap-4">
             {/* Start Top */}
             <div className="items-start flex-col flex bg-card px-4">
-              <div className="flex flex-row px-4 items-center gap-4 pb-4 relative justify-center w-full">
-                <Link href={"/"} className="absolute left-0">
-                  <ArrowLeftIcon className="w-5 h-5" />
-                </Link>
+              <div className="flex flex-row items-center gap-4 relative justify-start w-full pb-2">
+                <BackButton />
                 <div className="flex flex-row gap-1 items-center text-sm w-fit">
                   <h1 className="text-lg font-semibold">Recommendation</h1>
                 </div>
@@ -43,16 +38,20 @@ export default function RecommendationPage({
 
               <Badge variant={"outline"} className="w-fit">
                 <Link
-                  href={`/${recommendation.mode}/${slugify(
-                    recommendation.stationName,
+                  href={`/${recommendation.category}/${slugify(
+                    recommendation.stop_name,
                     {
                       lower: true,
+                      strict: true,
                     }
-                  )}`}
+                  )}-${recommendation.stop_id}`}
                   className="flex flex-row gap-1 items-center py-1 text-sm w-fit"
                 >
-                  <img src="/icons/bus.png" className="w-5 h-5" />
-                  <p>{recommendation.stationName}</p>
+                  <img
+                    src={getIconByStopCategory(recommendation.category)}
+                    className="w-5 h-5"
+                  />
+                  <p>{recommendation.stop_name}</p>
                 </Link>
               </Badge>
             </div>
