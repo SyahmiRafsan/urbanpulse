@@ -9,7 +9,7 @@ export default function MapController({
 }: {
   userLocation: { lat: number; lon: number };
   onMapMove: (bounds: L.LatLngBounds, zoom: number) => void;
-  stop: Stop;
+  stop?: Stop;
 }) {
   const map = useMap();
 

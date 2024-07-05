@@ -17,7 +17,7 @@ export default function StopsMap({
 }: {
   stops: Stop[];
   userLocation: { lat: number; lon: number };
-  stop: Stop;
+  stop?: Stop;
 }) {
   // Define category colors
   const categoryColors: Record<Category, string> = {
