@@ -18,7 +18,7 @@ export default function StopSearch() {
 
   // const [queryText, setQueryText] = useState<string>("");
 
-  const { setFilteredStops, filteredStops, query, setQuery, stops } =
+  const { setFilteredStops, filteredStops, stops, setQuery, setIsFullscreen } =
     useStopSearchStore();
 
   const { coordinates } = useUserStore();
@@ -34,7 +34,9 @@ export default function StopSearch() {
   return (
     <>
       <SelectStopMap />
-      <StopSearchInput />
+      <div className="p-4">
+        <StopSearchInput />
+      </div>
       <p className="text-muted-foreground px-4">
         Nearby stops ({filteredStops.length})
       </p>
@@ -53,17 +55,22 @@ export default function StopSearch() {
               : a.stop_lat - b.stop_lat
           )
           .map((st) => (
-            <div
+            <button
               key={st.stop_id}
-              className="p-4 border-b flex flex-row gap-2 items-center"
+              className="p-4 first:border-t mt-4 border-b flex flex-row gap-2 items-center w-full"
+              onClick={() => [
+                setQuery(String(st.stop_id)),
+                setIsFullscreen(true),
+              ]}
+              type="button"
             >
               <img
                 src={getIconByStopCategory(st.category)}
                 className="h-8 w-8"
               />
-              <div className="flex flex-col">
-                <p className="font-medium">
-                  {st.stop_name} ({st.stop_id})
+              <div className="flex flex-col items-start">
+                <p className="font-medium text-sm text-left">
+                  {st.stop_name} [{st.stop_id}]
                 </p>
                 {coordinates && (
                   <p className="text-sm text-muted-foreground">
@@ -75,7 +82,7 @@ export default function StopSearch() {
                   </p>
                 )}
               </div>
-            </div>
+            </button>
           ))}
       </div>
     </>

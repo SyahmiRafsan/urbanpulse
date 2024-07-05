@@ -140,7 +140,7 @@ export default function StopsMap({
         // }}
         zIndexOffset={50}
       >
-        <Popup className="flex flex-row">
+        <Popup className="">
           <div className="flex flex-row gap-2 items-center">
             <img src={getIconByStopCategory(stop.category)} />
             <b>{stop.stop_name}</b>
@@ -185,7 +185,8 @@ export default function StopsMap({
               ? getCategoryIconBig(
                   stop.category.toLocaleLowerCase() as Category
                 )
-              : getCategoryIcon(stop.category.toLocaleLowerCase() as Category)
+              : 
+              getCategoryIcon(stop.category.toLocaleLowerCase() as Category)
           }
           // eventHandlers={{
           //   click: () => alert(stop.stop_name),

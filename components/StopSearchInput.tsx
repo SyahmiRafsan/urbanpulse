@@ -6,8 +6,7 @@ import { useUserStore } from "@/stores/UserStore";
 import { filterStopsByRadius } from "@/lib/utils";
 
 export default function StopSearchInput() {
-  const { setFilteredStops, filteredStops, query, setQuery, stops } =
-    useStopSearchStore();
+  const { setFilteredStops, query, setQuery, stops } = useStopSearchStore();
 
   function handleSearch(query: string) {
     if (query !== "") {
@@ -26,7 +25,7 @@ export default function StopSearchInput() {
   const { coordinates } = useUserStore();
 
   return (
-    <div className="p-4 flex flex-col gap-4">
+    <div className="flex flex-col gap-4">
       <div className="flex flex-row gap-2 items-center">
         <div className="w-full">
           <input

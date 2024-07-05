@@ -25,7 +25,7 @@ export default function SelectStopMap({ stop }: { stop?: Stop }) {
   return (
     <div
       className={cn(
-        "object-cover transition-all w-full rounded-lg overflow-clip relative",
+        "object-cover transition-all w-full relative",
         isFullscreen
           ? "h-[100svh] fixed top-0 left-0 bg-primary-foreground animate-in fade-in-0"
           : "h-[30svh] md:h-[30svh] "
@@ -47,7 +47,7 @@ export default function SelectStopMap({ stop }: { stop?: Stop }) {
         stop={stop}
       />
       <Button
-        className="absolute top-2 right-2 shadow-lg"
+        className="absolute top-3 right-2 shadow-lg"
         variant={"outline"}
         size={"icon"}
         onClick={() => handleFullscreen(isFullscreen)}
@@ -55,7 +55,7 @@ export default function SelectStopMap({ stop }: { stop?: Stop }) {
         {isFullscreen ? <Cross1Icon /> : <EnterFullScreenIcon />}
       </Button>
       {isFullscreen && (
-        <div className="absolute bottom-0 w-full">
+        <div className="absolute bottom-0 md:-top-1 md:right-[40px] w-full md:max-w-sm p-4 h-fit">
           <StopSearchInput />
         </div>
       )}

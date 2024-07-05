@@ -53,6 +53,9 @@ export default function MapController({
         [userLocation.lat + latChange, userLocation.lon + lonChange],
       ]);
     }
+
+    // TODO fitBounds if click from searched list
+    
   }, [userLocation, stop, map]);
 
   return null; // This component doesn't render anything by itself

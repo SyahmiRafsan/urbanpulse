@@ -4,7 +4,11 @@ import React, { useState } from "react";
 import { ALL_STOPS } from "@/lib/stops/all_stops";
 import dynamic from "next/dynamic";
 import { Button } from "./ui/button";
-import { EnterFullScreenIcon, ExitFullScreenIcon } from "@radix-ui/react-icons";
+import {
+  Cross1Icon,
+  EnterFullScreenIcon,
+  ExitFullScreenIcon,
+} from "@radix-ui/react-icons";
 import { cn } from "@/lib/utils";
 
 export default function StopMap({ stop }: { stop?: Stop }) {
@@ -25,6 +29,9 @@ export default function StopMap({ stop }: { stop?: Stop }) {
           ? "h-[100svh] fixed top-0 left-0 bg-primary-foreground animate-in fade-in-0"
           : "h-[175px] md:h-[250px] "
       )}
+      onClick={
+        !isFullscreen ? () => handleFullscreen(isFullscreen) : () => null
+      }
     >
       <StopsMap
         stops={ALL_STOPS}
@@ -40,7 +47,7 @@ export default function StopMap({ stop }: { stop?: Stop }) {
         size={"icon"}
         onClick={() => handleFullscreen(isFullscreen)}
       >
-        {isFullscreen ? <ExitFullScreenIcon /> : <EnterFullScreenIcon />}
+        {isFullscreen ? <Cross1Icon /> : <EnterFullScreenIcon />}
       </Button>
     </div>
   );
