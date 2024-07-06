@@ -45,7 +45,21 @@ export default function StopsMap({
   const getCategoryIconBig = (category: Category) => {
     return new L.Icon({
       // iconUrl: `/icons/${categoryColors[category]}.svg`,
-      iconUrl: `/icons/location_dot.svg`,
+      iconUrl: `/icons/location_dot_red.svg`,
+      // iconUrl: "/icons/bus.svg",
+      iconSize: [25, 25],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41],
+      className: "",
+    });
+  };
+
+  const getSelectedCategoryIconBig = (category: Category) => {
+    return new L.DivIcon({
+      // iconUrl: `/icons/${categoryColors[category]}.svg`,
+      // iconUrl: `/icons/location_dot.svg`,
+      html: `<div><img src="/icons/location_dot_blue.svg" class="w-6 h-6" /></div>`,
       // iconUrl: "/icons/bus.svg",
       iconSize: [25, 25],
       iconAnchor: [12, 41],
@@ -59,7 +73,8 @@ export default function StopsMap({
 
   const searchParams = useSearchParams();
   const mode = searchParams.get("mode");
-  const { filteredStops, isFullscreen, query } = useStopSearchStore();
+  const { filteredStops, isFullscreen, query, selectedStop, setSelectedStop } =
+    useStopSearchStore();
 
   const handleMapMove = async (bounds: L.LatLngBounds, zoom: number) => {
     const moveFilteredStops = filterStopsByBounds(stops, bounds);
@@ -148,6 +163,31 @@ export default function StopsMap({
     );
   }
 
+  function selectedStopMarker(stop: Stop) {
+    return (
+      <Marker
+        position={[stop.stop_lat, stop.stop_lon]}
+        icon={getSelectedCategoryIconBig(
+          stop.category.toLocaleLowerCase() as Category
+        )}
+        // eventHandlers={{
+        //   click: () => alert(stop.stop_name),
+        // }}
+        zIndexOffset={50}
+      >
+        <Popup className="">
+          <div className="flex flex-row gap-2 items-center">
+            <img src={getIconByStopCategory(stop.category)} />
+            <div className="flex flex-col">
+              <b>{stop.stop_name}</b>
+              <span className="whitespace-nowrap text-blue-600 pr-2 font-bold">Selected stop</span>
+            </div>
+          </div>
+        </Popup>
+      </Marker>
+    );
+  }
+
   return (
     <MapContainer
       center={
@@ -171,50 +211,61 @@ export default function StopsMap({
         stop={stop}
       />
 
-      {stopsShown.map((stop, idx) => (
-        <Marker
-          key={idx}
-          position={[stop.stop_lat, stop.stop_lon]}
-          icon={
-            query !== "" &&
-            (stop.stop_name.toLowerCase().includes(query.toLowerCase()) ||
-              String(stop.stop_id).toLowerCase().includes(query.toLowerCase()))
-              ? getCategoryIconBig(
-                  stop.category.toLocaleLowerCase() as Category
-                )
-              : getCategoryIcon(stop.category.toLocaleLowerCase() as Category)
-          }
-          // eventHandlers={{
-          //   click: () => alert(stop.stop_name),
-          // }}
-        >
-          {/* // If using popup */}
-          <Popup className="">
-            <div>
-              <div className="flex flex-row gap-1 items-center">
-                <img src={getIconByStopCategory(stop.category)} />
-                <b className="pr-2 whitespace-nowrap">{stop.stop_name}</b>
-              </div>
-              {mode !== "searching" ? (
-                <Link
-                  href={`/${stop.category}/${slugify(stop.stop_name, {
-                    lower: true,
-                    strict: true,
-                  })}-${stop.stop_id}`}
-                >
-                  <Badge variant={"default"} className="mt-2">
-                    View
+      {stopsShown
+        .filter((st) => st.stop_id !== selectedStop?.stop_id)
+        .map((stop, idx) => (
+          <Marker
+            key={idx}
+            position={[stop.stop_lat, stop.stop_lon]}
+            icon={
+              query !== "" &&
+              (stop.stop_name.toLowerCase().includes(query.toLowerCase()) ||
+                String(stop.stop_id)
+                  .toLowerCase()
+                  .includes(query.toLowerCase()))
+                ? getCategoryIconBig(
+                    stop.category.toLocaleLowerCase() as Category
+                  )
+                : getCategoryIcon(stop.category.toLocaleLowerCase() as Category)
+            }
+            // eventHandlers={{
+            //   click: () => alert(stop.stop_name),
+            // }}
+          >
+            {/* // If using popup */}
+            <Popup className="">
+              <div className="">
+                <div className="flex flex-row gap-1 items-center">
+                  <img src={getIconByStopCategory(stop.category)} />
+                  <b className="w-full whitespace-nowrap">{stop.stop_name}</b>
+                </div>
+                {mode !== "searching" ? (
+                  <Link
+                    href={`/${stop.category}/${slugify(stop.stop_name, {
+                      lower: true,
+                      strict: true,
+                    })}-${stop.stop_id}`}
+                  >
+                    <Badge variant={"default"} className="mt-2 cursor-pointer">
+                      View
+                    </Badge>
+                  </Link>
+                ) : (
+                  <Badge
+                    className="mt-2 cursor-pointer"
+                    onClick={() => setSelectedStop(stop)}
+                  >
+                    Select Stop
                   </Badge>
-                </Link>
-              ) : (
-                <Badge className="mt-1">Select Stop</Badge>
-              )}
-            </div>
-          </Popup>
-        </Marker>
-      ))}
+                )}
+              </div>
+            </Popup>
+          </Marker>
+        ))}
 
       {stop && stopMarker(stop)}
+
+      {selectedStop && selectedStopMarker(selectedStop)}
 
       <Marker
         position={[userLocation.lat, userLocation.lon]}

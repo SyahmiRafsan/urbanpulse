@@ -11,6 +11,7 @@ import { useStopSearchStore } from "@/stores/StopSearchStore";
 import StopSearchInput from "./StopSearchInput";
 import StopTypes from "./StopTypes";
 import SearchStopMap from "./StopSearchMap";
+import StopSearchCard from "./StopSearchCard";
 
 export default function StopSearch() {
   // const [filteredStops, setFilteredStops] = useState<Stop[]>(
@@ -19,8 +20,14 @@ export default function StopSearch() {
 
   // const [queryText, setQueryText] = useState<string>("");
 
-  const { setFilteredStops, filteredStops, stops, setQuery, setIsFullscreen } =
-    useStopSearchStore();
+  const {
+    setFilteredStops,
+    filteredStops,
+    stops,
+    setQuery,
+    setIsFullscreen,
+    setSelectedStop,
+  } = useStopSearchStore();
 
   const { coordinates } = useLocationStore();
 
@@ -29,6 +36,12 @@ export default function StopSearch() {
       setFilteredStops(filterStopsByRadius(coordinates, stops, 500));
     }
   }, []);
+
+  function handleCardClick(stop: Stop) {
+    setQuery(String(stop.stop_name));
+    setIsFullscreen(true);
+    setSelectedStop(stop);
+  }
 
   return (
     <>
@@ -66,34 +79,10 @@ export default function StopSearch() {
               <button
                 key={st.stop_id}
                 className="p-4 first:border-t border-b flex flex-row gap-2 items-center w-full animate-in z-10 slide-in-from-left-4"
-                onClick={() => [
-                  setQuery(String(st.stop_name)),
-                  setIsFullscreen(true),
-                ]}
+                onClick={() => handleCardClick(st)}
                 type="button"
               >
-                <img
-                  src={getIconByStopCategory(st.category)}
-                  className="h-8 w-8"
-                />
-                <div className="flex flex-col items-start">
-                  <p className="font-medium text-sm text-left">
-                    {st.stop_name}{" "}
-                    <span className="text-muted-foreground font-normal">
-                      {st.stop_id}
-                    </span>
-                  </p>
-
-                  {coordinates && (
-                    <p className="text-sm text-muted-foreground">
-                      {haversineDistance(coordinates, {
-                        lat: st.stop_lat,
-                        lon: st.stop_lon,
-                      }).toFixed(0)}
-                      m
-                    </p>
-                  )}
-                </div>
+                <StopSearchCard stop={st} />
               </button>
             ))
         ) : (

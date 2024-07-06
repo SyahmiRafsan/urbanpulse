@@ -4,10 +4,11 @@ import React, { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { Button } from "./ui/button";
 import { Cross1Icon, EnterFullScreenIcon } from "@radix-ui/react-icons";
-import { cn } from "@/lib/utils";
+import { cn, getIconByStopCategory, haversineDistance } from "@/lib/utils";
 import { useLocationStore } from "@/stores/LocationStore";
 import { useStopSearchStore } from "@/stores/StopSearchStore";
 import StopSearchInput from "./StopSearchInput";
+import StopSearchCard from "./StopSearchCard";
 
 export default function StopSearchMap({ stop }: { stop?: Stop }) {
   const StopsMap = dynamic(() => import("@/components/StopsMap"), {
@@ -20,7 +21,8 @@ export default function StopSearchMap({ stop }: { stop?: Stop }) {
   }
 
   const { coordinates } = useLocationStore();
-  const { stops, isFullscreen, setIsFullscreen } = useStopSearchStore();
+  const { stops, isFullscreen, setIsFullscreen, selectedStop } =
+    useStopSearchStore();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -60,8 +62,28 @@ export default function StopSearchMap({ stop }: { stop?: Stop }) {
         {isFullscreen ? <Cross1Icon /> : <EnterFullScreenIcon />}
       </Button>
       {isFullscreen && (
-        <div className="absolute bottom-0 md:-top-1 md:right-[36px] w-full md:max-w-sm p-4 h-fit">
-          <StopSearchInput />
+        <div className="absolute bottom-0 md:-top-1 md:right-[36px] w-full md:max-w-sm /p-4 h-fit">
+          <div className="p-4">
+            <StopSearchInput />
+          </div>
+          <div>
+            {selectedStop !== null ? (
+              <div
+                className="bg-card p-4 rounded-t-lg max-w-[400px] animate-in slide-in-from-bottom-full"
+                key={selectedStop.stop_id}
+              >
+                <p className=" text-muted-foreground text-sm mb-2">
+                  Selected stop
+                </p>
+                <StopSearchCard stop={selectedStop} />
+                <div className="mt-4 border-t py-4">
+                  <Button className="w-full">Confirm Selection</Button>
+                </div>
+              </div>
+            ) : (
+              <div></div>
+            )}
+          </div>
         </div>
       )}
     </div>

@@ -14,11 +14,11 @@ export default function StopTypes({
   recommendationsSetter?: (recommendations: Recommendation[]) => void | null;
   initialList: (Stop | Recommendation)[];
 }) {
-  const { filteredStops } = useStopSearchStore();
+  const { filteredStops, initialStops, setInitialStops } = useStopSearchStore();
 
-  const [initialFilteredStops, setInitialFilteredStops] = useState(
-    initialList || []
-  );
+  // const [initialStops, setInitialStops] = useState(
+  //   initialList || []
+  // );
   const types = [
     { label: "Bus", value: "bus" },
     { label: "LRT", value: "lrt" },
@@ -28,8 +28,8 @@ export default function StopTypes({
   ];
 
   useEffect(() => {
-    if (initialFilteredStops.length == 0) {
-      setInitialFilteredStops(filteredStops);
+    if (initialStops.length == 0) {
+      setInitialStops(filteredStops);
     }
   }, [filteredStops]);
 
@@ -55,15 +55,15 @@ export default function StopTypes({
 
   useEffect(() => {
     const stopsWithType = selectedType.includes("all")
-      ? initialFilteredStops
-      : initialFilteredStops.filter((stop) =>
+      ? initialStops
+      : initialStops.filter((stop) =>
           selectedType.includes(stop.category.toLowerCase())
         );
 
     if (stopsSetter) {
       stopsSetter(stopsWithType as Stop[]);
     } else if (recommendationsSetter) {
-      recommendationsSetter(stopsWithType as Recommendation[]);
+      recommendationsSetter(stopsWithType as unknown as Recommendation[]);
     }
   }, [selectedType]);
 

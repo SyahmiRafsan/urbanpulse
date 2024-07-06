@@ -1,4 +1,7 @@
+"use client";
+
 import Nav from "@/components/Nav";
+import StopSearchInput from "@/components/StopSearchInput";
 import { ALL_STOPS } from "@/lib/stops/all_stops";
 import dynamic from "next/dynamic";
 import React from "react";
@@ -19,6 +22,9 @@ export default function MapPage() {
         <Nav />
       </div>
       <StopsMap stops={ALL_STOPS} userLocation={userLocation} />
+      <div className="fixed bottom-16 sm:bottom-24 md w-full max-w-[400px] m-auto inset-x-0 p-4">
+        <StopSearchInput />
+      </div>
     </div>
   );
 }

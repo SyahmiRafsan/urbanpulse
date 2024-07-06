@@ -50,7 +50,7 @@ export default function LocationButton() {
                 ? () =>
                     process.env.NODE_ENV == "development"
                       ? setShowCoord(!showCoord)
-                      : null
+                      : handleClick
                 : handleClick
             }
             disabled={loading}

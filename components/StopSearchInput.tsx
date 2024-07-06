@@ -8,7 +8,8 @@ import { Input } from "./ui/input";
 import { METER_RADIUS_SEARCH } from "@/lib/constants";
 
 export default function StopSearchInput() {
-  const { setFilteredStops, query, setQuery, stops } = useStopSearchStore();
+  const { setFilteredStops, query, setQuery, stops, setInitialStops } =
+    useStopSearchStore();
 
   function handleSearch(query: string) {
     if (query !== "") {
@@ -18,9 +19,19 @@ export default function StopSearchInput() {
           String(st.stop_id).toLowerCase().includes(query.toLowerCase())
       );
 
+      // alert(newFiltered.length);
+
+      // console.log(newFiltered.length);
+
       setFilteredStops(newFiltered);
+      setInitialStops(newFiltered);
     } else {
-      setFilteredStops(filterStopsByRadius(coordinates, stops, METER_RADIUS_SEARCH));
+      setFilteredStops(
+        filterStopsByRadius(coordinates, stops, METER_RADIUS_SEARCH)
+      );
+      setInitialStops(
+        filterStopsByRadius(coordinates, stops, METER_RADIUS_SEARCH)
+      );
     }
   }
 
@@ -38,7 +49,11 @@ export default function StopSearchInput() {
               e.target.value == ""
                 ? [
                     setFilteredStops(
-                      filterStopsByRadius(coordinates, stops, METER_RADIUS_SEARCH)
+                      filterStopsByRadius(
+                        coordinates,
+                        stops,
+                        METER_RADIUS_SEARCH
+                      )
                     ),
                     setQuery(""),
                   ]
