@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ALL_STOPS } from "@/lib/stops/all_stops";
 import dynamic from "next/dynamic";
 import { Button } from "./ui/button";
@@ -19,6 +19,22 @@ export default function StopMap({ stop }: { stop?: Stop }) {
   }
 
   const { coordinates } = useLocationStore();
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setIsFullscreen(false);
+      }
+    };
+
+    // Add event listener when the component mounts
+    window.addEventListener("keydown", handleKeyDown);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   return (
     <div

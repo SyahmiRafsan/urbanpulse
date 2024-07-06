@@ -1,7 +1,7 @@
+"use client";
 import Nav from "@/components/Nav";
 import RecommendationCard from "@/components/RecommendationCard";
-import { Button } from "@/components/ui/button";
-import { ChevronDownIcon, DrawingPinIcon } from "@radix-ui/react-icons";
+import { ChevronDownIcon } from "@radix-ui/react-icons";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,15 +9,20 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import Link from "next/link";
 import { dummyRecommendations } from "@/services/recommendation";
 import LocationButton from "@/components/LocationButton";
-import { getIconByStopCategory } from "@/lib/utils";
 import StopTypes from "@/components/StopTypes";
+import { useState } from "react";
 
 export default function Home() {
+  const [filteredRecommendations, setFilteredRecommendations] =
+    useState<Recommendation[]>(dummyRecommendations);
+
+  function handleFilter(recommendations: Recommendation[]) {
+    setFilteredRecommendations(recommendations);
+  }
   return (
-    <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24">
+    <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24 min-h-[100svh]">
       <div className="max-w-[700px] border-x w-full bg-background gap-5">
         <Nav />
         <div className="flex flex-col gap-5 pt-4">
@@ -43,17 +48,24 @@ export default function Home() {
           </div>
           <div className="flex flex-row gap-2 items-center overflow-x-auto">
             <div className="px-4">
-              <StopTypes />
+              <StopTypes
+                recommendationsSetter={handleFilter}
+                initialList={dummyRecommendations}
+              />
             </div>
           </div>
           {/* End Top */}
           {/* Start Feed */}
           <div>
-            {dummyRecommendations.map((rec) => (
-              <div key={rec.id}>
-                <RecommendationCard recommendation={rec} />
-              </div>
-            ))}
+            {filteredRecommendations.length > 0 ? (
+              filteredRecommendations.map((rec) => (
+                <div key={rec.id}>
+                  <RecommendationCard recommendation={rec} />
+                </div>
+              ))
+            ) : (
+              <div className="p-4 border-y">No recommendations found.</div>
+            )}
           </div>
           {/* End Feed */}
         </div>

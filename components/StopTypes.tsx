@@ -1,37 +1,99 @@
-import React from 'react'
-import { Button } from './ui/button'
-import { getIconByStopCategory } from '@/lib/utils';
+"use client";
 
+import React, { useEffect, useState } from "react";
+import { Button } from "./ui/button";
+import { getIconByStopCategory } from "@/lib/utils";
+import { useStopSearchStore } from "@/stores/StopSearchStore";
 
-export default function StopTypes() {
+export default function StopTypes({
+  stopsSetter,
+  recommendationsSetter,
+  initialList,
+}: {
+  stopsSetter?: (stops: Stop[]) => void | null;
+  recommendationsSetter?: (recommendations: Recommendation[]) => void | null;
+  initialList: (Stop | Recommendation)[];
+}) {
+  const { filteredStops } = useStopSearchStore();
 
-    const modes = [
-        { label: "Bus", value: "bus" },
-        { label: "LRT", value: "lrt" },
-        { label: "MRT", value: "mrt" },
-        { label: "Monorail", value: "mr" },
-        // { label: "KTM", value: "ktm" },
-      ];
+  const [initialFilteredStops, setInitialFilteredStops] = useState(
+    initialList || []
+  );
+  const types = [
+    { label: "Bus", value: "bus" },
+    { label: "LRT", value: "lrt" },
+    { label: "MRT", value: "mrt" },
+    { label: "Monorail", value: "mr" },
+    // { label: "KTM", value: "ktm" },
+  ];
+
+  useEffect(() => {
+    if (initialFilteredStops.length == 0) {
+      setInitialFilteredStops(filteredStops);
+    }
+  }, [filteredStops]);
+
+  const [selectedType, setSelectedType] = useState(["all"]);
+
+  const handleModeChange = (mode: string) => {
+    setSelectedType((prevModes) => {
+      if (mode == "all") {
+        return ["all"];
+      } else {
+        if (prevModes.includes(mode)) {
+          if (prevModes.length > 1) {
+            return prevModes.filter((m) => m !== mode);
+          } else {
+            return ["all"];
+          }
+        } else {
+          return [...prevModes.filter((m) => m !== "all"), mode];
+        }
+      }
+    });
+  };
+
+  useEffect(() => {
+    const stopsWithType = selectedType.includes("all")
+      ? initialFilteredStops
+      : initialFilteredStops.filter((stop) =>
+          selectedType.includes(stop.category)
+        );
+
+    // Using type guards to ensure the setter receives the correct type
+
+    if (stopsSetter) {
+      stopsSetter(stopsWithType as Stop[]);
+    } else if (recommendationsSetter) {
+      recommendationsSetter(stopsWithType as Recommendation[]);
+    }
+  }, [selectedType]);
 
   return (
     <div className="flex flex-row gap-2 items-center overflow-x-auto">
-    <Button className="rounded-full" size={"sm"}>
-      <p className="whitespace-nowrap">All Stops</p>
-    </Button>
-    {modes.map((md, i) => (
       <Button
-        key={md.label + i}
-        className="rounded-full px-5"
-        variant={"outline"}
+        className="rounded-full"
         size={"sm"}
+        variant={selectedType[0] == "all" ? "default" : "outline"}
+        onClick={() => handleModeChange("all")}
       >
-        <img
-          src={getIconByStopCategory(md.value)}
-          className="w-5 h-5 mr-1 rounded-sm"
-        />
-        <p className="">{md.label}</p>
+        <p className="whitespace-nowrap">All Stops</p>
       </Button>
-    ))}
-  </div>
-  )
+      {types.map((type, i) => (
+        <Button
+          key={type.label + i}
+          className="rounded-full px-5"
+          variant={selectedType.includes(type.value) ? "default" : "outline"}
+          size={"sm"}
+          onClick={() => handleModeChange(type.value)}
+        >
+          <img
+            src={getIconByStopCategory(type.value)}
+            className="w-5 h-5 mr-1 rounded-sm"
+          />
+          <p className="">{type.label}</p>
+        </Button>
+      ))}
+    </div>
+  );
 }

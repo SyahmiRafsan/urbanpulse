@@ -73,12 +73,10 @@ export default function StopsMap({
         setStopsShown(moveFilteredStops);
       }
 
-      if (mode == "searching" && isFullscreen && query =="") {
+      if (mode == "searching" && isFullscreen && query == "") {
         setStopsShown(moveFilteredStops);
       }
     }
-    console.log("rerendered");
-    console.log({ bounds, zoom });
   };
 
   useEffect(() => {

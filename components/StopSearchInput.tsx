@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import { useStopSearchStore } from "@/stores/StopSearchStore";
 import { useLocationStore } from "@/stores/LocationStore";
 import { filterStopsByRadius } from "@/lib/utils";
+import { Input } from "./ui/input";
 
 export default function StopSearchInput() {
   const { setFilteredStops, query, setQuery, stops } = useStopSearchStore();
@@ -28,9 +29,9 @@ export default function StopSearchInput() {
     <div className="flex flex-col gap-4">
       <div className="flex flex-row gap-2 items-center">
         <div className="w-full">
-          <input
+          <Input
             placeholder="Search by stop name"
-            className="bg-input border border-input rounded-md px-2 py-2 w-full max-w-full"
+            className="w-full max-w-full bg-card"
             value={query}
             onChange={(e) =>
               e.target.value == ""
@@ -48,7 +49,7 @@ export default function StopSearchInput() {
         <Button
           size={"icon"}
           onClick={() => handleSearch(query)}
-          className="w-10 h-10 shrink-0"
+          className="shrink-0"
         >
           <MagnifyingGlassIcon className="shrink-0" />
         </Button>

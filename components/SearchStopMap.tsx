@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { Button } from "./ui/button";
 import { Cross1Icon, EnterFullScreenIcon } from "@radix-ui/react-icons";
@@ -9,7 +9,7 @@ import { useLocationStore } from "@/stores/LocationStore";
 import { useStopSearchStore } from "@/stores/StopSearchStore";
 import StopSearchInput from "./StopSearchInput";
 
-export default function SelectStopMap({ stop }: { stop?: Stop }) {
+export default function SearchStopMap({ stop }: { stop?: Stop }) {
   const StopsMap = dynamic(() => import("@/components/StopsMap"), {
     ssr: false,
   });
@@ -21,6 +21,22 @@ export default function SelectStopMap({ stop }: { stop?: Stop }) {
 
   const { coordinates } = useLocationStore();
   const { stops, isFullscreen, setIsFullscreen } = useStopSearchStore();
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setIsFullscreen(false);
+      }
+    };
+
+    // Add event listener when the component mounts
+    window.addEventListener("keydown", handleKeyDown);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   return (
     <div
@@ -44,7 +60,7 @@ export default function SelectStopMap({ stop }: { stop?: Stop }) {
         {isFullscreen ? <Cross1Icon /> : <EnterFullScreenIcon />}
       </Button>
       {isFullscreen && (
-        <div className="absolute bottom-0 md:-top-1 md:right-[40px] w-full md:max-w-sm p-4 h-fit">
+        <div className="absolute bottom-0 md:-top-1 md:right-[36px] w-full md:max-w-sm p-4 h-fit">
           <StopSearchInput />
         </div>
       )}
