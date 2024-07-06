@@ -40,7 +40,10 @@ export default function MapController({
       //   map.setView([userLocation.lat, userLocation.lon], ); // Adjust the zoom level as needed
       //   map.flyTo([userLocation.lat, userLocation.lon],18)
 
-      const { latChange, lonChange } = metersToDegreeChange(METER_RADIUS_SEARCH, stop.stop_lat); 
+      const { latChange, lonChange } = metersToDegreeChange(
+        METER_RADIUS_SEARCH,
+        stop.stop_lat
+      );
       map.fitBounds([
         [stop.stop_lat - latChange, stop.stop_lon - lonChange],
         [stop.stop_lat + latChange, stop.stop_lon + lonChange],
@@ -67,7 +70,8 @@ export default function MapController({
         const { latChange, lonChange } = metersToDegreeChange(
           METER_RADIUS_SEARCH,
           userLocation.lat
-        ); 
+        );
+
         map.fitBounds([
           [userLocation.lat - latChange, userLocation.lon - lonChange],
           [userLocation.lat + latChange, userLocation.lon + lonChange],

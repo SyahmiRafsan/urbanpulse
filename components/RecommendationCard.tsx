@@ -35,14 +35,16 @@ export default function RecommendationCard({
         <div>
           <p className="text-xl font-bold mb-2">{recommendation.title}</p>
           <div className="flex flex-row gap-1 flex-wrap">
-            <Badge variant={"muted"}>Quality of Life</Badge>
-            <Badge variant={"muted"}>Safety</Badge>
-            <Badge variant={"muted"}>Connectivity</Badge>
+            {recommendation.highlights.map((hl) => (
+              <Badge variant={"muted"} key={hl + recommendation.id}>
+                {hl}
+              </Badge>
+            ))}
           </div>
         </div>
         <div className="w-20 h-20 ./md:w-24 /md:h-24 shrink-0">
           <img
-            src={recommendation.image}
+            src={recommendation.media[0].url}
             className="aspect-square object-cover rounded-lg"
           />
         </div>

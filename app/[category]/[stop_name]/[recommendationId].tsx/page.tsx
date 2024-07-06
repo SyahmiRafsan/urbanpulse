@@ -79,7 +79,7 @@ export default function RecommendationPage({
             <div className="flex flex-row gap-4 overflow-x-auto px-4">
               {[1, 2, 3].map((img) => (
                 <img
-                  src={recommendation.image}
+                  src={recommendation.media[0].url}
                   key={img}
                   className="rounded-lg max-h-[200px]"
                 />

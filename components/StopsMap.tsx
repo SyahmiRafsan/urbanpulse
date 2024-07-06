@@ -8,9 +8,15 @@ import { useEffect, useState } from "react";
 import { Badge } from "./ui/badge";
 import Link from "next/link";
 import slugify from "slugify";
-import { getIconByStopCategory } from "@/lib/utils";
+import {
+  formatThousands,
+  getIconByStopCategory,
+  haversineDistance,
+} from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 import { useStopSearchStore } from "@/stores/StopSearchStore";
+import { CreateRecommendationState } from "@/lib/constants";
+import { useLocationStore } from "@/stores/LocationStore";
 
 export default function StopsMap({
   stops,
@@ -29,6 +35,8 @@ export default function StopsMap({
     bus: "bus",
     // Add more categories as needed
   };
+
+  const { coordinates } = useLocationStore();
 
   // Create a custom icon based on category
   const getCategoryIcon = (category: Category) => {
@@ -84,11 +92,17 @@ export default function StopsMap({
         moveFilteredStops.filter((st) => st.stop_id !== stop.stop_id)
       );
     } else {
-      if (mode !== "searching") {
+      if (mode !== CreateRecommendationState.SEARCHING) {
         setStopsShown(moveFilteredStops);
       }
 
-      if (mode == "searching" && isFullscreen && query == "") {
+      if (
+        mode == CreateRecommendationState.SEARCHING &&
+        isFullscreen
+        // TODO decide if user can see others if there is query text
+        // &&
+        // query == ""
+      ) {
         setStopsShown(moveFilteredStops);
       }
     }
@@ -180,7 +194,9 @@ export default function StopsMap({
             <img src={getIconByStopCategory(stop.category)} />
             <div className="flex flex-col">
               <b>{stop.stop_name}</b>
-              <span className="whitespace-nowrap text-blue-600 pr-2 font-bold">Selected stop</span>
+              <span className="whitespace-nowrap text-blue-600 pr-2 font-bold">
+                Selected stop
+              </span>
             </div>
           </div>
         </Popup>
@@ -235,29 +251,45 @@ export default function StopsMap({
             {/* // If using popup */}
             <Popup className="">
               <div className="">
-                <div className="flex flex-row gap-1 items-center">
+                <div className="flex flex-row gap-2 items-start">
                   <img src={getIconByStopCategory(stop.category)} />
-                  <b className="w-full whitespace-nowrap">{stop.stop_name}</b>
+                  <div className="flex flex-col">
+                    <b className="w-full whitespace-nowrap">{stop.stop_name}</b>
+                    {coordinates && (
+                      <span className="text-xs text-muted-foreground">
+                        {formatThousands(
+                          haversineDistance(coordinates, {
+                            lat: stop.stop_lat,
+                            lon: stop.stop_lon,
+                          })
+                        )}
+                        m
+                      </span>
+                    )}
+                    {mode !== "searching" ? (
+                      <Link
+                        href={`/${stop.category}/${slugify(stop.stop_name, {
+                          lower: true,
+                          strict: true,
+                        })}-${stop.stop_id}`}
+                      >
+                        <Badge
+                          variant={"default"}
+                          className="mt-2 w-fit whitespace-nowrap cursor-pointer"
+                        >
+                          View
+                        </Badge>
+                      </Link>
+                    ) : (
+                      <Badge
+                        className="mt-2 w-fit whitespace-nowrap cursor-pointer"
+                        onClick={() => setSelectedStop(stop)}
+                      >
+                        Select Stop
+                      </Badge>
+                    )}
+                  </div>
                 </div>
-                {mode !== "searching" ? (
-                  <Link
-                    href={`/${stop.category}/${slugify(stop.stop_name, {
-                      lower: true,
-                      strict: true,
-                    })}-${stop.stop_id}`}
-                  >
-                    <Badge variant={"default"} className="mt-2 cursor-pointer">
-                      View
-                    </Badge>
-                  </Link>
-                ) : (
-                  <Badge
-                    className="mt-2 cursor-pointer"
-                    onClick={() => setSelectedStop(stop)}
-                  >
-                    Select Stop
-                  </Badge>
-                )}
               </div>
             </Popup>
           </Marker>

@@ -89,3 +89,29 @@ export function filterStopsByRadius(
     return distance <= radiusInMeters;
   });
 }
+
+/**
+ * Converts a number to a string with 'k' suffix for thousands.
+ *
+ * @param num - The number to be converted.
+ * @returns A string representing the number with 'k' suffix if applicable.
+ */
+export function formatThousands(num: number): string {
+  if (num >= 1000) {
+    const formattedNum = (num / 1000).toFixed(1);
+    // Remove trailing .0 if it's a whole number
+    return formattedNum.endsWith(".0")
+      ? formattedNum.slice(0, -2) + "k"
+      : formattedNum + "k";
+  } else {
+    const formattedNum = num.toFixed(0);
+
+    return formattedNum;
+  }
+  // return num.toString();
+}
+
+// Example usage:
+console.log(formatThousands(1500)); // "1.5k"
+console.log(formatThousands(999)); // "999"
+console.log(formatThousands(10000)); // "10k"

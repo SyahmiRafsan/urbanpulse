@@ -1,6 +1,10 @@
 "use client";
 
-import { getIconByStopCategory, haversineDistance } from "@/lib/utils";
+import {
+  formatThousands,
+  getIconByStopCategory,
+  haversineDistance,
+} from "@/lib/utils";
 import { useLocationStore } from "@/stores/LocationStore";
 import React from "react";
 
@@ -20,12 +24,12 @@ export default function StopSearchCard({ stop }: { stop: Stop }) {
 
         {coordinates && (
           <p className="text-sm text-muted-foreground">
-            {Number(
+            {formatThousands(
               haversineDistance(coordinates, {
                 lat: stop.stop_lat,
                 lon: stop.stop_lon,
-              }).toFixed(0)
-            ).toLocaleString()}
+              })
+            )}
             m
           </p>
         )}

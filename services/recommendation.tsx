@@ -9,8 +9,15 @@ export const dummyRecommendations: Recommendation[] = [
     upvotesCount: 6,
     commentsCount: 5,
     category: "bus",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/2/2d/Bus_Stop_on_Vauxhall_Bridge_Road_-_geograph.org.uk_-_598333.jpg",
+    media: [
+      {
+        id: "abc",
+        created_on: Date.now(),
+        url: "https://upload.wikimedia.org/wikipedia/commons/2/2d/Bus_Stop_on_Vauxhall_Bridge_Road_-_geograph.org.uk_-_598333.jpg",
+        recommendationId: "r1",
+      },
+    ],
+    highlights: ["Connectivity", "Safety", "Quality Of Life"],
   },
   {
     id: "r2",
@@ -20,8 +27,15 @@ export const dummyRecommendations: Recommendation[] = [
     upvotesCount: 5,
     commentsCount: 5,
     category: "bus",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPdtVbr6pJ6HGh7ZjHPcFXn4ZFGWLdQ_jkig&s",
+    media: [
+      {
+        id: "abc",
+        created_on: Date.now(),
+        url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPdtVbr6pJ6HGh7ZjHPcFXn4ZFGWLdQ_jkig&s",
+        recommendationId: "r2",
+      },
+    ],
+    highlights: ["Connectivity", "Safety", "Quality Of Life"],
   },
   {
     id: "r3",
@@ -31,8 +45,15 @@ export const dummyRecommendations: Recommendation[] = [
     upvotesCount: 4,
     commentsCount: 2,
     category: "bus",
-    image:
-      "https://apicms.thestar.com.my/uploads/images/2022/12/15/1863908.webp",
+    media: [
+      {
+        id: "abc",
+        created_on: Date.now(),
+        url: "https://apicms.thestar.com.my/uploads/images/2022/12/15/1863908.webp",
+        recommendationId: "r3",
+      },
+    ],
+    highlights: ["Connectivity", "Safety", "Quality Of Life"],
   },
   {
     id: "r4",
@@ -42,8 +63,15 @@ export const dummyRecommendations: Recommendation[] = [
     upvotesCount: 3,
     commentsCount: 6,
     category: "lrt",
-    image:
-      "https://www.klia2.info/wp-content/uploads/mrt-pasar-seni-station-102.webp",
+    media: [
+      {
+        id: "abc",
+        created_on: Date.now(),
+        url: "https://www.klia2.info/wp-content/uploads/mrt-pasar-seni-station-102.webp",
+        recommendationId: "r4",
+      },
+    ],
+    highlights: ["Connectivity", "Safety", "Quality Of Life"],
   },
   {
     id: "r5",
@@ -53,8 +81,15 @@ export const dummyRecommendations: Recommendation[] = [
     upvotesCount: 2,
     commentsCount: 2,
     category: "mrt",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzTb7r7kk9Q2EofiYPksVJLgJMxyuG8f626Q&s",
+    media: [
+      {
+        id: "abc",
+        created_on: Date.now(),
+        url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzTb7r7kk9Q2EofiYPksVJLgJMxyuG8f626Q&s",
+        recommendationId: "r5",
+      },
+    ],
+    highlights: ["Connectivity", "Safety", "Quality Of Life"],
   },
 ];
 

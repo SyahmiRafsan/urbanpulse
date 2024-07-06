@@ -4,11 +4,12 @@ import React, { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { Button } from "./ui/button";
 import { Cross1Icon, EnterFullScreenIcon } from "@radix-ui/react-icons";
-import { cn, getIconByStopCategory, haversineDistance } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useLocationStore } from "@/stores/LocationStore";
 import { useStopSearchStore } from "@/stores/StopSearchStore";
 import StopSearchInput from "./StopSearchInput";
 import StopSearchCard from "./StopSearchCard";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function StopSearchMap({ stop }: { stop?: Stop }) {
   const StopsMap = dynamic(() => import("@/components/StopsMap"), {
@@ -40,6 +41,10 @@ export default function StopSearchMap({ stop }: { stop?: Stop }) {
     };
   }, []);
 
+  const router = useRouter();
+
+  const pathname = usePathname();
+
   return (
     <div
       className={cn(
@@ -69,7 +74,7 @@ export default function StopSearchMap({ stop }: { stop?: Stop }) {
           <div>
             {selectedStop !== null ? (
               <div
-                className="bg-card p-4 rounded-t-lg max-w-[400px] animate-in slide-in-from-bottom-full"
+                className="bg-card p-4 rounded-t-lg md:max-w-[400px] animate-in slide-in-from-bottom-full"
                 key={selectedStop.stop_id}
               >
                 <p className=" text-muted-foreground text-sm mb-2">
@@ -77,7 +82,12 @@ export default function StopSearchMap({ stop }: { stop?: Stop }) {
                 </p>
                 <StopSearchCard stop={selectedStop} />
                 <div className="mt-4 border-t py-4">
-                  <Button className="w-full">Confirm Selection</Button>
+                  <Button
+                    className="w-full"
+                    onClick={() => router.push(`${pathname}?mode=selected`)}
+                  >
+                    Confirm Selection
+                  </Button>
                 </div>
               </div>
             ) : (

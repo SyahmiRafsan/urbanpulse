@@ -1,11 +1,12 @@
 import BackButton from "@/components/BackButton";
+import CreateRecommendation from "@/components/CreateRecommendation";
 import Nav from "@/components/Nav";
 import StopSearch from "@/components/StopSearch";
 import React, { Suspense } from "react";
 
 export default function CreateRecommendationPage() {
   return (
-    <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24 min-h-[100svh]">
+    <main className="flex flex-col items-center justify-between bg-neutral-50 pb-10 min-h-[100svh]">
       <div className="max-w-[700px] border-x w-full bg-background gap-4">
         <Nav />
         <div className="flex flex-col gap-4 pt-4">
@@ -20,17 +21,9 @@ export default function CreateRecommendationPage() {
           </div>
           {/* End Top */}
           {/* Start Feed */}
-          <div>
-            <p className="px-4">
-              Post your recommendation to help make public transport
-              improvements
-            </p>
-            <p className="font-bold my-4 px-4">Select Stop</p>
-
-            <Suspense>
-              <StopSearch />
-            </Suspense>
-          </div>
+          <Suspense>
+            <CreateRecommendation />
+          </Suspense>
           {/* End Feed */}
         </div>
       </div>

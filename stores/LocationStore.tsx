@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 interface LocationState {
   coordinates: { lat: number; lon: number };
@@ -18,7 +18,7 @@ export const useLocationStore = create(
     }),
     {
       name: "user-location", // unique name for the storage key
-      getStorage: () => localStorage,
+      storage: createJSONStorage(() => localStorage),
       // ...
       onRehydrateStorage: (state) => {
         console.log("hydration starts");

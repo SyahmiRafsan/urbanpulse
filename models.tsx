@@ -1,12 +1,21 @@
 interface Recommendation {
   id: string;
+  description?: string;
   stop_name: string;
   stop_id: string | number;
   title: string;
   upvotesCount: number;
   commentsCount: number;
   category: string;
-  image: string;
+  highlights: string[];
+  media: Media[];
+}
+
+interface Media {
+  id: string;
+  url: string;
+  recommendationId: string;
+  created_on: number;
 }
 
 type Category = "lrt" | "mrt" | "mr" | "bus";
