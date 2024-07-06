@@ -13,16 +13,9 @@ import Link from "next/link";
 import { dummyRecommendations } from "@/services/recommendation";
 import LocationButton from "@/components/LocationButton";
 import { getIconByStopCategory } from "@/lib/utils";
+import StopTypes from "@/components/StopTypes";
 
 export default function Home() {
-  const modes = [
-    { label: "Bus", value: "bus" },
-    { label: "LRT", value: "lrt" },
-    { label: "MRT", value: "mrt" },
-    { label: "Monorail", value: "mr" },
-    { label: "KTM", value: "ktm" },
-  ];
-
   return (
     <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24">
       <div className="max-w-[700px] border-x w-full bg-background gap-5">
@@ -48,24 +41,10 @@ export default function Home() {
             </DropdownMenu>
             <LocationButton />
           </div>
-          <div className="flex flex-row gap-2 items-center overflow-x-auto pl-4">
-            <Button className="rounded-full" size={"sm"}>
-              <p className="whitespace-nowrap">All Stops</p>
-            </Button>
-            {modes.map((md, i) => (
-              <Button
-                key={md.label + i}
-                className="rounded-full px-5"
-                variant={"outline"}
-                size={"sm"}
-              >
-                <img
-                  src={getIconByStopCategory(md.value)}
-                  className="w-5 h-5 mr-1 rounded-sm"
-                />
-                <p className="">{md.label}</p>
-              </Button>
-            ))}
+          <div className="flex flex-row gap-2 items-center overflow-x-auto">
+            <div className="px-4">
+              <StopTypes />
+            </div>
           </div>
           {/* End Top */}
           {/* Start Feed */}

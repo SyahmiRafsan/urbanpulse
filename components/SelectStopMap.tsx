@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { Button } from "./ui/button";
 import { Cross1Icon, EnterFullScreenIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/utils";
-import { useUserStore } from "@/stores/UserStore";
+import { useLocationStore } from "@/stores/LocationStore";
 import { useStopSearchStore } from "@/stores/StopSearchStore";
 import StopSearchInput from "./StopSearchInput";
 
@@ -19,7 +19,7 @@ export default function SelectStopMap({ stop }: { stop?: Stop }) {
     setIsFullscreen(!_isFullscreen);
   }
 
-  const { coordinates } = useUserStore();
+  const { coordinates } = useLocationStore();
   const { stops, isFullscreen, setIsFullscreen } = useStopSearchStore();
 
   return (
@@ -34,18 +34,7 @@ export default function SelectStopMap({ stop }: { stop?: Stop }) {
         !isFullscreen ? () => handleFullscreen(isFullscreen) : () => null
       }
     >
-      <StopsMap
-        stops={stops}
-        userLocation={
-          coordinates
-            ? coordinates
-            : {
-                lat: 3.1582,
-                lon: 101.7122,
-              }
-        }
-        stop={stop}
-      />
+      <StopsMap stops={stops} userLocation={coordinates} stop={stop} />
       <Button
         className="absolute top-3 right-2 shadow-lg"
         variant={"outline"}

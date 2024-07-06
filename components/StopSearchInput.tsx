@@ -2,7 +2,7 @@ import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import React from "react";
 import { Button } from "./ui/button";
 import { useStopSearchStore } from "@/stores/StopSearchStore";
-import { useUserStore } from "@/stores/UserStore";
+import { useLocationStore } from "@/stores/LocationStore";
 import { filterStopsByRadius } from "@/lib/utils";
 
 export default function StopSearchInput() {
@@ -22,7 +22,7 @@ export default function StopSearchInput() {
     }
   }
 
-  const { coordinates } = useUserStore();
+  const { coordinates } = useLocationStore();
 
   return (
     <div className="flex flex-col gap-4">

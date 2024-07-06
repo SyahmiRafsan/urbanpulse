@@ -73,7 +73,7 @@ export default function StopsMap({
         setStopsShown(moveFilteredStops);
       }
 
-      if (mode == "searching" && isFullscreen) {
+      if (mode == "searching" && isFullscreen && query =="") {
         setStopsShown(moveFilteredStops);
       }
     }
@@ -158,7 +158,7 @@ export default function StopsMap({
           : [userLocation.lat, userLocation.lon]
       }
       // zoom={18}
-      minZoom={14}
+      minZoom={10}
       maxZoom={18}
       // style={{ height: "100%", width: "100%" }}
       className="w-[100%] h-[100%] z-0"
@@ -178,15 +178,13 @@ export default function StopsMap({
           key={idx}
           position={[stop.stop_lat, stop.stop_lon]}
           icon={
-            isFullscreen &&
             query !== "" &&
             (stop.stop_name.toLowerCase().includes(query.toLowerCase()) ||
               String(stop.stop_id).toLowerCase().includes(query.toLowerCase()))
               ? getCategoryIconBig(
                   stop.category.toLocaleLowerCase() as Category
                 )
-              : 
-              getCategoryIcon(stop.category.toLocaleLowerCase() as Category)
+              : getCategoryIcon(stop.category.toLocaleLowerCase() as Category)
           }
           // eventHandlers={{
           //   click: () => alert(stop.stop_name),

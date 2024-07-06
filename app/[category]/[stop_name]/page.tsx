@@ -47,7 +47,7 @@ export default function StopPage({
             </div>
             {/* End Top */}
             <img
-              src={`/dummy/${stop.category}.png`}
+              src={`/dummy/${stop.category.toLowerCase()}.png`}
               className="max-h-[175px] md:max-h-[250px] object-cover w-full"
             />
             <div className="border-b p-4">

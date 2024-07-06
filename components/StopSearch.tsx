@@ -6,10 +6,11 @@ import {
   haversineDistance,
 } from "@/lib/utils";
 import React, { useEffect } from "react";
-import { useUserStore } from "@/stores/UserStore";
+import { useLocationStore } from "@/stores/LocationStore";
 import SelectStopMap from "./SelectStopMap";
 import { useStopSearchStore } from "@/stores/StopSearchStore";
 import StopSearchInput from "./StopSearchInput";
+import StopTypes from "./StopTypes";
 
 export default function StopSearch() {
   // const [filteredStops, setFilteredStops] = useState<Stop[]>(
@@ -21,13 +22,11 @@ export default function StopSearch() {
   const { setFilteredStops, filteredStops, stops, setQuery, setIsFullscreen } =
     useStopSearchStore();
 
-  const { coordinates } = useUserStore();
+  const { coordinates } = useLocationStore();
 
   useEffect(() => {
     if (coordinates) {
-      if (coordinates && coordinates.lat !== null && coordinates.lon !== null) {
-        setFilteredStops(filterStopsByRadius(coordinates, stops, 250));
-      }
+      setFilteredStops(filterStopsByRadius(coordinates, stops, 500));
     }
   }, []);
 
@@ -36,11 +35,14 @@ export default function StopSearch() {
       <SelectStopMap />
       <div className="p-4">
         <StopSearchInput />
+        <div className="mt-4">
+          <StopTypes />
+        </div>
       </div>
       <p className="text-muted-foreground px-4">
         Nearby stops ({filteredStops.length})
       </p>
-      <div>
+      <div className="mt-4">
         {filteredStops
           .sort((a, b) =>
             coordinates
@@ -57,9 +59,9 @@ export default function StopSearch() {
           .map((st) => (
             <button
               key={st.stop_id}
-              className="p-4 first:border-t mt-4 border-b flex flex-row gap-2 items-center w-full"
+              className="p-4 py-2 first:border-t border-b flex flex-row gap-2 items-center w-full"
               onClick={() => [
-                setQuery(String(st.stop_id)),
+                setQuery(String(st.stop_name)),
                 setIsFullscreen(true),
               ]}
               type="button"

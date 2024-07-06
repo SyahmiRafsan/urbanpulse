@@ -4,12 +4,9 @@ import React, { useState } from "react";
 import { ALL_STOPS } from "@/lib/stops/all_stops";
 import dynamic from "next/dynamic";
 import { Button } from "./ui/button";
-import {
-  Cross1Icon,
-  EnterFullScreenIcon,
-  ExitFullScreenIcon,
-} from "@radix-ui/react-icons";
+import { Cross1Icon, EnterFullScreenIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/utils";
+import { useLocationStore } from "@/stores/LocationStore";
 
 export default function StopMap({ stop }: { stop?: Stop }) {
   const StopsMap = dynamic(() => import("@/components/StopsMap"), {
@@ -20,6 +17,8 @@ export default function StopMap({ stop }: { stop?: Stop }) {
   function handleFullscreen(_isFullscreen: boolean) {
     setIsFullscreen(!_isFullscreen);
   }
+
+  const { coordinates } = useLocationStore();
 
   return (
     <div
@@ -33,16 +32,9 @@ export default function StopMap({ stop }: { stop?: Stop }) {
         !isFullscreen ? () => handleFullscreen(isFullscreen) : () => null
       }
     >
-      <StopsMap
-        stops={ALL_STOPS}
-        userLocation={{
-          lat: 3.1582,
-          lon: 101.7122,
-        }}
-        stop={stop}
-      />
+      <StopsMap stops={ALL_STOPS} userLocation={coordinates} stop={stop} />
       <Button
-        className="absolute top-2 right-2 shadow-lg"
+        className="absolute top-2 right-2 shadow-lg z-50"
         variant={"outline"}
         size={"icon"}
         onClick={() => handleFullscreen(isFullscreen)}

@@ -27,7 +27,7 @@ export default function Nav() {
   ];
 
   return (
-    <nav className="fixed w-full flex flex-row bottom-0 sm:bottom-4 left-0 justify-center items-center">
+    <nav className="fixed w-full md:w-fit flex flex-row bottom-0 sm:bottom-4 left-0 justify-center m-auto inset-x-0 items-center">
       <div className="sm:max-w-fit /max-w-[700px] sm:rounded-md gap-4 px-6 py-4 flex flex-row justify-between sm:justify-center w-full bg-white drop-shadow-2xl border-t sm:border">
         {links.map((link) => (
           <Link href={link.url} key={link.label}>

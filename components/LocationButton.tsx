@@ -1,30 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DrawingPinIcon } from "@radix-ui/react-icons";
 import { Button } from "./ui/button";
-import { useUserStore } from "@/stores/UserStore";
+import { useLocationStore } from "@/stores/LocationStore";
 
 export default function LocationButton() {
   const [loading, setLoading] = useState(false);
-  const { district, setDistrict, setCoordinates, coordinates } = useUserStore();
+  const { district, setDistrict, setCoordinates, coordinates } =
+    useLocationStore();
+
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    if (!isClient) {
+      setIsClient(true);
+    }
+  }, []);
 
   const handleClick = async () => {
     try {
       setLoading(true);
 
-      if (!coordinates?.lat && !coordinates?.lon) {
-        const position = await getCurrentPosition();
-        const { latitude, longitude } = position.coords;
+      const position = await getCurrentPosition();
+      const { latitude, longitude } = position.coords;
 
-        setCoordinates(latitude, longitude);
+      setCoordinates(latitude, longitude);
 
-        const district = await fetchDistrict(latitude, longitude);
-        setDistrict(district);
-      } else {
-        const district = await fetchDistrict(coordinates.lat, coordinates.lon);
-        setDistrict(district);
-      }
+      const district = await fetchDistrict(latitude, longitude);
+      setDistrict(district);
     } catch (error) {
       console.error("Error fetching location:", error);
       setLoading(false);
@@ -34,18 +38,22 @@ export default function LocationButton() {
   };
 
   return (
-    <button
-      onClick={handleClick}
-      disabled={loading}
-      className="flex gap-1 items-center text-muted-foreground text-sm"
-    >
-      <DrawingPinIcon className="w-5 h-5" />
-      {district ? (
-        <p>{district}</p>
-      ) : (
-        <p>{loading ? "Fetching..." : "Get Location"}</p>
+    <>
+      {isClient && (
+        <button
+          onClick={handleClick}
+          disabled={loading}
+          className="flex gap-1 items-center text-muted-foreground text-sm"
+        >
+          <DrawingPinIcon className="w-5 h-5" />
+          {district ? (
+            <p>{district}</p>
+          ) : (
+            <p>{loading ? "Fetching..." : "Get Location"}</p>
+          )}
+        </button>
       )}
-    </button>
+    </>
   );
 }
 
