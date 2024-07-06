@@ -9,7 +9,7 @@ import { useLocationStore } from "@/stores/LocationStore";
 import { useStopSearchStore } from "@/stores/StopSearchStore";
 import StopSearchInput from "./StopSearchInput";
 
-export default function SearchStopMap({ stop }: { stop?: Stop }) {
+export default function StopSearchMap({ stop }: { stop?: Stop }) {
   const StopsMap = dynamic(() => import("@/components/StopsMap"), {
     ssr: false,
   });
@@ -23,7 +23,7 @@ export default function SearchStopMap({ stop }: { stop?: Stop }) {
   const { stops, isFullscreen, setIsFullscreen } = useStopSearchStore();
 
   useEffect(() => {
-    const handleKeyDown = (event) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setIsFullscreen(false);
       }

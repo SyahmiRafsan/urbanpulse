@@ -10,7 +10,7 @@ import { useLocationStore } from "@/stores/LocationStore";
 import { useStopSearchStore } from "@/stores/StopSearchStore";
 import StopSearchInput from "./StopSearchInput";
 import StopTypes from "./StopTypes";
-import SearchStopMap from "./SearchStopMap";
+import SearchStopMap from "./StopSearchMap";
 
 export default function StopSearch() {
   // const [filteredStops, setFilteredStops] = useState<Stop[]>(

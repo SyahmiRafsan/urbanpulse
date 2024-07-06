@@ -21,7 +21,7 @@ export default function StopMap({ stop }: { stop?: Stop }) {
   const { coordinates } = useLocationStore();
 
   useEffect(() => {
-    const handleKeyDown = (event) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setIsFullscreen(false);
       }
