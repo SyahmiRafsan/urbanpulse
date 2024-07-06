@@ -11,7 +11,7 @@ export default function RecommendationCard({
   recommendation: Recommendation;
 }) {
   return (
-    <div className="px-4 border-b py-4 animate-in slide-in-from-left-4">
+    <div className="px-4 border-b py-4 animate-in slide-in-from-left-4 z-10">
       <Link
         href={`/${recommendation.category}/${slugify(recommendation.stop_name, {
           lower: true,

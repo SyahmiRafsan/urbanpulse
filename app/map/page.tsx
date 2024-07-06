@@ -15,7 +15,7 @@ export default function MapPage() {
 
   return (
     <div className="h-[100svh]">
-      <div className="fixed bottom-0 z-50 w-full flex flex-row justify-center">
+      <div className="fixed bottom-0 w-full flex flex-row justify-center z-50">
         <Nav />
       </div>
       <StopsMap stops={ALL_STOPS} userLocation={userLocation} />

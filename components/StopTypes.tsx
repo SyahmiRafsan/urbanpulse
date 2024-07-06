@@ -57,10 +57,8 @@ export default function StopTypes({
     const stopsWithType = selectedType.includes("all")
       ? initialFilteredStops
       : initialFilteredStops.filter((stop) =>
-          selectedType.includes(stop.category)
+          selectedType.includes(stop.category.toLowerCase())
         );
-
-    // Using type guards to ensure the setter receives the correct type
 
     if (stopsSetter) {
       stopsSetter(stopsWithType as Stop[]);

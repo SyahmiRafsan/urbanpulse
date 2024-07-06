@@ -63,7 +63,7 @@ export default function StopSearch() {
             .map((st) => (
               <button
                 key={st.stop_id}
-                className="p-4 first:border-t border-b flex flex-row gap-2 items-center w-full animate-in slide-in-from-left-4"
+                className="p-4 first:border-t border-b flex flex-row gap-2 items-center w-full animate-in z-10 slide-in-from-left-4"
                 onClick={() => [
                   setQuery(String(st.stop_name)),
                   setIsFullscreen(true),

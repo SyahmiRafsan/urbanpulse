@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { DrawingPinIcon } from "@radix-ui/react-icons";
 import { Button } from "./ui/button";
 import { useLocationStore } from "@/stores/LocationStore";
+import { Input } from "./ui/input";
 
 export default function LocationButton() {
   const [loading, setLoading] = useState(false);
@@ -37,21 +38,53 @@ export default function LocationButton() {
     }
   };
 
+  const [showCoord, setShowCoord] = useState(false);
+
   return (
     <>
       {isClient && (
-        <button
-          onClick={handleClick}
-          disabled={loading}
-          className="flex gap-1 items-center text-muted-foreground text-sm"
-        >
-          <DrawingPinIcon className="w-5 h-5" />
-          {district ? (
-            <p>{district}</p>
-          ) : (
-            <p>{loading ? "Fetching..." : "Get Location"}</p>
+        <>
+          <button
+            onClick={
+              district
+                ? () =>
+                    process.env.NODE_ENV == "development"
+                      ? setShowCoord(!showCoord)
+                      : null
+                : handleClick
+            }
+            disabled={loading}
+            className="flex gap-1 items-center text-muted-foreground text-sm"
+          >
+            <DrawingPinIcon className="w-5 h-5" />
+            {district ? (
+              <p>{district}</p>
+            ) : (
+              <p>{loading ? "Fetching..." : "Get Location"}</p>
+            )}
+             {showCoord && (
+            <div className="w-fit flex-row flex gap-1 ml-1">
+              <Input
+                step={0.0001}
+                value={coordinates.lat.toFixed(4)}
+                onChange={(e) =>
+                  setCoordinates(Number(e.target.value), coordinates.lon)
+                }
+                type="number"
+              />
+              <Input
+                step={0.0001}
+                value={coordinates.lon.toFixed(4)}
+                onChange={(e) =>
+                  setCoordinates(coordinates.lat, Number(e.target.value))
+                }
+                type="number"
+              />
+            </div>
           )}
-        </button>
+          </button>
+         
+        </>
       )}
     </>
   );
