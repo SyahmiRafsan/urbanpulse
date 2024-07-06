@@ -27,9 +27,9 @@ export default function StopPage({
 
   return (
     <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24">
-      <div className="max-w-[700px] border-x w-full min-h-screen bg-background gap-5 bg-neutral-50">
+      <div className="max-w-[700px] border-x w-full min-h-screen bg-background gap-4 bg-neutral-50">
         <Nav />
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-4">
           {/* Start Stop */}
           <div className="bg-card pt-4">
             {/* Start Top */}

@@ -35,7 +35,9 @@ export default function StopSearch() {
       <SearchStopMap />
       <div className="p-4">
         <StopSearchInput />
-        <div className="mt-4">
+      </div>
+      <div className="flex flex-row gap-2 items-center overflow-x-auto mb-4">
+        <div className="px-4">
           <StopTypes
             stopsSetter={setFilteredStops}
             initialList={filteredStops}

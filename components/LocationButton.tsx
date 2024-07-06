@@ -62,7 +62,9 @@ export default function LocationButton() {
             ) : (
               <p>{loading ? "Fetching..." : "Get Location"}</p>
             )}
-             {showCoord && (
+           
+          </button>
+          {showCoord && (
             <div className="w-fit flex-row flex gap-1 ml-1">
               <Input
                 step={0.0001}
@@ -82,8 +84,6 @@ export default function LocationButton() {
               />
             </div>
           )}
-          </button>
-         
         </>
       )}
     </>

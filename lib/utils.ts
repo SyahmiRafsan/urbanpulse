@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { METER_RADIUS_SEARCH } from "./constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -77,7 +78,7 @@ export function haversineDistance(
 export function filterStopsByRadius(
   userCoordinates: Coordinates,
   stops: Stop[],
-  radiusInMeters: number = 250
+  radiusInMeters: number = METER_RADIUS_SEARCH
 ): Stop[] {
   return stops.filter((stop) => {
     const stopCoordinates: Coordinates = {

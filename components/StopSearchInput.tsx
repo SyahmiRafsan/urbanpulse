@@ -5,6 +5,7 @@ import { useStopSearchStore } from "@/stores/StopSearchStore";
 import { useLocationStore } from "@/stores/LocationStore";
 import { filterStopsByRadius } from "@/lib/utils";
 import { Input } from "./ui/input";
+import { METER_RADIUS_SEARCH } from "@/lib/constants";
 
 export default function StopSearchInput() {
   const { setFilteredStops, query, setQuery, stops } = useStopSearchStore();
@@ -19,7 +20,7 @@ export default function StopSearchInput() {
 
       setFilteredStops(newFiltered);
     } else {
-      setFilteredStops(filterStopsByRadius(coordinates, stops, 250));
+      setFilteredStops(filterStopsByRadius(coordinates, stops, METER_RADIUS_SEARCH));
     }
   }
 
@@ -37,7 +38,7 @@ export default function StopSearchInput() {
               e.target.value == ""
                 ? [
                     setFilteredStops(
-                      filterStopsByRadius(coordinates, stops, 250)
+                      filterStopsByRadius(coordinates, stops, METER_RADIUS_SEARCH)
                     ),
                     setQuery(""),
                   ]
