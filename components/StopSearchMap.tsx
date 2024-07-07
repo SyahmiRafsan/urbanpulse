@@ -95,7 +95,7 @@ export default function StopSearchMap({ stop }: { stop?: Stop }) {
                   Selected stop
                 </p>
                 <StopSearchCard stop={selectedStop} />
-                <div className="mt-4 border-t py-4">
+                <div className="mt-4 border-t pt-4">
                   <Button
                     className="w-full"
                     onClick={() => router.push(`${pathname}?mode=selected`)}

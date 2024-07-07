@@ -18,7 +18,7 @@ export default function MapController({
 }) {
   const map = useMap();
 
-  const { filteredStops, isFullscreen } = useStopSearchStore();
+  const { filteredStops, selectedStop } = useStopSearchStore();
 
   useMapEvents({
     moveend: (event) => {
@@ -61,11 +61,15 @@ export default function MapController({
           [userLocation.lat, userLocation.lon],
         ]);
 
-        filteredStops.forEach((stop) => {
-          bounds.extend([stop.stop_lat, stop.stop_lon]);
-        });
-
-        map.fitBounds(bounds.pad(0.5));
+        if (!selectedStop) {
+          filteredStops.forEach((stop) => {
+            bounds.extend([stop.stop_lat, stop.stop_lon]);
+          });
+          map.fitBounds(bounds.pad(0.5));
+        } else {
+          bounds.extend([selectedStop.stop_lat, selectedStop.stop_lon]);
+          map.fitBounds(bounds.pad(0.8));
+        }
       } else {
         const { latChange, lonChange } = metersToDegreeChange(
           METER_RADIUS_SEARCH,
@@ -79,7 +83,7 @@ export default function MapController({
       }
     }
 
-    // TODO fitBounds if click from searched list
+    // [x] fitBounds if click from searched list
   }, [userLocation, stop, map]);
 
   return null; // This component doesn't render anything by itself

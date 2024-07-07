@@ -35,7 +35,7 @@ export default function StopSearch() {
     if (coordinates) {
       setFilteredStops(filterStopsByRadius(coordinates, stops, 500));
     }
-  }, []);
+  }, [coordinates]);
 
   function handleCardClick(stop: Stop) {
     setQuery(String(stop.stop_name));

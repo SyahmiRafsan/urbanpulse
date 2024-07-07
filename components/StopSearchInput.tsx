@@ -59,7 +59,7 @@ export default function StopSearchInput() {
                   ]
                 : setQuery(e.target.value)
             }
-            // type="search"
+            type="search"
           />
         </div>
         <Button

@@ -81,8 +81,14 @@ export default function StopsMap({
 
   const searchParams = useSearchParams();
   const mode = searchParams.get("mode");
-  const { filteredStops, isFullscreen, query, selectedStop, setSelectedStop } =
-    useStopSearchStore();
+  const {
+    filteredStops,
+    isFullscreen,
+    query,
+    selectedStop,
+    setSelectedStop,
+    setIsFullscreen,
+  } = useStopSearchStore();
 
   const handleMapMove = async (bounds: L.LatLngBounds, zoom: number) => {
     const moveFilteredStops = filterStopsByBounds(stops, bounds);
@@ -244,9 +250,12 @@ export default function StopsMap({
                   )
                 : getCategoryIcon(stop.category.toLocaleLowerCase() as Category)
             }
-            // eventHandlers={{
-            //   click: () => alert(stop.stop_name),
-            // }}
+            eventHandlers={{
+              click:
+                mode == CreateRecommendationState.SEARCHING
+                  ? () => [setSelectedStop(stop), setIsFullscreen(true)]
+                  : () => null,
+            }}
           >
             {/* // If using popup */}
             <Popup className="">
@@ -266,7 +275,7 @@ export default function StopsMap({
                         m
                       </span>
                     )}
-                    {mode !== "searching" ? (
+                    {mode !== CreateRecommendationState.SEARCHING ? (
                       <Link
                         href={`/${stop.category}/${slugify(stop.stop_name, {
                           lower: true,

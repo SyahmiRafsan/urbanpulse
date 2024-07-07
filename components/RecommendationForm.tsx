@@ -44,7 +44,7 @@ export default function RecommendationForm({
           category: selectedStop?.category || "",
           highlights: [],
           media: [],
-          createdOn: null,
+          createdOn: DateTime.now().toISO(),
         }
   );
 
