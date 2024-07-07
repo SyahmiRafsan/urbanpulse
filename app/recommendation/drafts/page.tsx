@@ -11,7 +11,7 @@ export default function CreateRecommendationPage() {
   const { recommendationDrafts } = useRecommendationStore();
 
   return (
-    <main className="flex flex-col items-center justify-between bg-neutral-50 pb-10 min-h-[100svh]">
+    <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24 min-h-[100svh]">
       <div className="max-w-[700px] border-x w-full bg-background gap-4">
         <Nav />
         <div className="flex flex-col gap-4 pt-4">
