@@ -110,8 +110,3 @@ export function formatThousands(num: number): string {
   }
   // return num.toString();
 }
-
-// Example usage:
-console.log(formatThousands(1500)); // "1.5k"
-console.log(formatThousands(999)); // "999"
-console.log(formatThousands(10000)); // "10k"

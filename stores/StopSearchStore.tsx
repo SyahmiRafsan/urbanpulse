@@ -5,7 +5,7 @@ interface StopSearchState {
   isFullscreen: boolean;
   setIsFullscreen: (bool: boolean) => void;
   selectedStop: Stop | null;
-  setSelectedStop: (stop: Stop) => void;
+  setSelectedStop: (stop: Stop | null) => void;
   stops: Stop[];
   filteredStops: Stop[];
   setFilteredStops: (stops: Stop[]) => void;
@@ -19,7 +19,7 @@ export const useStopSearchStore = create<StopSearchState>((set) => ({
   isFullscreen: false,
   setIsFullscreen: (isFullscreen: boolean) => set({ isFullscreen }),
   selectedStop: null,
-  setSelectedStop: (stop: Stop) => set({ selectedStop: stop }),
+  setSelectedStop: (stop: Stop | null) => set({ selectedStop: stop }),
   stops: ALL_STOPS,
   filteredStops: [],
   setFilteredStops: (filteredStops) => set({ filteredStops }),

@@ -14,29 +14,39 @@ import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Cross1Icon } from "@radix-ui/react-icons";
+import { DateTime } from "luxon";
 
-export default function RecommendationForm() {
+export default function RecommendationForm({
+  initialRecommendation,
+}: {
+  initialRecommendation?: Recommendation;
+}) {
   const searchParams = useSearchParams();
   const mode = searchParams.get("mode");
 
-  const { selectedStop } = useStopSearchStore();
+  const { selectedStop, setSelectedStop } = useStopSearchStore();
   const { updateDraft, addDraft, recommendationDrafts } =
     useRecommendationStore();
 
   const router = useRouter();
   const pathname = usePathname();
 
-  const [recommendation, setRecommendation] = useState<Recommendation>({
-    id: uuidv4(),
-    stop_name: selectedStop?.stop_name || "",
-    stop_id: selectedStop?.stop_id || "",
-    title: "",
-    upvotesCount: 0,
-    commentsCount: 0,
-    category: selectedStop?.category || "",
-    highlights: [],
-    media: [],
-  });
+  const [recommendation, setRecommendation] = useState<Recommendation>(
+    initialRecommendation
+      ? { ...initialRecommendation, media: [] }
+      : {
+          id: uuidv4(),
+          stop_name: selectedStop?.stop_name || "",
+          stop_id: selectedStop?.stop_id || "",
+          title: "",
+          upvotesCount: 0,
+          commentsCount: 0,
+          category: selectedStop?.category || "",
+          highlights: [],
+          media: [],
+          createdOn: null,
+        }
+  );
 
   useEffect(() => {
     if (mode == CreateRecommendationState.SELECTED && selectedStop == null) {
@@ -84,7 +94,7 @@ export default function RecommendationForm() {
       id: uuidv4(),
       url: URL.createObjectURL(file),
       recommendationId: recommendation.id,
-      created_on: Date.now(),
+      createdOn: DateTime.now().toISO(),
     }));
     setRecommendation((prev) => ({
       ...prev,
@@ -104,20 +114,23 @@ export default function RecommendationForm() {
     updateDraft(recommendation);
     // Here you would typically send the data to your backend
     console.log("Submitting recommendation:", recommendation);
+    setSelectedStop(null);
   };
 
   function handleCancel() {
-    const existingDraft = recommendationDrafts.find(
-      (rc) => rc.id == recommendation.id
-    );
-
-    if (existingDraft) {
-      updateDraft(recommendation);
+    if (initialRecommendation) {
+      updateDraft({ ...recommendation, createdOn: DateTime.now().toISO() });
     } else {
-      addDraft(recommendation);
+      addDraft({ ...recommendation, createdOn: DateTime.now().toISO() });
     }
 
-    router.push("/");
+    if (initialRecommendation) {
+      router.replace("/recommendation/drafts");
+    } else {
+      router.replace("/");
+    }
+
+    setSelectedStop(null);
   }
 
   return (
@@ -229,7 +242,7 @@ export default function RecommendationForm() {
           type="button"
           onClick={() => handleCancel()}
         >
-          Cancel
+          Save
         </Button>
         <Button type="submit">Post</Button>
       </div>

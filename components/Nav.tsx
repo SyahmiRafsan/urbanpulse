@@ -12,6 +12,7 @@ import { Button } from "./ui/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { CreateRecommendationState } from "@/lib/constants";
 
 export default function Nav() {
   const links = [
@@ -19,17 +20,20 @@ export default function Nav() {
     { label: "Map", url: "/map", icon: <DrawingPinIcon className="w-5 h-5" /> },
     {
       label: "Recommend",
-      url: "/recommendation/create?mode=searching",
+      url: `/recommendation/create?mode=${CreateRecommendationState.SEARCHING}`,
       icon: <PlusIcon className="w-5 h-5" />,
     },
     {
       label: "Notifications",
-      url: "/",
+      url: "/notifications",
       icon: <BellIcon className="w-5 h-5" />,
     },
-    { label: "Account", url: "/", icon: <PersonIcon className="w-5 h-5" /> },
+    {
+      label: "Account",
+      url: "/account",
+      icon: <PersonIcon className="w-5 h-5" />,
+    },
   ];
-
 
   const pathname = usePathname();
 

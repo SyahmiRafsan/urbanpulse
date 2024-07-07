@@ -1,18 +1,17 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { useSearchParams } from "next/navigation";
+import React from "react";
 import StopSearch from "./StopSearch";
 import StopSearchCard from "./StopSearchCard";
 import { useStopSearchStore } from "@/stores/StopSearchStore";
 import { useRecommendationStore } from "@/stores/RecommendationStore";
-import {
-  CreateRecommendationState,
-  RecommendationHighlights,
-} from "@/lib/constants";
+import { CreateRecommendationState } from "@/lib/constants";
 import { Badge } from "./ui/badge";
 import RecommendationForm from "./RecommendationForm";
+import Link from "next/link";
+import { Button } from "./ui/button";
+import { UpdateIcon } from "@radix-ui/react-icons";
 
 export default function CreateRecommendation() {
   const searchParams = useSearchParams();
@@ -30,18 +29,33 @@ export default function CreateRecommendation() {
           </p>
           <div className="flex flex-row gap-4 my-4 justify-between items-center px-4">
             <p className="font-bold">Select Stop</p>
-            <Badge variant={"outline"}>
-              {recommendationDrafts.length}{" "}
-              {recommendationDrafts.length > 1 ? "drafts" : "draft"}
-            </Badge>
+            <Link href={`/recommendation/drafts`}>
+              <Badge>
+                {recommendationDrafts.length}{" "}
+                {recommendationDrafts.length > 1 ? "drafts" : "draft"}
+              </Badge>
+            </Link>
           </div>
           <StopSearch />
         </div>
       ) : (
         <div className="flex flex-col gap-6 pb-4 border-b">
-          <div className="bg-blue-50 p-4 border-y border-blue-100">
-            <p className=" text-muted-foreground text-xs mb-2">Selected stop</p>
-            {selectedStop !== null && <StopSearchCard stop={selectedStop} />}
+          <div className="bg-blue-50 p-4 border-y border-blue-100 flex flex-row gap-4 justify-between items-center">
+            <div className="flex flex-col">
+              <p className=" text-muted-foreground text-xs mb-2">
+                Selected stop
+              </p>
+
+              {selectedStop !== null && <StopSearchCard stop={selectedStop} />}
+            </div>
+
+            <Link
+              href={`/recommendation/create?mode=${CreateRecommendationState.SEARCHING}`}
+            >
+              <Button size={"icon"} variant={"outline"} className="shrink-0">
+                <UpdateIcon />
+              </Button>
+            </Link>
           </div>
 
           <RecommendationForm />

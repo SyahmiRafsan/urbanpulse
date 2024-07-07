@@ -10,6 +10,9 @@ import { useStopSearchStore } from "@/stores/StopSearchStore";
 import StopSearchInput from "./StopSearchInput";
 import StopSearchCard from "./StopSearchCard";
 import { usePathname, useRouter } from "next/navigation";
+import { useRecommendationStore } from "@/stores/RecommendationStore";
+import Link from "next/link";
+import { Badge } from "./ui/badge";
 
 export default function StopSearchMap({ stop }: { stop?: Stop }) {
   const StopsMap = dynamic(() => import("@/components/StopsMap"), {
@@ -42,9 +45,9 @@ export default function StopSearchMap({ stop }: { stop?: Stop }) {
   }, []);
 
   const router = useRouter();
-
   const pathname = usePathname();
 
+  const { recommendationDrafts } = useRecommendationStore();
   return (
     <div
       className={cn(
@@ -67,14 +70,25 @@ export default function StopSearchMap({ stop }: { stop?: Stop }) {
         {isFullscreen ? <Cross1Icon /> : <EnterFullScreenIcon />}
       </Button>
       {isFullscreen && (
-        <div className="absolute bottom-0 md:-top-1 md:right-[36px] w-full md:max-w-sm /p-4 h-fit">
-          <div className="p-4">
+        <Link
+          href={`/recommendation/drafts`}
+          className="absolute top-4 right-14 shadow-lg"
+        >
+          <Badge>
+            {recommendationDrafts.length}{" "}
+            {recommendationDrafts.length > 1 ? "drafts" : "draft"}
+          </Badge>
+        </Link>
+      )}
+      {isFullscreen && (
+        <div className="absolute bottom-0 md:-top-1 md:right-[130px] w-full md:max-w-sm /p-4 h-fit">
+          <div className="p-4 md:px-0">
             <StopSearchInput />
           </div>
           <div>
             {selectedStop !== null ? (
               <div
-                className="bg-card p-4 rounded-t-lg md:max-w-[400px] animate-in slide-in-from-bottom-full"
+                className="bg-card p-4 rounded-t-lg md:rounded-lg md:max-w-[400px] animate-in slide-in-from-bottom-full"
                 key={selectedStop.stop_id}
               >
                 <p className=" text-muted-foreground text-sm mb-2">

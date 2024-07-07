@@ -1,9 +1,18 @@
-import BackButton from "@/components/BackButton";
-import CreateRecommendation from "@/components/CreateRecommendation";
-import Nav from "@/components/Nav";
-import React, { Suspense } from "react";
+"use client";
 
-export default function CreateRecommendationPage() {
+import BackButton from "@/components/BackButton";
+import Nav from "@/components/Nav";
+import RecommendationForm from "@/components/RecommendationForm";
+import { useRecommendationStore } from "@/stores/RecommendationStore";
+import React from "react";
+
+export default function CreateRecommendationPage({
+  params,
+}: {
+  params: { recommendationId: string };
+}) {
+  const { recommendationDrafts } = useRecommendationStore();
+
   return (
     <main className="flex flex-col items-center justify-between bg-neutral-50 pb-10 min-h-[100svh]">
       <div className="max-w-[700px] border-x w-full bg-background gap-4">
@@ -14,16 +23,20 @@ export default function CreateRecommendationPage() {
             <div className="flex flex-row items-center gap-4 relative justify-start w-full">
               <BackButton />
               <div className="flex flex-row gap-1 items-center text-sm w-fit">
-                <h1 className="text-lg font-semibold">Create Recommendation</h1>
+                <h1 className="text-lg font-semibold">Edit Draft</h1>
               </div>
             </div>
           </div>
           {/* End Top */}
-          {/* Start Form */}
-          <Suspense>
-            <CreateRecommendation />
-          </Suspense>
-          {/* End Form */}
+          {/* Start Body */}
+          <div className="border-b pb-4">
+            <RecommendationForm
+              initialRecommendation={recommendationDrafts.find(
+                (rec) => rec.id == params.recommendationId
+              )}
+            />
+          </div>
+          {/* End Body */}
         </div>
       </div>
     </main>
