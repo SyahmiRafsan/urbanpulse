@@ -3,7 +3,7 @@ import { Badge } from "./ui/badge";
 import { ChatBubbleIcon, ThickArrowUpIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import slugify from "slugify";
-import { getIconByStopCategory } from "@/lib/utils";
+import { getIconByStopCategory, getRelativeTime } from "@/lib/utils";
 import { DateTime } from "luxon";
 
 export default function RecommendationCard({
@@ -61,11 +61,11 @@ export default function RecommendationCard({
       </Link>
       <div className="mt-4 flex flex-row gap-4 justify-between">
         <p className="text-sm text-muted-foreground">
-          {(recommendation?.createdOn &&
-            DateTime.fromISO(recommendation?.createdOn).toFormat(
-              "d/M/yy (h:mma)"
-            )) ||
-            "No date"}
+          {getRelativeTime(recommendation.createdOn)} ago
+          {/* ·{" "}
+          {DateTime.fromISO(recommendation.createdOn).toFormat(
+            "d/M/yy (h:mma)"
+          )} */}
         </p>
         {!isDraft && (
           <div className="flex flex-row gap-2 items-center text-muted-foreground">

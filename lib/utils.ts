@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { METER_RADIUS_SEARCH } from "./constants";
+import { DateTime } from "luxon";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -109,4 +110,31 @@ export function formatThousands(num: number): string {
     return formattedNum;
   }
   // return num.toString();
+}
+
+/**
+ * Return a relative time
+ *
+ * @param date - The date to be converted.
+ * @returns date in shorthand form (1d/1h/1m/1s).
+ */
+export function getRelativeTime(date: string): string {
+  const now = DateTime.now();
+  const diff = now.diff(DateTime.fromISO(date), [
+    "days",
+    "hours",
+    "minutes",
+    "seconds",
+  ]);
+  const { days = 0, hours = 0, minutes = 0, seconds = 0 } = diff.toObject();
+
+  if (days >= 1) {
+    return `${Math.floor(days)}d`;
+  } else if (hours >= 1) {
+    return `${Math.floor(hours)}h`;
+  } else if (minutes >= 1) {
+    return `${Math.floor(minutes)}m`;
+  } else {
+    return `${Math.floor(seconds)}s`;
+  }
 }

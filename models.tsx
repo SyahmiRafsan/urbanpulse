@@ -9,7 +9,7 @@ interface Recommendation {
   category: string;
   highlights: string[];
   media: Media[];
-  createdOn: string | null;
+  createdOn: string;
 }
 
 interface Media {
