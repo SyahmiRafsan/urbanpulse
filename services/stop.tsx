@@ -1,4 +1,7 @@
+import db from "@/db/drizzle";
+import { stopTable } from "@/db/schema";
 import { ALL_STOPS } from "@/lib/stops/all_stops";
+import { eq } from "drizzle-orm";
 import slugify from "slugify";
 
 const dummyStops = [
@@ -38,7 +41,24 @@ const dummyStops = [
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzTb7r7kk9Q2EofiYPksVJLgJMxyuG8f626Q&s",
   },
 ];
-export function getStop(id: string) {
+export async function getStop(id: string) {
+  // const stop = ALL_STOPS.filter((st) => String(st.stop_id) == id)[0];
+
+  const stop = await db.query.stopTable.findFirst({
+    where: eq(stopTable.stopId, id),
+  });
+
+  return {
+    ...stop,
+    stop_name: stop?.stopName || "",
+    stop_id: stop?.stopId || "",
+    category: stop?.category as Category,
+    stop_lat: Number(stop?.stopLat),
+    stop_lon: Number(stop?.stopLon),
+  };
+}
+
+export  function getStopJSON(id: string) {
   const stop = ALL_STOPS.filter((st) => String(st.stop_id) == id)[0];
 
   return stop;

@@ -1,4 +1,4 @@
-import { getStop } from "@/services/stop";
+import { getStopJSON } from "@/services/stop";
 
 export async function generateMetadata({
   params,
@@ -7,7 +7,7 @@ export async function generateMetadata({
 }) {
   const stopId = params.stop_name.split("-").slice(-1)[0];
 
-  const stop = getStop(stopId);
+  const stop = getStopJSON(stopId);
 
   return {
     title: `${stop.stop_name} | UrbanPulse`,

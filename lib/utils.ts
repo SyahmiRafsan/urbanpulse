@@ -27,7 +27,7 @@ export function metersToDegreeChange(
 }
 
 // TODO category as Category below
-export function getIconByStopCategory(category: string) {
+export function getIconByStopCategory(category: Category) {
   const imgUrl = `/icons/${category.toLowerCase()}.svg`;
   return imgUrl;
 }

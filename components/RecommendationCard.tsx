@@ -23,7 +23,7 @@ export default function RecommendationCard({
         className="flex flex-row gap-1 items-center mb-2 text-sm w-fit"
       >
         <img
-          src={getIconByStopCategory(recommendation.category)}
+          src={getIconByStopCategory(recommendation.category as Category)}
           className="w-5 h-5"
         />
         <p>{recommendation.stop_name}</p>

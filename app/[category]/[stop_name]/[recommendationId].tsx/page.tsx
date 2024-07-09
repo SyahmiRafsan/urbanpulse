@@ -1,7 +1,7 @@
 import Nav from "@/components/Nav";
 import { Button } from "@/components/ui/button";
 import { getRecommendation } from "@/services/recommendation";
-import { ArrowLeftIcon, PlusIcon } from "@radix-ui/react-icons";
+import { PlusIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import React from "react";
 
@@ -48,7 +48,9 @@ export default function RecommendationPage({
                   className="flex flex-row gap-1 items-center py-1 text-sm w-fit"
                 >
                   <img
-                    src={getIconByStopCategory(recommendation.category)}
+                    src={getIconByStopCategory(
+                      recommendation.category as Category
+                    )}
                     className="w-5 h-5"
                   />
                   <p>{recommendation.stop_name}</p>

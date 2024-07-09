@@ -1,6 +1,6 @@
 interface Recommendation {
   id: string;
-  description?: string;
+  description: string;
   stop_name: string;
   stop_id: string | number;
   title: string;
@@ -19,17 +19,13 @@ interface Media {
   createdAt: string;
 }
 
-type Category = "lrt" | "mrt" | "mr" | "bus";
+type Category = "LRT" | "MRT" | "MR" | "BUS" | "BRT";
 
 interface Stop {
-  stop_id: string | number;
+  id?: string;
+  stop_id: string;
   stop_name: string;
   stop_lat: number;
   stop_lon: number;
-  category: Category | string;
-  route_id?: string;
-  geometry?: string;
-  isOKU?: boolean;
-  status?: string;
-  search?: string;
+  category: Category;
 }

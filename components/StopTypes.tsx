@@ -86,7 +86,7 @@ export default function StopTypes({
           onClick={() => handleModeChange(type.value)}
         >
           <img
-            src={getIconByStopCategory(type.value)}
+            src={getIconByStopCategory(type.value as Category)}
             className="w-5 h-5 mr-1 rounded-sm"
           />
           <p className="">{type.label}</p>

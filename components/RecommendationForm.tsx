@@ -31,6 +31,7 @@ export default function RecommendationForm({
           stop_name: selectedStop?.stop_name || "",
           stop_id: selectedStop?.stop_id || "",
           title: "",
+          description: "",
           upvotesCount: 0,
           commentsCount: 0,
           category: selectedStop?.category || "",
@@ -123,8 +124,7 @@ export default function RecommendationForm({
     <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
       <div className="flex flex-col gap-4 border-b pb-6 px-4">
         <Label htmlFor="title" className="leading-6">
-          Describe your recommendation to help make public transport
-          improvements
+          Title of your recommendation
         </Label>
         <Textarea
           placeholder="Title"
@@ -134,7 +134,18 @@ export default function RecommendationForm({
           value={recommendation.title}
           onChange={handleInputChange}
           rows={1}
+          maxLength={100}
         />
+        <p className="text-xs text-muted-foreground">
+          {(recommendation.title && recommendation.title.split("").length) || 0}
+          /100 words
+        </p>
+      </div>
+      <div className="flex flex-col gap-4 border-b pb-6 px-4">
+        <Label htmlFor="description" className="leading-6">
+          Describe your recommendation to help make public transport
+          improvements
+        </Label>
         <Textarea
           placeholder="Enter a description..."
           id="description"
@@ -143,12 +154,13 @@ export default function RecommendationForm({
           value={recommendation.description}
           onChange={handleInputChange}
           rows={4}
+          maxLength={2500}
         />
         <p className="text-xs text-muted-foreground">
           {(recommendation.description &&
             recommendation.description.split("").length) ||
             0}
-          /250 words
+          /2500 words
         </p>
       </div>
       <div className="flex flex-col gap-4 border-b pb-6 px-4">

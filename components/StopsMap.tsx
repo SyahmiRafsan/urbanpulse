@@ -29,10 +29,11 @@ export default function StopsMap({
 }) {
   // Define category colors
   const categoryColors: Record<Category, string> = {
-    lrt: "lrt",
-    mrt: "mrt",
-    mr: "mr",
-    bus: "bus",
+    LRT: "lrt",
+    MRT: "mrt",
+    MR: "mr",
+    BUS: "bus",
+    BRT: "brt",
     // Add more categories as needed
   };
 
@@ -245,10 +246,8 @@ export default function StopsMap({
                 String(stop.stop_id)
                   .toLowerCase()
                   .includes(query.toLowerCase()))
-                ? getCategoryIconBig(
-                    stop.category.toLocaleLowerCase() as Category
-                  )
-                : getCategoryIcon(stop.category.toLocaleLowerCase() as Category)
+                ? getCategoryIconBig(stop.category as Category)
+                : getCategoryIcon(stop.category as Category)
             }
             eventHandlers={{
               click:
