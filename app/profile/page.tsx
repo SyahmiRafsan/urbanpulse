@@ -1,14 +1,14 @@
 "use client";
 
 import BackButton from "@/components/BackButton";
+import DraftsButton from "@/components/DraftsButton";
 import Nav from "@/components/Nav";
 import RecommendationCard from "@/components/RecommendationCard";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/hooks/AuthContext";
 import { dummyRecommendations } from "@/services/recommendation";
-import { useRecommendationStore } from "@/stores/RecommendationStore";
 import {
   ChatBubbleIcon,
   ExitIcon,
@@ -19,14 +19,21 @@ import {
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect } from "react";
 
 export default function ProfilePage() {
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isEditing = searchParams.get("editing");
-  const { recommendationDrafts } = useRecommendationStore();
+
+  const router = useRouter();
+  const { user, hasFetched, loggedIn } = useAuth();
+
+  useEffect(() => {
+    if (hasFetched && !loggedIn) {
+      router.push("/login");
+    }
+  }, [hasFetched]);
 
   return (
     <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24 min-h-[100svh]">
@@ -51,7 +58,7 @@ export default function ProfilePage() {
               <div className="p-4 flex flex-col items-center gap-4 w-full">
                 <div className="relative">
                   <img
-                    src="https://pbs.twimg.com/profile_images/1617747470624382976/D4zg6xZW_400x400.jpg"
+                    src={user?.image}
                     className="w-24 h-24 rounded-full border"
                   />
                   {isEditing && (
@@ -62,18 +69,23 @@ export default function ProfilePage() {
                 </div>
                 {!isEditing ? (
                   <div className="flex flex-col items-center">
-                    <h1 className="font-medium text-lg">Syahmi Rafsanjani</h1>
-                    <p className="text-muted-foreground">syahmi@gmail.com</p>
+                    <h1 className="font-medium text-lg">{user?.name}</h1>
+                    <p className="text-muted-foreground">{user?.email}</p>
                   </div>
                 ) : (
                   <div className="flex flex-col max-w-[400px] items-center w-full gap-4">
                     <div className="w-full">
                       <Label htmlFor="name">Name</Label>
-                      <Input id="name" name="name" />
+                      <Input id="name" name="name" value={user?.name} />
                     </div>
                     <div className="w-full">
                       <Label htmlFor="email">Email</Label>
-                      <Input id="email" name="email" disabled />
+                      <Input
+                        id="email"
+                        name="email"
+                        disabled
+                        value={user?.email}
+                      />
                     </div>
                   </div>
                 )}
@@ -100,10 +112,12 @@ export default function ProfilePage() {
                   icon={<ChatBubbleIcon className="w-5 h-5" />}
                   label={"Send feedback"}
                 />
-                <ProfileButton
-                  icon={<ExitIcon className="w-5 h-5" />}
-                  label={"Sign out"}
-                />
+                <Link href={"/auth/logout"} className="w-full">
+                  <ProfileButton
+                    icon={<ExitIcon className="w-5 h-5" />}
+                    label={"Sign out"}
+                  />
+                </Link>
                 <ProfileButtonDestructive
                   icon={<TrashIcon className="w-5 h-5" />}
                   label={"Delete account"}
@@ -120,12 +134,7 @@ export default function ProfilePage() {
                       ({dummyRecommendations.length})
                     </span>
                   </p>
-                  <Link href={`/recommendation/drafts`}>
-                    <Badge>
-                      {recommendationDrafts.length}{" "}
-                      {recommendationDrafts.length > 1 ? "drafts" : "draft"}
-                    </Badge>
-                  </Link>
+                  <DraftsButton />
                 </div>
 
                 <div>

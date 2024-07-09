@@ -16,8 +16,6 @@ import {
 import { useSearchParams } from "next/navigation";
 import { useStopSearchStore } from "@/stores/StopSearchStore";
 import { CreateRecommendationState } from "@/lib/constants";
-import { useLocationStore } from "@/stores/LocationStore";
-
 export default function StopsMap({
   stops,
   userLocation,
@@ -36,8 +34,6 @@ export default function StopsMap({
     BRT: "brt",
     // Add more categories as needed
   };
-
-  const { coordinates } = useLocationStore();
 
   // Create a custom icon based on category
   const getCategoryIcon = (category: Category) => {
@@ -263,10 +259,10 @@ export default function StopsMap({
                   <img src={getIconByStopCategory(stop.category)} />
                   <div className="flex flex-col">
                     <b className="w-full whitespace-nowrap">{stop.stop_name}</b>
-                    {coordinates && (
+                    {userLocation && (
                       <span className="text-xs text-muted-foreground">
                         {formatThousands(
-                          haversineDistance(coordinates, {
+                          haversineDistance(userLocation, {
                             lat: stop.stop_lat,
                             lon: stop.stop_lon,
                           })
@@ -305,7 +301,7 @@ export default function StopsMap({
 
       {stop && stopMarker(stop)}
 
-      {selectedStop && selectedStopMarker(selectedStop)}
+      {!stop && selectedStop && selectedStopMarker(selectedStop)}
 
       <Marker
         position={[userLocation.lat, userLocation.lon]}

@@ -12,6 +12,7 @@ import RecommendationForm from "./RecommendationForm";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { UpdateIcon } from "@radix-ui/react-icons";
+import DraftsButton from "./DraftsButton";
 
 export default function CreateRecommendation() {
   const searchParams = useSearchParams();
@@ -41,12 +42,7 @@ export default function CreateRecommendation() {
           </p>
           <div className="flex flex-row gap-4 my-4 justify-between items-center px-4">
             <p className="font-bold">Select Stop</p>
-            <Link href={`/recommendation/drafts`}>
-              <Badge>
-                {recommendationDrafts.length}{" "}
-                {recommendationDrafts.length > 1 ? "drafts" : "draft"}
-              </Badge>
-            </Link>
+            <DraftsButton />
           </div>
           <StopSearch />
         </div>

@@ -11,8 +11,7 @@ import StopSearchInput from "./StopSearchInput";
 import StopSearchCard from "./StopSearchCard";
 import { usePathname, useRouter } from "next/navigation";
 import { useRecommendationStore } from "@/stores/RecommendationStore";
-import Link from "next/link";
-import { Badge } from "./ui/badge";
+import DraftsButton from "./DraftsButton";
 
 export default function StopSearchMap({ stop }: { stop?: Stop }) {
   const StopsMap = dynamic(() => import("@/components/StopsMap"), {
@@ -70,15 +69,9 @@ export default function StopSearchMap({ stop }: { stop?: Stop }) {
         {isFullscreen ? <Cross1Icon /> : <EnterFullScreenIcon />}
       </Button>
       {isFullscreen && (
-        <Link
-          href={`/recommendation/drafts`}
-          className="absolute top-4 right-14 shadow-lg"
-        >
-          <Badge>
-            {recommendationDrafts.length}{" "}
-            {recommendationDrafts.length > 1 ? "drafts" : "draft"}
-          </Badge>
-        </Link>
+        <div className="absolute top-4 right-14 shadow-lg">
+          <DraftsButton />
+        </div>
       )}
       {isFullscreen && (
         <div className="absolute bottom-0 md:-top-1 md:right-[130px] w-full md:max-w-sm /p-4 h-fit">

@@ -5,11 +5,13 @@ import Nav from "@/components/Nav";
 import RecommendationCard from "@/components/RecommendationCard";
 import { useRecommendationStore } from "@/stores/RecommendationStore";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 export default function CreateRecommendationPage() {
   const { recommendationDrafts } = useRecommendationStore();
 
+  const router = useRouter()
   return (
     <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24 min-h-[100svh]">
       <div className="max-w-[700px] border-x w-full bg-background gap-4">
@@ -29,9 +31,9 @@ export default function CreateRecommendationPage() {
           <div className="border-t">
             {recommendationDrafts.length > 0 ? (
               recommendationDrafts.map((rec) => (
-                <Link key={rec.id} href={`/recommendation/${rec.id}`}>
+                <div key={rec.id} onClick={()=>router.push(`/recommendation/${rec.id}`)} className="w-full flex items-start">
                   <RecommendationCard recommendation={rec} isDraft={true} />
-                </Link>
+                </div>
               ))
             ) : (
               <div className="p-4 border-b">

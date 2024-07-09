@@ -1,8 +1,21 @@
+"use client";
+
 import Nav from "@/components/Nav";
+import { useAuth } from "@/hooks/AuthContext";
 import { BellIcon } from "@radix-ui/react-icons";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
 
 export default function NotificationsPage() {
+  const router = useRouter();
+  const { user, hasFetched, loggedIn } = useAuth();
+
+  useEffect(() => {
+    if (hasFetched && !loggedIn) {
+      router.push("/login");
+    }
+  }, [hasFetched]);
+
   return (
     <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24 min-h-[100svh]">
       <div className="max-w-[700px] border-x w-full bg-background gap-4">

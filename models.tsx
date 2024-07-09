@@ -29,3 +29,10 @@ interface Stop {
   stop_lon: number;
   category: Category;
 }
+
+interface DatabaseUserAttributes {
+  id: string;
+  email: string;
+  name: string;
+  image: string;
+}
