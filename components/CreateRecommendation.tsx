@@ -1,7 +1,7 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import React from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect } from "react";
 import StopSearch from "./StopSearch";
 import StopSearchCard from "./StopSearchCard";
 import { useStopSearchStore } from "@/stores/StopSearchStore";
@@ -19,6 +19,18 @@ export default function CreateRecommendation() {
 
   const { selectedStop } = useStopSearchStore();
   const { recommendationDrafts } = useRecommendationStore();
+
+  const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (
+      (mode == CreateRecommendationState.SELECTED && selectedStop == null) ||
+      (mode !== CreateRecommendationState.SEARCHING && selectedStop == null)
+    ) {
+      router.replace(`${pathname}?mode=searching`);
+    }
+  }, [mode]);
 
   return (
     <>

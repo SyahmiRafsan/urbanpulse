@@ -1,14 +1,11 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useStopSearchStore } from "@/stores/StopSearchStore";
 import { useRecommendationStore } from "@/stores/RecommendationStore";
-import {
-  CreateRecommendationState,
-  RecommendationHighlights,
-} from "@/lib/constants";
+import { RecommendationHighlights } from "@/lib/constants";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
@@ -21,15 +18,10 @@ export default function RecommendationForm({
 }: {
   initialRecommendation?: Recommendation;
 }) {
-  const searchParams = useSearchParams();
-  const mode = searchParams.get("mode");
-
   const { selectedStop, setSelectedStop } = useStopSearchStore();
-  const { updateDraft, addDraft, recommendationDrafts } =
-    useRecommendationStore();
+  const { updateDraft, addDraft } = useRecommendationStore();
 
   const router = useRouter();
-  const pathname = usePathname();
 
   const [recommendation, setRecommendation] = useState<Recommendation>(
     initialRecommendation
@@ -47,12 +39,6 @@ export default function RecommendationForm({
           createdOn: DateTime.now().toISO(),
         }
   );
-
-  useEffect(() => {
-    if (mode == CreateRecommendationState.SELECTED && selectedStop == null) {
-      router.push(`${pathname}?mode=searching`);
-    }
-  }, [mode]);
 
   useEffect(() => {
     if (selectedStop) {
