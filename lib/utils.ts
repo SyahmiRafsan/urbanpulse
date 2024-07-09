@@ -26,7 +26,12 @@ export function metersToDegreeChange(
   return { latChange, lonChange };
 }
 
-// TODO category as Category below
+export function getCategoryWithoutBus(category: string) {
+  if (category == "BUS") {
+    return null;
+  } else return category;
+}
+
 export function getIconByStopCategory(category: Category) {
   const imgUrl = `/icons/${category.toLowerCase()}.svg`;
   return imgUrl;

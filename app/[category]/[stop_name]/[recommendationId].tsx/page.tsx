@@ -8,7 +8,7 @@ import React from "react";
 import slugify from "slugify";
 import { Badge } from "@/components/ui/badge";
 import CommentCard from "@/components/CommentCard";
-import { getIconByStopCategory } from "@/lib/utils";
+import { getCategoryWithoutBus, getIconByStopCategory } from "@/lib/utils";
 import BackButton from "@/components/BackButton";
 
 export default function RecommendationPage({
@@ -53,7 +53,7 @@ export default function RecommendationPage({
                     )}
                     className="w-5 h-5"
                   />
-                  <p>{recommendation.stop_name}</p>
+                  <p>{getCategoryWithoutBus(recommendation.category.toLocaleUpperCase())}{" "}{recommendation.stop_name}</p>
                 </Link>
               </Badge>
             </div>

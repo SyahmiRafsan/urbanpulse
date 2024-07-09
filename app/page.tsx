@@ -57,8 +57,8 @@ export default function Home() {
           {/* End Top */}
           {/* Start Feed */}
           <div>
-            {dummyRecommendations.length > 0 ? (
-              dummyRecommendations.map((rec) => (
+            {filteredRecommendations.length > 0 ? (
+              filteredRecommendations.map((rec) => (
                 <div key={rec.id}>
                   <RecommendationCard recommendation={rec} />
                 </div>

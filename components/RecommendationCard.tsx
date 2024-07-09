@@ -3,7 +3,7 @@ import { Badge } from "./ui/badge";
 import { ChatBubbleIcon, ThickArrowUpIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import slugify from "slugify";
-import { getIconByStopCategory, getRelativeTime } from "@/lib/utils";
+import { getCategoryWithoutBus, getIconByStopCategory, getRelativeTime } from "@/lib/utils";
 import { DateTime } from "luxon";
 
 export default function RecommendationCard({
@@ -26,7 +26,10 @@ export default function RecommendationCard({
           src={getIconByStopCategory(recommendation.category as Category)}
           className="w-5 h-5"
         />
-        <p>{recommendation.stop_name}</p>
+        <p>
+          {getCategoryWithoutBus(recommendation.category.toLocaleUpperCase())}{" "}
+          {recommendation.stop_name}
+        </p>
       </Link>
       <Link
         className="flex flex-row gap-4 w-full justify-between"

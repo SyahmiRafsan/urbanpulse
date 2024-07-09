@@ -2,6 +2,7 @@
 
 import {
   formatThousands,
+  getCategoryWithoutBus,
   getIconByStopCategory,
   haversineDistance,
 } from "@/lib/utils";
@@ -16,6 +17,7 @@ export default function StopSearchCard({ stop }: { stop: Stop }) {
       <img src={getIconByStopCategory(stop.category)} className="h-8 w-8" />
       <div className="flex flex-col items-start">
         <p className="font-medium text-sm text-left">
+          {getCategoryWithoutBus(stop.category.toLocaleUpperCase())}{" "}
           {stop.stop_name}{" "}
           <span className="text-muted-foreground text-xs font-normal">
             {stop.stop_id}

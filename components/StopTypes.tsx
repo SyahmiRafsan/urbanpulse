@@ -54,15 +54,21 @@ export default function StopTypes({
   };
 
   useEffect(() => {
-    const stopsWithType = selectedType.includes("all")
-      ? initialStops
-      : initialStops.filter((stop) =>
-          selectedType.includes(stop.category.toLowerCase())
-        );
-
     if (stopsSetter) {
+      const stopsWithType = selectedType.includes("all")
+        ? initialStops
+        : initialStops.filter((stop) =>
+            selectedType.includes(stop.category.toLowerCase())
+          );
       stopsSetter(stopsWithType as Stop[]);
-    } else if (recommendationsSetter) {
+    }
+
+    if (recommendationsSetter) {
+      const stopsWithType = selectedType.includes("all")
+        ? initialList
+        : initialList.filter((stop) =>
+            selectedType.includes(stop.category.toLowerCase())
+          );
       recommendationsSetter(stopsWithType as unknown as Recommendation[]);
     }
   }, [selectedType]);

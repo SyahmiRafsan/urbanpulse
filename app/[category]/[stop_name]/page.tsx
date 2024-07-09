@@ -1,6 +1,5 @@
 import Nav from "@/components/Nav";
 import RecommendationCard from "@/components/RecommendationCard";
-import { Button } from "@/components/ui/button";
 import { dummyRecommendations } from "@/services/recommendation";
 import { ChevronDownIcon, PlusIcon } from "@radix-ui/react-icons";
 import React from "react";
@@ -12,10 +11,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { getStopJSON } from "@/services/stop";
-import { getIconByStopCategory, truncateString } from "@/lib/utils";
+import {
+  getCategoryWithoutBus,
+  getIconByStopCategory,
+  truncateString,
+} from "@/lib/utils";
 import BackButton from "@/components/BackButton";
 import StopMap from "@/components/StopMap";
 import { notFound } from "next/navigation";
+import StopPageCreateButton from "@/components/StopPageCreateButton";
 
 export default async function StopPage({
   params,
@@ -47,8 +51,13 @@ export default async function StopPage({
                       src={getIconByStopCategory(stop.category as Category)}
                       className="w-5 h-5"
                     />
-                    <h1 className="text-lg font-semibold whitespace-nowrap">
+                    <h1 className="text-lg font-semibold whitespace-nowrap flex md:hidden">
+                      {getCategoryWithoutBus(stop.category.toLocaleUpperCase())}{" "}
                       {truncateString(stop.stop_name, 25)}
+                    </h1>
+                    <h1 className="text-lg font-semibold whitespace-nowrap hidden md:flex">
+                      {getCategoryWithoutBus(stop.category.toLocaleUpperCase())}{" "}
+                      {truncateString(stop.stop_name, 50)}{" "}
                     </h1>
                   </div>
                 </div>
@@ -67,10 +76,7 @@ export default async function StopPage({
               {/* Start CTA */}
               <div className="bg-card p-4 py-6 border-y flex flex-col gap-4 items-center">
                 <p className="font-medium">Help to improve this stop</p>
-                <Button>
-                  <PlusIcon className="mr-1" />
-                  Submit Recommendation
-                </Button>
+                <StopPageCreateButton stop={stop} />
               </div>
               {/* End CTA */}
               {/* Start Feed */}

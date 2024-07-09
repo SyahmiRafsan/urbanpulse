@@ -45,8 +45,8 @@ export default function Nav() {
             <Button
               className={cn(
                 "flex items-center p-2 rounded-lg",
-                pathname !== link.url && "text-muted-foreground",
-                link.label == "Recommend" && "text-primary-foreground"
+                pathname !== link.url && "text-muted-foreground opacity-70",
+                link.label == "Recommend" && "text-primary-foreground opacity-100"
               )}
               size={"icon"}
               variant={link.label == "Recommend" ? "default" : "ghost"}

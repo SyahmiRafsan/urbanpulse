@@ -10,7 +10,7 @@ export async function generateMetadata({
   const stop = getStopJSON(stopId);
 
   return {
-    title: `${stop.stop_name} | UrbanPulse`,
+    title: `${stop.category} ${stop.stop_name} | UrbanPulse`,
     description:
       "UrbanPulse is a community-driven platform designed to empower citizens to improve their urban environment, starting with public transport.",
   };
