@@ -7,7 +7,6 @@ import StopSearchCard from "./StopSearchCard";
 import { useStopSearchStore } from "@/stores/StopSearchStore";
 import { useRecommendationStore } from "@/stores/RecommendationStore";
 import { CreateRecommendationState } from "@/lib/constants";
-import { Badge } from "./ui/badge";
 import RecommendationForm from "./RecommendationForm";
 import Link from "next/link";
 import { Button } from "./ui/button";

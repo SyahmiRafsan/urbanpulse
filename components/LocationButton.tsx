@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { DrawingPinIcon } from "@radix-ui/react-icons";
-import { Button } from "./ui/button";
 import { useLocationStore } from "@/stores/LocationStore";
 import { Input } from "./ui/input";
 

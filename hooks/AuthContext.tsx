@@ -7,12 +7,26 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import LoginCard from "@/components/LoginCard";
 
 interface AuthContextType {
   user: DatabaseUserAttributes | null;
   loggedIn: boolean;
   isLoading: boolean;
   hasFetched: boolean;
+  setShowLoginModal: (bool: boolean) => void;
+  loginCheck: () => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,6 +48,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [hasFetched, setHasFetched] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -61,9 +76,45 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, []);
 
+  function loginCheck(): boolean {
+    if (hasFetched && !loggedIn) {
+      setShowLoginModal(true);
+      return false;
+    }
+    return true;
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loggedIn, isLoading, hasFetched }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loggedIn,
+        isLoading,
+        hasFetched,
+        setShowLoginModal,
+        loginCheck,
+      }}
+    >
       {children}
+      <LoginModal open={showLoginModal} setOpen={setShowLoginModal} />
     </AuthContext.Provider>
   );
 };
+
+function LoginModal({
+  open,
+  setOpen,
+}: {
+  open: boolean;
+  setOpen: (bool: boolean) => void;
+}) {
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent className="min-w-[50svw]">
+        <div className="">
+          <LoginCard />
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}

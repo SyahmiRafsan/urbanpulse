@@ -10,8 +10,8 @@ import { useStopSearchStore } from "@/stores/StopSearchStore";
 import StopSearchInput from "./StopSearchInput";
 import StopSearchCard from "./StopSearchCard";
 import { usePathname, useRouter } from "next/navigation";
-import { useRecommendationStore } from "@/stores/RecommendationStore";
 import DraftsButton from "./DraftsButton";
+import { useAuth } from "@/hooks/AuthContext";
 
 export default function StopSearchMap({ stop }: { stop?: Stop }) {
   const StopsMap = dynamic(() => import("@/components/StopsMap"), {
@@ -46,7 +46,8 @@ export default function StopSearchMap({ stop }: { stop?: Stop }) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { recommendationDrafts } = useRecommendationStore();
+  const { loginCheck } = useAuth();
+
   return (
     <div
       className={cn(
@@ -91,7 +92,11 @@ export default function StopSearchMap({ stop }: { stop?: Stop }) {
                 <div className="mt-4 border-t pt-4">
                   <Button
                     className="w-full"
-                    onClick={() => router.push(`${pathname}?mode=selected`)}
+                    onClick={() =>
+                      loginCheck()
+                        ? router.push(`${pathname}?mode=selected`)
+                        : null
+                    }
                   >
                     Confirm Selection
                   </Button>
