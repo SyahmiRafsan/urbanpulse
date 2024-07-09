@@ -61,9 +61,9 @@ export default function RecommendationCard({
       </Link>
       <div className="mt-4 flex flex-row gap-4 justify-between">
         <p className="text-sm text-muted-foreground">
-          {getRelativeTime(recommendation.createdOn)} ago
+          {getRelativeTime(recommendation.createdAt)} ago
           {/* ·{" "}
-          {DateTime.fromISO(recommendation.createdOn).toFormat(
+          {DateTime.fromISO(recommendation.createdAt).toFormat(
             "d/M/yy (h:mma)"
           )} */}
         </p>

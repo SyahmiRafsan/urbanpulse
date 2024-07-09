@@ -36,7 +36,7 @@ export default function RecommendationForm({
           category: selectedStop?.category || "",
           highlights: [],
           media: [],
-          createdOn: DateTime.now().toISO(),
+          createdAt: DateTime.now().toISO(),
         }
   );
 
@@ -80,7 +80,7 @@ export default function RecommendationForm({
       id: uuidv4(),
       url: URL.createObjectURL(file),
       recommendationId: recommendation.id,
-      createdOn: DateTime.now().toISO(),
+      createdAt: DateTime.now().toISO(),
     }));
     setRecommendation((prev) => ({
       ...prev,
@@ -105,9 +105,9 @@ export default function RecommendationForm({
 
   function handleCancel() {
     if (initialRecommendation) {
-      updateDraft({ ...recommendation, createdOn: DateTime.now().toISO() });
+      updateDraft({ ...recommendation, createdAt: DateTime.now().toISO() });
     } else {
-      addDraft({ ...recommendation, createdOn: DateTime.now().toISO() });
+      addDraft({ ...recommendation, createdAt: DateTime.now().toISO() });
     }
 
     if (initialRecommendation) {

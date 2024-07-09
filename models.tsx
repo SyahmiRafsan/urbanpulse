@@ -9,14 +9,14 @@ interface Recommendation {
   category: string;
   highlights: string[];
   media: Media[];
-  createdOn: string;
+  createdAt: string;
 }
 
 interface Media {
   id: string;
   url: string;
   recommendationId: string;
-  createdOn: string;
+  createdAt: string;
 }
 
 type Category = "lrt" | "mrt" | "mr" | "bus";

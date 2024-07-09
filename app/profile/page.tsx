@@ -66,7 +66,7 @@ export default function ProfilePage() {
                     <p className="text-muted-foreground">syahmi@gmail.com</p>
                   </div>
                 ) : (
-                  <div className="flex flex-col md:flex-row items-center w-full gap-4">
+                  <div className="flex flex-col max-w-[400px] items-center w-full gap-4">
                     <div className="w-full">
                       <Label htmlFor="name">Name</Label>
                       <Input id="name" name="name" />
@@ -87,7 +87,7 @@ export default function ProfilePage() {
                     </Button>
                   </div>
                 ) : (
-                  <div className="w-full p-4 fixed md:static md:p-0 md:pt-4 bottom-0 animate-in slide-in-from-bottom-4 flex justify-end">
+                  <div className="w-full p-4 fixed max-w-[400px] md:static md:p-0 md:pt-4 bottom-0 animate-in slide-in-from-bottom-4 flex justify-end">
                     <Button className="w-full md:w-fit">Save</Button>
                   </div>
                 )}
