@@ -47,22 +47,22 @@ export default function LocationButton() {
           <button
             onClick={
               district
-                ? () =>
-                    process.env.NODE_ENV == "development"
-                      ? setShowCoord(!showCoord)
-                      : handleClick
-                : handleClick
+                ? process.env.NODE_ENV == "development"
+                  ? !showCoord
+                    ? () => setShowCoord(!showCoord)
+                    : () => handleClick()
+                  : () => handleClick()
+                : () => handleClick()
             }
             disabled={loading}
             className="flex gap-1 items-center text-muted-foreground text-sm"
           >
             <DrawingPinIcon className="w-5 h-5" />
-            {district ? (
-              <p>{district}</p>
+            {!loading ? (
+              <p>{district ? district : "Get Location"}</p>
             ) : (
-              <p>{loading ? "Fetching..." : "Get Location"}</p>
+              <p>Fetching...</p>
             )}
-           
           </button>
           {showCoord && (
             <div className="w-fit flex-row flex gap-1 ml-1">
