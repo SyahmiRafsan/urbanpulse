@@ -2,7 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { METER_RADIUS_SEARCH } from "./constants";
 import { DateTime } from "luxon";
-
+import { validate } from "uuid";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -123,9 +123,9 @@ export function formatThousands(num: number): string {
  * @param date - The date to be converted.
  * @returns date in shorthand form (1d/1h/1m/1s).
  */
-export function getRelativeTime(date: string): string {
+export function getRelativeTime(date: Date): string {
   const now = DateTime.now();
-  const diff = now.diff(DateTime.fromISO(date), [
+  const diff = now.diff(DateTime.fromJSDate(date), [
     "days",
     "hours",
     "minutes",
@@ -150,4 +150,8 @@ export function getBackendUrl() {
       ? "https://urbanpulse-asia.vercel.app"
       : "http://localhost:5420";
   return url;
+}
+
+export function checkUUID(id: string) {
+  return validate(id);
 }

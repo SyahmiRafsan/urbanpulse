@@ -1,10 +1,11 @@
 "use server";
 import db from "@/db/drizzle";
-import { dummyRecommendations } from "./dummies";
+import { eq } from "drizzle-orm";
+import { recommendationTable } from "@/db/schema";
 
 export async function getRecommendations() {
   const recommendations = await db.query.recommendationTable.findMany({
-    with: { stop: true },
+    with: { stop: true, media: true },
   });
 
   console.log(recommendations);
@@ -12,9 +13,16 @@ export async function getRecommendations() {
 }
 
 export async function getRecommendation(id: string) {
-  const recommendation = dummyRecommendations.filter(
-    (rec) => String(rec.stop_id) == id
-  )[0];
+  // const recommendation = dummyRecommendations.filter(
+  //   (rec) => String(rec.stop_id) == id
+  // )[0];
+
+  const recommendation = await db.query.recommendationTable.findFirst({
+    with: { stop: true, comments: true, media: true, user: true },
+    where: eq(recommendationTable.id, id),
+  });
+
+  console.log(recommendation);
 
   return recommendation;
 }

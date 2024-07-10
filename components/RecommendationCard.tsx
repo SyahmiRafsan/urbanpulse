@@ -3,7 +3,11 @@ import { Badge } from "./ui/badge";
 import { ChatBubbleIcon, ThickArrowUpIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import slugify from "slugify";
-import { getCategoryWithoutBus, getIconByStopCategory, getRelativeTime } from "@/lib/utils";
+import {
+  getCategoryWithoutBus,
+  getIconByStopCategory,
+  getRelativeTime,
+} from "@/lib/utils";
 import { DateTime } from "luxon";
 
 export default function RecommendationCard({
@@ -16,10 +20,13 @@ export default function RecommendationCard({
   return (
     <div className="px-4 border-b py-4 animate-in slide-in-from-left-4 z-10">
       <Link
-        href={`/${recommendation.category}/${slugify(recommendation.stop_name, {
-          lower: true,
-          strict: true,
-        })}-${recommendation.stop_id}`}
+        href={`/${recommendation.category}/${slugify(
+          recommendation.stop.stopName,
+          {
+            lower: true,
+            strict: true,
+          }
+        )}-${recommendation.stop.stopId}`}
         className="flex flex-row gap-1 items-center mb-2 text-sm w-fit"
       >
         <img
@@ -28,17 +35,20 @@ export default function RecommendationCard({
         />
         <p>
           {getCategoryWithoutBus(recommendation.category.toLocaleUpperCase())}{" "}
-          {recommendation.stop_name}
+          {recommendation.stop.stopName}
         </p>
       </Link>
       <Link
         className="flex flex-row gap-4 w-full justify-between"
         href={
           !isDraft
-            ? `/${recommendation.category}/${slugify(recommendation.stop_name, {
-                lower: true,
-                strict: true,
-              })}-${recommendation.stop_id}/${recommendation.id}`
+            ? `/${recommendation.category}/${slugify(
+                recommendation.stop.stopName,
+                {
+                  lower: true,
+                  strict: true,
+                }
+              )}-${recommendation.stop.stopId}/${recommendation.id}`
             : `/recommendation/${recommendation.id}`
         }
       >
@@ -64,7 +74,7 @@ export default function RecommendationCard({
       </Link>
       <div className="mt-4 flex flex-row gap-4 justify-between">
         <p className="text-sm text-muted-foreground">
-          {getRelativeTime(recommendation.createdAt)} ago
+          {getRelativeTime(recommendation.createdAt)}
           {/* ·{" "}
           {DateTime.fromISO(recommendation.createdAt).toFormat(
             "d/M/yy (h:mma)"
@@ -75,12 +85,12 @@ export default function RecommendationCard({
             <Link
               className="flex flex-row items-center gap-1"
               href={`/${recommendation.category}/${slugify(
-                recommendation.stop_name,
+                recommendation.stop.stopName,
                 {
                   lower: true,
                   strict: true,
                 }
-              )}-${recommendation.stop_id}/${recommendation.id}`}
+              )}-${recommendation.stop.stopId}/${recommendation.id}`}
             >
               <ChatBubbleIcon /> <p>{recommendation.commentsCount}</p>
             </Link>

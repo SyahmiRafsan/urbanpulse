@@ -1,28 +1,36 @@
 interface Recommendation {
   id: string;
   description: string;
-  stop_name: string;
-  stop_id: string | number;
+  stop: { id: string; stopId: string | null; stopName: string };
+  // stop_name: string;
+  // stop_id: string | number1;
   title: string;
   upvotesCount: number;
   commentsCount: number;
   category: string;
   highlights: string[];
   media: Media[];
-  createdAt: string;
+  createdAt: Date;
 }
 
 interface Media {
   id: string;
+  userId: string;
+  createdAt: Date;
   url: string;
-  file: File;
-  recommendationId: string;
-  createdAt: string;
+  mediaId: string;
+  mediaType: "RECOMMENDATION" | "COMMENT";
 }
 
 type Category = "LRT" | "MRT" | "MR" | "BUS" | "BRT";
 
-type RecommendationHighlight = "ACCESSIBILITY" | "CONNECTIVITY" | "EFFICIENCY" | "ENVIRONMENTAL" | "QUALITY_OF_LIFE" | "SAFETY";
+type RecommendationHighlight =
+  | "ACCESSIBILITY"
+  | "CONNECTIVITY"
+  | "EFFICIENCY"
+  | "ENVIRONMENTAL"
+  | "QUALITY_OF_LIFE"
+  | "SAFETY";
 
 interface Stop {
   id?: string;

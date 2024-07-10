@@ -9,7 +9,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { dummyRecommendations } from "@/services/dummies";
 import LocationButton from "@/components/LocationButton";
 import StopTypes from "@/components/StopTypes";
 import { useEffect, useState } from "react";
@@ -17,7 +16,7 @@ import { getRecommendations } from "@/services/recommendation";
 
 export default function Home() {
   const [filteredRecommendations, setFilteredRecommendations] =
-    useState<Recommendation[]>(dummyRecommendations);
+    useState<Recommendation[]>([]);
 
   function handleFilter(recommendations: Recommendation[]) {
     setFilteredRecommendations(recommendations);
@@ -26,7 +25,7 @@ export default function Home() {
   useEffect(() => {
     async function getRecs() {
       const list: Recommendation[] = await getRecommendations();
-
+      console.log(list);
       setFilteredRecommendations(list);
     }
     getRecs();
@@ -61,14 +60,14 @@ export default function Home() {
             <div className="px-4">
               <StopTypes
                 recommendationsSetter={handleFilter}
-                initialList={dummyRecommendations}
+                initialList={filteredRecommendations}
               />
             </div>
           </div>
           {/* End Top */}
           {/* Start Feed */}
           <div>
-            {filteredRecommendations.length > 0 ? (
+            {filteredRecommendations?.length > 0 ? (
               filteredRecommendations.map((rec) => (
                 <div key={rec.id}>
                   <RecommendationCard recommendation={rec} />

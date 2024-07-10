@@ -9,7 +9,7 @@ export default function CommentCard() {
           className="rounded-full w-5 h-5"
         />
         <p className="font-medium">SyahmiRafsan</p>
-        <p className="text-muted-foreground text-sm">• 4h ago</p>
+        <p className="text-muted-foreground text-sm">• 4h</p>
       </div>
       <div className="flex flex-col gap-2 px-4">
         <p className="">
