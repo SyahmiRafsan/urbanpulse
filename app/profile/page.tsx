@@ -4,11 +4,14 @@ import BackButton from "@/components/BackButton";
 import DraftsButton from "@/components/DraftsButton";
 import Nav from "@/components/Nav";
 import RecommendationCard from "@/components/RecommendationCard";
+import RecommendationSkeleton from "@/components/RecommendationSkeleton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/AuthContext";
 import { dummyRecommendations } from "@/services/dummies";
+import { getRecommendationsByUserId } from "@/services/recommendation";
+import { useRecommendationStore } from "@/stores/RecommendationStore";
 import {
   ChatBubbleIcon,
   ExitIcon,
@@ -32,6 +35,20 @@ export default function ProfilePage() {
   useEffect(() => {
     if (hasFetched && !loggedIn) {
       router.push("/login");
+    }
+  }, [hasFetched]);
+
+  const { setRecommendationsUser, recommendationsUser, hasFetchedUser } =
+    useRecommendationStore();
+
+  useEffect(() => {
+    async function getRecs(userId: string) {
+      const list: Recommendation[] = await getRecommendationsByUserId(userId);
+
+      setRecommendationsUser(list);
+    }
+    if (!hasFetchedUser && user) {
+      getRecs(user.id);
     }
   }, [hasFetched]);
 
@@ -138,34 +155,38 @@ export default function ProfilePage() {
                 </div>
 
                 <div>
-                  {dummyRecommendations.length > 0 ? (
-                    dummyRecommendations.map((rec) => (
-                      <div key={rec.id}>
-                        <RecommendationCard recommendation={rec} />
+                  {hasFetchedUser ? (
+                    recommendationsUser.length > 0 ? (
+                      recommendationsUser.map((rec) => (
+                        <div key={rec.id}>
+                          <RecommendationCard recommendation={rec} />
+                        </div>
+                      ))
+                    ) : (
+                      <div className="p-4 border-y flex sm:flex-row flex-col gap-4 items-center">
+                        <img src="/artwork/rail.svg" className="max-w-sm" />
+                        <div className="flex flex-col gap-4">
+                          <p className="font-medium">
+                            Post your first recommendation
+                          </p>
+                          <p className="text-sm text-center sm:text-left">
+                            Share your ideas and make a positive impact on our
+                            city&apos;s transit system
+                          </p>
+                          <Link
+                            className="w-full mb-4 mt-2 sm:mb-0 sm:w-fit"
+                            href={"/recommendation/create"}
+                          >
+                            <Button className="w-full sm:w-fit">
+                              <PlusIcon className="mr-1" />
+                              <p>Create Recommendation</p>
+                            </Button>
+                          </Link>
+                        </div>
                       </div>
-                    ))
+                    )
                   ) : (
-                    <div className="p-4 border-y flex sm:flex-row flex-col gap-4 items-center">
-                      <img src="/artwork/rail.svg" className="max-w-sm" />
-                      <div className="flex flex-col gap-4">
-                        <p className="font-medium">
-                          Post your first recommendation
-                        </p>
-                        <p className="text-sm text-center sm:text-left">
-                          Share your ideas and make a positive impact on our
-                          city&apos;s transit system
-                        </p>
-                        <Link
-                          className="w-full mb-4 mt-2 sm:mb-0 sm:w-fit"
-                          href={"/recommendation/create"}
-                        >
-                          <Button className="w-full sm:w-fit">
-                            <PlusIcon className="mr-1" />
-                            <p>Create Recommendation</p>
-                          </Button>
-                        </Link>
-                      </div>
-                    </div>
+                    [1, 2, 3].map((s) => <RecommendationSkeleton key={s} />)
                   )}
                 </div>
               </div>

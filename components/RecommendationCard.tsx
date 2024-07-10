@@ -18,7 +18,7 @@ export default function RecommendationCard({
   isDraft?: boolean;
 }) {
   return (
-    <div className="px-4 border-b py-4 animate-in slide-in-from-left-4 z-10">
+    <div className="px-4 border-b py-4 animate-in slide-in-from-left-4 z-10 w-full">
       <Link
         href={`/${recommendation.category}/${slugify(
           recommendation.stop.stopName,
@@ -74,7 +74,9 @@ export default function RecommendationCard({
       </Link>
       <div className="mt-4 flex flex-row gap-4 justify-between">
         <p className="text-sm text-muted-foreground">
-          {getRelativeTime(recommendation.createdAt)}
+          {getRelativeTime(
+            DateTime.fromISO(String(recommendation.createdAt)).toJSDate()
+          )}
           {/* ·{" "}
           {DateTime.fromISO(recommendation.createdAt).toFormat(
             "d/M/yy (h:mma)"

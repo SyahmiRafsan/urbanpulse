@@ -1,6 +1,6 @@
 import Nav from "@/components/Nav";
 import { Button } from "@/components/ui/button";
-import { PlusIcon } from "@radix-ui/react-icons";
+import { Pencil1Icon, PlusIcon, TrashIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import React from "react";
 
@@ -32,7 +32,7 @@ export default async function RecommendationPage({
 
   return (
     <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24">
-      <div className="max-w-[700px] border-x w-full min-h-screen bg-background gap-4 bg-neutral-50">
+      <div className="max-w-[700px] border-x border-b w-full min-h-[100svh] bg-background gap-4 bg-neutral-50">
         <Nav />
         <div className="flex flex-col gap-4">
           {/* Start Recommendation */}
@@ -77,7 +77,8 @@ export default async function RecommendationPage({
 
               <div className="flex flex-row gap-2 items-center px-4">
                 <img
-                  src="https://ui-avatars.com/api/?name=Syahmi+Rafsan"
+                  // src="https://ui-avatars.com/api/?name=Syahmi+Rafsan"
+                  src={recommendation.user.image}
                   className="rounded-full w-5 h-5"
                 />
                 <p className="font-medium">{recommendation.user.name}</p>
@@ -107,6 +108,18 @@ export default async function RecommendationPage({
                   ))}
                 </div>
               )}
+              <div className="flex flex-row gap-4 justify-between">
+                <Link href={`/recommendation/${recommendation.id}`}>
+                  <Button variant={"ghost"}>
+                    <Pencil1Icon className="mr-1" />
+                    Edit
+                  </Button>
+                </Link>
+                <Button variant={"ghost-destructive"}>
+                  <TrashIcon className="mr-1" />
+                  Delete
+                </Button>
+              </div>
             </div>
           )}
           {/* End Recommendation */}
@@ -115,11 +128,14 @@ export default async function RecommendationPage({
             <h2 className="text-lg font-semibold px-4">
               Comments ({recommendation?.commentsCount})
             </h2>
-            <div>
-              <CommentCard />
-              <CommentCard />
-              <CommentCard />
-            </div>
+            {recommendation?.commentsCount ||
+              (0 > 0 && (
+                <div>
+                  <CommentCard />
+                  <CommentCard />
+                  <CommentCard />
+                </div>
+              ))}
           </div>
           {/* End Comments */}
           {/* Start CTA */}

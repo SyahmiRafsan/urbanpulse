@@ -13,23 +13,32 @@ import LocationButton from "@/components/LocationButton";
 import StopTypes from "@/components/StopTypes";
 import { useEffect, useState } from "react";
 import { getRecommendations } from "@/services/recommendation";
+import { useRecommendationStore } from "@/stores/RecommendationStore";
+import { Skeleton } from "@/components/ui/skeleton";
+import RecommendationSkeleton from "@/components/RecommendationSkeleton";
 
 export default function Home() {
-  const [filteredRecommendations, setFilteredRecommendations] =
-    useState<Recommendation[]>([]);
+  const { setRecommendations, recommendations, hasFetched } =
+    useRecommendationStore();
 
-  function handleFilter(recommendations: Recommendation[]) {
-    setFilteredRecommendations(recommendations);
-  }
+  const [filteredRecommendations, setFilteredRecommendations] =
+    useState<Recommendation[]>(recommendations);
 
   useEffect(() => {
     async function getRecs() {
       const list: Recommendation[] = await getRecommendations();
       console.log(list);
       setFilteredRecommendations(list);
+      setRecommendations(list);
     }
-    getRecs();
+    if (!hasFetched) {
+      getRecs();
+    }
   }, []);
+
+  function handleFilter(recommendations: Recommendation[]) {
+    setFilteredRecommendations(recommendations);
+  }
 
   return (
     <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24 min-h-[100svh]">
@@ -60,21 +69,25 @@ export default function Home() {
             <div className="px-4">
               <StopTypes
                 recommendationsSetter={handleFilter}
-                initialList={filteredRecommendations}
+                initialList={recommendations}
               />
             </div>
           </div>
           {/* End Top */}
           {/* Start Feed */}
           <div>
-            {filteredRecommendations?.length > 0 ? (
-              filteredRecommendations.map((rec) => (
-                <div key={rec.id}>
-                  <RecommendationCard recommendation={rec} />
-                </div>
-              ))
+            {hasFetched ? (
+              filteredRecommendations?.length > 0 ? (
+                filteredRecommendations.map((rec) => (
+                  <div key={rec.id}>
+                    <RecommendationCard recommendation={rec} />
+                  </div>
+                ))
+              ) : (
+                <div className="p-4 border-y">No recommendations found.</div>
+              )
             ) : (
-              <div className="p-4 border-y">No recommendations found.</div>
+              [1, 2, 3, 4, 5].map((s) => <RecommendationSkeleton key={s} />)
             )}
           </div>
           {/* End Feed */}
