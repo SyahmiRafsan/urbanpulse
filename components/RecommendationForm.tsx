@@ -193,7 +193,7 @@ export default function RecommendationForm({
     if (initialRecommendation) {
       router.replace("/recommendation/drafts");
     } else {
-      router.replace("/");
+      router.replace("/recommendation/drafts");
     }
 
     setSelectedStop(null);
@@ -323,6 +323,7 @@ export default function RecommendationForm({
 
       {isDraft ? (
         <div className="flex flex-col sm:flex-row justify-end gap-4 px-4">
+          {initialRecommendation && <DeletePostButton recommendation={recommendation} />}
           <Button
             variant={"outline"}
             type="button"
@@ -334,7 +335,7 @@ export default function RecommendationForm({
         </div>
       ) : (
         <div className="flex flex-col sm:flex-row justify-end gap-4 px-4">
-          <DeletePostButton />
+          <DeletePostButton recommendation={recommendation}/>
           <Button type="submit">Update</Button>
         </div>
       )}

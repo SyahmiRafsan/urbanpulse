@@ -14,7 +14,6 @@ import StopTypes from "@/components/StopTypes";
 import { useEffect, useState } from "react";
 import { getRecommendations } from "@/services/recommendation";
 import { useRecommendationStore } from "@/stores/RecommendationStore";
-import { Skeleton } from "@/components/ui/skeleton";
 import RecommendationSkeleton from "@/components/RecommendationSkeleton";
 
 export default function Home() {
@@ -27,7 +26,7 @@ export default function Home() {
   useEffect(() => {
     async function getRecs() {
       const list: Recommendation[] = await getRecommendations();
-      console.log(list);
+      // console.log(list);
       setFilteredRecommendations(list);
       setRecommendations(list);
     }
@@ -65,8 +64,8 @@ export default function Home() {
             </DropdownMenu>
             <LocationButton />
           </div>
-          <div className="flex flex-row gap-2 items-center overflow-x-auto">
-            <div className="px-4">
+          <div className="flex flex-row gap-2 items-center overflow-x-auto sticky top-0 bg-card border-b">
+            <div className="px-4 py-2">
               <StopTypes
                 recommendationsSetter={handleFilter}
                 initialList={recommendations}

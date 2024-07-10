@@ -5,7 +5,7 @@ import db from "./db/drizzle";
 import { recommendationTable } from "./db/schema";
 import { getStop } from "./services/stop";
 import { lucia } from "./auth";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 export async function createRecommendation(formData: FormData) {
   const rawFormData = Object.fromEntries(formData);
@@ -84,10 +84,24 @@ export async function updateRecommendation(formData: FormData) {
       const addedRecommendation = await db
         .update(recommendationTable)
         .set(formObj)
-        .where(eq(recommendationTable.id, recommendationId))
+        .where(
+          and(
+            eq(recommendationTable.id, recommendationId),
+            eq(recommendationTable.userId, user.id)
+          )
+        )
         .returning();
 
       return addedRecommendation;
     }
   }
+}
+
+export async function deleteRecommendation(recommendationId: string) {
+  const deletedRecommendation = await db
+    .delete(recommendationTable)
+    .where(eq(recommendationTable.id, recommendationId))
+    .returning();
+
+  return deletedRecommendation;
 }

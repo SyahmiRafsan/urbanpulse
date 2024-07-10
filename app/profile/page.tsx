@@ -144,8 +144,8 @@ export default function ProfilePage() {
             )}
 
             {!isEditing && (
-              <div className="bg-card">
-                <div className="border-b flex flex-row justify-between gap-4 p-4 border-t">
+              <div className="">
+                <div className="bg-card sticky top-0 border-b flex flex-row justify-between gap-4 p-4 border-t">
                   <p className="font-medium">
                     My Recommendations{" "}
                     <span className="text-muted-foreground">

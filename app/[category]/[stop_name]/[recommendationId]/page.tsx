@@ -118,13 +118,13 @@ export default async function RecommendationPage({
                     Edit
                   </Button>
                 </Link>
-                <DeletePostButton />
+                <DeletePostButton recommendation={recommendation} />
               </div>
             </div>
           )}
           {/* End Recommendation */}
           {/* Start Comments */}
-          <div className="bg-card border-t pt-4">
+          <div className="bg-card border-y py-4">
             <h2 className="text-lg font-semibold px-4">
               Comments ({recommendation?.commentsCount})
             </h2>

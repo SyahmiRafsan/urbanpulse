@@ -49,14 +49,14 @@ export default function CreateRecommendationPage({
       setFoundRecommendation(foundRec);
     }
 
-    console.log(foundDraft);
+    // console.log(foundDraft);
     // console.log(user);
 
     if (!foundDraft && user) {
-      console.log("running");
+      console.log("Fetching db");
       getRecs(user.id);
     } else {
-      console.log("fd draft");
+      console.log("Found from draft");
       setFoundRecommendation(foundDraft);
     }
   }, [user]);
