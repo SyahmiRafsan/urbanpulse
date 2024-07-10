@@ -57,7 +57,7 @@ export default function RecommendationCard({
           <div className="flex flex-row gap-1 flex-wrap">
             {recommendation.highlights.map((hl) => (
               <Badge variant={"muted"} key={hl + recommendation.id}>
-                {hl}
+                {hl.replaceAll("_", " ")}
               </Badge>
             ))}
           </div>
@@ -75,8 +75,9 @@ export default function RecommendationCard({
       <div className="mt-4 flex flex-row gap-4 justify-between">
         <p className="text-sm text-muted-foreground">
           {getRelativeTime(
-            isDraft?DateTime.fromISO(String(recommendation.createdAt)).toJSDate():
-            recommendation.createdAt
+            isDraft
+              ? DateTime.fromISO(String(recommendation.createdAt)).toJSDate()
+              : recommendation.createdAt
           )}
           {/* ·{" "}
           {DateTime.fromISO(recommendation.createdAt).toFormat(

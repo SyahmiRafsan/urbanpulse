@@ -2,8 +2,8 @@ interface Recommendation {
   id: string;
   description: string;
   stop: { id: string; stopId: string | null; stopName: string };
-  // stop_name: string;
-  // stop_id: string | number1;
+  stopName?: string;
+  stopId?: string | number;
   title: string;
   upvotesCount: number;
   commentsCount: number;
@@ -23,7 +23,7 @@ interface Media {
   mediaType: MediaType;
 }
 
-type MediaType ="RECOMMENDATION" | "COMMENT"
+type MediaType = "RECOMMENDATION" | "COMMENT";
 
 type Category = "LRT" | "MRT" | "MR" | "BUS" | "BRT";
 

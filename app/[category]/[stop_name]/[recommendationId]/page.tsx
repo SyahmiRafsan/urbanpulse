@@ -16,6 +16,7 @@ import {
 import BackButton from "@/components/BackButton";
 import { getRecommendation } from "@/services/recommendation";
 import { notFound } from "next/navigation";
+import DeletePostButton from "@/components/DeletePostButton";
 
 export default async function RecommendationPage({
   params,
@@ -93,7 +94,7 @@ export default async function RecommendationPage({
               <div className="flex flex-row gap-1 flex-wrap px-4">
                 {recommendation.highlights.map((h) => (
                   <Badge variant={"muted"} key={h}>
-                    {h}
+                    {h.replaceAll("_", " ")}
                   </Badge>
                 ))}
               </div>
@@ -115,10 +116,7 @@ export default async function RecommendationPage({
                     Edit
                   </Button>
                 </Link>
-                <Button variant={"link-destructive"} size={"none"}>
-                  <TrashIcon className="mr-1" />
-                  Delete
-                </Button>
+                <DeletePostButton />
               </div>
             </div>
           )}

@@ -94,7 +94,7 @@ export default function StopSearchMap({ stop }: { stop?: Stop }) {
                     className="w-full"
                     onClick={() =>
                       loginCheck()
-                        ? router.push(`${pathname}?mode=selected`)
+                        ? router.push(`${pathname}?mode=selected&draft=true`)
                         : null
                     }
                   >

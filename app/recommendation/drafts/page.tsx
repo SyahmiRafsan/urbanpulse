@@ -33,7 +33,9 @@ export default function CreateRecommendationPage() {
               recommendationDrafts.map((rec) => (
                 <div
                   key={rec.id}
-                  onClick={() => router.push(`/recommendation/${rec.id}`)}
+                  onClick={() =>
+                    router.push(`/recommendation/${rec.id}?draft=true`)
+                  }
                   className="w-full flex items-start"
                 >
                   <RecommendationCard recommendation={rec} isDraft={true} />

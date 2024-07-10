@@ -10,7 +10,7 @@ export async function createRecommendation(formData: FormData) {
   const rawFormData = Object.fromEntries(formData);
   console.log(rawFormData);
 
-  const stop = await getStop(String(rawFormData.stop_id));
+  const stop = await getStop(String(rawFormData.stopId));
 
   const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null;
   if (sessionId && stop) {
@@ -31,7 +31,10 @@ export async function createRecommendation(formData: FormData) {
         userId: user.id,
         highlights: (rawFormData.highlights as string)
           .split(",")
-          .map((h) => h.toUpperCase() as RecommendationHighlight),
+          .map(
+            (h) =>
+              h.toUpperCase().replaceAll(" ", "_") as RecommendationHighlight
+          ),
       };
 
       const addedRecommendation = await db

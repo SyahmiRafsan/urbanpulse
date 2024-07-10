@@ -45,7 +45,7 @@ export default function CreateRecommendationPage({
 
       const foundRec = list.find((rec) => rec.id == params.recommendationId);
 
-      console.log(foundRec);
+      // console.log(foundRec);
       setFoundRecommendation(foundRec);
     }
 

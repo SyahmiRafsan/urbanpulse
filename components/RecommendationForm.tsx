@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useStopSearchStore } from "@/stores/StopSearchStore";
@@ -14,6 +14,8 @@ import { Cross1Icon } from "@radix-ui/react-icons";
 import { DateTime } from "luxon";
 import { createRecommendation } from "@/actions";
 import { useAuth } from "@/hooks/AuthContext";
+import DeletePostButton from "./DeletePostButton";
+import { capitalizeWords } from "@/lib/utils";
 
 export default function RecommendationForm({
   initialRecommendation,
@@ -27,9 +29,17 @@ export default function RecommendationForm({
 
   const [recommendation, setRecommendation] = useState<Recommendation>(
     initialRecommendation
-      ? { ...initialRecommendation, media: [] }
+      ? {
+          ...initialRecommendation,
+          highlights: initialRecommendation.highlights.map(
+            (hl) => capitalizeWords(hl.replace(/_/g, " ")) // Replace `_` with space
+          ),
+          media: [],
+        }
       : {
           id: uuidv4(),
+          stopName: selectedStop?.stop_name || "",
+          stopId: selectedStop?.stop_id || "",
           stop: {
             id: "",
             stopName: selectedStop?.stop_name || "",
@@ -46,12 +56,15 @@ export default function RecommendationForm({
         }
   );
 
+  const searchParams = useSearchParams();
+  const isDraft = searchParams.get("draft");
+
   useEffect(() => {
     if (selectedStop) {
       setRecommendation((prev) => ({
         ...prev,
-        stop_name: selectedStop.stop_name,
-        stop_id: selectedStop.stop_id,
+        stopName: selectedStop.stop_name,
+        stopId: selectedStop.stop_id,
       }));
     }
   }, [selectedStop]);
@@ -199,11 +212,14 @@ export default function RecommendationForm({
         <Label className="leading-6">
           Select up to 3 highlights to describe your recommendation
         </Label>
+
         <div className="flex flex-wrap gap-2">
           {Object.values(RecommendationHighlights).map((hl) => (
             <Button
               className={`rounded-full ${
-                recommendation.highlights.includes(hl)
+                recommendation.highlights
+                  // .map((hl) => hl.replaceAll("_"," ").toLowerCase())
+                  .includes(hl)
                   ? "border-neutral-600"
                   : "font-normal"
               }`}
@@ -266,16 +282,24 @@ export default function RecommendationForm({
           </div>
         )}
       </div>
-      <div className="flex flex-col sm:flex-row justify-end gap-4 px-4">
-        <Button
-          variant={"outline"}
-          type="button"
-          onClick={() => handleCancel()}
-        >
-          Save
-        </Button>
-        <Button type="submit">Post</Button>
-      </div>
+
+      {isDraft ? (
+        <div className="flex flex-col sm:flex-row justify-end gap-4 px-4">
+          <Button
+            variant={"outline"}
+            type="button"
+            onClick={() => handleCancel()}
+          >
+            Save
+          </Button>
+          <Button type="submit">Post</Button>
+        </div>
+      ) : (
+        <div className="flex flex-col sm:flex-row justify-end gap-4 px-4">
+          <DeletePostButton />
+          <Button type="submit">Update</Button>
+        </div>
+      )}
     </form>
   );
 }
