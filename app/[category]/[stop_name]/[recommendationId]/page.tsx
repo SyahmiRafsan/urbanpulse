@@ -108,14 +108,14 @@ export default async function RecommendationPage({
                   ))}
                 </div>
               )}
-              <div className="flex flex-row gap-4 justify-between">
+              <div className="flex flex-row gap-4 justify-between px-4 pt-4">
                 <Link href={`/recommendation/${recommendation.id}`}>
-                  <Button variant={"ghost"}>
+                  <Button variant={"link"} size={"none"}>
                     <Pencil1Icon className="mr-1" />
                     Edit
                   </Button>
                 </Link>
-                <Button variant={"ghost-destructive"}>
+                <Button variant={"link-destructive"} size={"none"}>
                   <TrashIcon className="mr-1" />
                   Delete
                 </Button>
