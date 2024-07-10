@@ -25,6 +25,7 @@ export async function createRecommendation(formData: FormData) {
 
     if (user) {
       const formObj = {
+        id: rawFormData.id as string,
         title: rawFormData.title as string,
         description: rawFormData.description as string,
         stopId: String(stop.id),

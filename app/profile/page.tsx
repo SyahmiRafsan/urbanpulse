@@ -29,7 +29,7 @@ export default function ProfilePage() {
   const isEditing = searchParams.get("editing");
 
   const router = useRouter();
-  const { user, hasFetched, loggedIn } = useAuth();
+  const { user, hasFetched, loggedIn, logout } = useAuth();
 
   useEffect(() => {
     if (hasFetched && !loggedIn) {
@@ -50,10 +50,6 @@ export default function ProfilePage() {
       getRecs(user.id);
     }
   }, [hasFetched]);
-
-  function handleLogout() {
-    router.replace("/auth/logout");
-  }
 
   return (
     <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24 min-h-[100svh]">
@@ -127,13 +123,13 @@ export default function ProfilePage() {
             </div>
 
             {!isEditing && (
-              <div className="bg-card flex flex-col md:flex-row">
+              <div className="bg-card flex flex-col md:flex-row border-t md:border-t-0">
                 <ProfileButton
                   icon={<ChatBubbleIcon className="w-5 h-5" />}
                   label={"Send feedback"}
                 />
 
-                <div onClick={() => handleLogout()} className="w-full">
+                <div onClick={() => logout()} className="w-full">
                   <ProfileButton
                     icon={<ExitIcon className="w-5 h-5" />}
                     label={"Sign out"}
@@ -212,7 +208,7 @@ function ProfileButton({
   label: string;
 }) {
   return (
-    <button className="p-4 px-8 gap-4 items-center md:justify-center md:px-4 first:border-t border-b md:border-r md:border-t w-full flex flex-row">
+    <button className="p-4 px-8 gap-4 items-center md:justify-center md:px-4 border-b md:border-r md:border-t w-full flex flex-row">
       {icon}
       <p className="font-medium">{label}</p>
     </button>

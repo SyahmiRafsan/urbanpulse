@@ -170,7 +170,6 @@ export default function RecommendationForm({
       )
     );
 
-    router.refresh();
     router.push(
       `/${recommendation.category.toLowerCase().toLowerCase()}/${slugify(
         recommendation.stop.stopName,

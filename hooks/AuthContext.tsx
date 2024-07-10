@@ -7,18 +7,9 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import LoginCard from "@/components/LoginCard";
+import { useRouter } from "next/navigation";
 
 interface AuthContextType {
   user: DatabaseUserAttributes | null;
@@ -27,6 +18,8 @@ interface AuthContextType {
   hasFetched: boolean;
   setShowLoginModal: (bool: boolean) => void;
   loginCheck: () => boolean;
+  logout: () => void;
+  login: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -84,6 +77,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return true;
   }
 
+  const router = useRouter();
+
+  function logout() {
+    router.replace("/auth/logout");
+    setLoggedIn(false);
+    setUser(null);
+  }
+
+  function login() {
+    router.push("/auth/login");
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -93,6 +98,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         hasFetched,
         setShowLoginModal,
         loginCheck,
+        logout,
+        login,
       }}
     >
       {children}
