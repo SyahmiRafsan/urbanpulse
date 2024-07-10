@@ -12,10 +12,12 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Cross1Icon } from "@radix-ui/react-icons";
 import { DateTime } from "luxon";
-import { createRecommendation } from "@/actions";
+import { createRecommendation, updateRecommendation } from "@/actions";
 import { useAuth } from "@/hooks/AuthContext";
 import DeletePostButton from "./DeletePostButton";
 import { capitalizeWords } from "@/lib/utils";
+import { useRecommendationStore } from "@/stores/RecommendationStore";
+import slugify from "slugify";
 
 export default function RecommendationForm({
   initialRecommendation,
@@ -23,7 +25,13 @@ export default function RecommendationForm({
   initialRecommendation?: Recommendation;
 }) {
   const { selectedStop, setSelectedStop } = useStopSearchStore();
-  const { updateDraft, addDraft } = useDraftStore();
+  const { updateDraft, addDraft, removeDraft } = useDraftStore();
+  const {
+    setRecommendations,
+    setRecommendationsUser,
+    recommendations,
+    recommendationsUser,
+  } = useRecommendationStore();
   const { user } = useAuth();
   const router = useRouter();
 
@@ -31,6 +39,7 @@ export default function RecommendationForm({
     initialRecommendation
       ? {
           ...initialRecommendation,
+          stopId: initialRecommendation.stop.stopId || "",
           highlights: initialRecommendation.highlights.map(
             (hl) => capitalizeWords(hl.replace(/_/g, " ")) // Replace `_` with space
           ),
@@ -139,10 +148,36 @@ export default function RecommendationForm({
 
     formData.append("highlights", recommendation.highlights.join(","));
 
-    await createRecommendation(formData);
+    if (isDraft) {
+      const newRecommendation = await createRecommendation(formData);
+      console.log("Submitted recommendation:", newRecommendation);
 
-    console.log("Submitting recommendation:", recommendation);
-    // setSelectedStop(null);
+      removeDraft(recommendation);
+    } else {
+      const updatedRecommendation = await updateRecommendation(formData);
+      console.log("Updated:", updatedRecommendation);
+    }
+
+    setRecommendations(
+      recommendations.map((rc) =>
+        rc.id == recommendation.id ? recommendation : rc
+      )
+    );
+
+    setRecommendationsUser(
+      recommendationsUser.map((rc) =>
+        rc.id == recommendation.id ? recommendation : rc
+      )
+    );
+
+    router.push(
+      `/${recommendation.category}/${slugify(recommendation.stop.stopName, {
+        lower: true,
+        strict: true,
+      })}-${recommendation.stopId}/${recommendation.id}`
+    );
+    router.refresh();
+    setSelectedStop(null);
   };
 
   function handleCancel() {

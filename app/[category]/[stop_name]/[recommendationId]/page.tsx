@@ -8,6 +8,7 @@ import slugify from "slugify";
 import { Badge } from "@/components/ui/badge";
 import CommentCard from "@/components/CommentCard";
 import {
+  capitalizeWords,
   checkUUID,
   getCategoryWithoutBus,
   getIconByStopCategory,
@@ -29,6 +30,7 @@ export default async function RecommendationPage({
   const recommendation = await getRecommendation(params.recommendationId);
 
   if (!recommendation) {
+    notFound();
   }
 
   return (
@@ -94,7 +96,7 @@ export default async function RecommendationPage({
               <div className="flex flex-row gap-1 flex-wrap px-4">
                 {recommendation.highlights.map((h) => (
                   <Badge variant={"muted"} key={h}>
-                    {h.replaceAll("_", " ")}
+                    {capitalizeWords(h.replaceAll("_", " "))}
                   </Badge>
                 ))}
               </div>

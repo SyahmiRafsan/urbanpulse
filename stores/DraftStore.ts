@@ -5,6 +5,7 @@ interface DraftState {
   recommendationDrafts: Recommendation[];
   updateDraft: (rec: Recommendation) => void;
   addDraft: (rec: Recommendation) => void;
+  removeDraft: (rec: Recommendation) => void;
 }
 
 export const useDraftStore = create(
@@ -20,6 +21,12 @@ export const useDraftStore = create(
       addDraft: (updatedRec) =>
         set({
           recommendationDrafts: [updatedRec, ...get().recommendationDrafts],
+        }),
+      removeDraft: (rec) =>
+        set({
+          recommendationDrafts: get().recommendationDrafts.filter(
+            (rc) => rc.id !== rec.id
+          ),
         }),
     }),
     {

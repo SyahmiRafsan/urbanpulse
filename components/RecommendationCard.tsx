@@ -4,6 +4,7 @@ import { ChatBubbleIcon, ThickArrowUpIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import slugify from "slugify";
 import {
+  capitalizeWords,
   getCategoryWithoutBus,
   getIconByStopCategory,
   getRelativeTime,
@@ -57,7 +58,7 @@ export default function RecommendationCard({
           <div className="flex flex-row gap-1 flex-wrap">
             {recommendation.highlights.map((hl) => (
               <Badge variant={"muted"} key={hl + recommendation.id}>
-                {hl.replaceAll("_", " ")}
+                {capitalizeWords(hl.replaceAll("_", " "))}
               </Badge>
             ))}
           </div>
