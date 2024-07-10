@@ -51,6 +51,10 @@ export default function ProfilePage() {
     }
   }, [hasFetched]);
 
+  function handleLogout() {
+    router.replace("/auth/logout");
+  }
+
   return (
     <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24 min-h-[100svh]">
       <div className="max-w-[700px] border-x w-full bg-background gap-4">
@@ -128,12 +132,14 @@ export default function ProfilePage() {
                   icon={<ChatBubbleIcon className="w-5 h-5" />}
                   label={"Send feedback"}
                 />
-                <Link href={"/auth/logout"} className="w-full">
+
+                <div onClick={() => handleLogout()} className="w-full">
                   <ProfileButton
                     icon={<ExitIcon className="w-5 h-5" />}
                     label={"Sign out"}
                   />
-                </Link>
+                </div>
+
                 <ProfileButtonDestructive
                   icon={<TrashIcon className="w-5 h-5" />}
                   label={"Delete account"}
