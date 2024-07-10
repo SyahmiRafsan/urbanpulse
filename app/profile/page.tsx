@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/AuthContext";
-import { dummyRecommendations } from "@/services/dummies";
 import { getRecommendationsByUserId } from "@/services/recommendation";
 import { useRecommendationStore } from "@/stores/RecommendationStore";
 import {
@@ -148,7 +147,7 @@ export default function ProfilePage() {
                   <p className="font-medium">
                     My Recommendations{" "}
                     <span className="text-muted-foreground">
-                      ({dummyRecommendations.length})
+                      ({recommendationsUser.length})
                     </span>
                   </p>
                   <DraftsButton />

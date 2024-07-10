@@ -170,13 +170,17 @@ export default function RecommendationForm({
       )
     );
 
-    router.push(
-      `/${recommendation.category}/${slugify(recommendation.stop.stopName, {
-        lower: true,
-        strict: true,
-      })}-${recommendation.stopId}/${recommendation.id}`
-    );
     router.refresh();
+    router.push(
+      `/${recommendation.category.toLowerCase().toLowerCase()}/${slugify(
+        recommendation.stop.stopName,
+        {
+          lower: true,
+          strict: true,
+        }
+      )}-${recommendation.stopId}/${recommendation.id}`
+    );
+
     setSelectedStop(null);
   };
 

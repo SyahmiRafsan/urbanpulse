@@ -21,7 +21,7 @@ export default function RecommendationCard({
   return (
     <div className="px-4 border-b py-4 animate-in slide-in-from-left-4 z-10 w-full">
       <Link
-        href={`/${recommendation.category}/${slugify(
+        href={`/${recommendation.category.toLowerCase()}/${slugify(
           recommendation.stop.stopName,
           {
             lower: true,
@@ -43,7 +43,7 @@ export default function RecommendationCard({
         className="flex flex-row gap-4 w-full justify-between"
         href={
           !isDraft
-            ? `/${recommendation.category}/${slugify(
+            ? `/${recommendation.category.toLowerCase()}/${slugify(
                 recommendation.stop.stopName,
                 {
                   lower: true,
@@ -89,7 +89,7 @@ export default function RecommendationCard({
           <div className="flex flex-row gap-2 items-center text-muted-foreground">
             <Link
               className="flex flex-row items-center gap-1"
-              href={`/${recommendation.category}/${slugify(
+              href={`/${recommendation.category.toLowerCase()}/${slugify(
                 recommendation.stop.stopName,
                 {
                   lower: true,

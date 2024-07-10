@@ -52,7 +52,7 @@ export default async function RecommendationPage({
 
                 <Badge variant={"outline"} className="w-fit">
                   <Link
-                    href={`/${recommendation.category}/${slugify(
+                    href={`/${recommendation.category.toLowerCase()}/${slugify(
                       recommendation.stop.stopName,
                       {
                         lower: true,
