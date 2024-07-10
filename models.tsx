@@ -19,8 +19,11 @@ interface Media {
   createdAt: Date;
   url: string;
   mediaId: string;
-  mediaType: "RECOMMENDATION" | "COMMENT";
+  file?: File;
+  mediaType: MediaType;
 }
+
+type MediaType ="RECOMMENDATION" | "COMMENT"
 
 type Category = "LRT" | "MRT" | "MR" | "BUS" | "BRT";
 

@@ -13,6 +13,7 @@ import { Input } from "./ui/input";
 import { Cross1Icon } from "@radix-ui/react-icons";
 import { DateTime } from "luxon";
 import { createRecommendation } from "@/actions";
+import { useAuth } from "@/hooks/AuthContext";
 
 export default function RecommendationForm({
   initialRecommendation,
@@ -21,7 +22,7 @@ export default function RecommendationForm({
 }) {
   const { selectedStop, setSelectedStop } = useStopSearchStore();
   const { updateDraft, addDraft } = useRecommendationStore();
-
+  const { user } = useAuth();
   const router = useRouter();
 
   const [recommendation, setRecommendation] = useState<Recommendation>(
@@ -29,8 +30,11 @@ export default function RecommendationForm({
       ? { ...initialRecommendation, media: [] }
       : {
           id: uuidv4(),
-          stop_name: selectedStop?.stop_name || "",
-          stop_id: selectedStop?.stop_id || "",
+          stop: {
+            id: "",
+            stopName: selectedStop?.stop_name || "",
+            stopId: selectedStop?.stop_id || "",
+          },
           title: "",
           description: "",
           upvotesCount: 0,
@@ -38,7 +42,7 @@ export default function RecommendationForm({
           category: selectedStop?.category || "",
           highlights: [],
           media: [],
-          createdAt: DateTime.now().toISO(),
+          createdAt: DateTime.now().toJSDate(),
         }
   );
 
@@ -78,18 +82,22 @@ export default function RecommendationForm({
     const remainingSlots = 3 - recommendation.media.length;
     const filesToAdd = files.slice(0, remainingSlots);
 
-    const newMedia = filesToAdd.map((file) => ({
-      id: uuidv4(),
-      file: file,
-      url: URL.createObjectURL(file),
-      recommendationId: recommendation.id,
-      createdAt: DateTime.now().toISO(),
-    }));
+    if (user) {
+      const newMedia = filesToAdd.map((file) => ({
+        id: uuidv4(),
+        file: file,
+        url: URL.createObjectURL(file),
+        mediaId: recommendation.id,
+        createdAt: DateTime.now().toJSDate(),
+        mediaType: "RECOMMENDATION" as MediaType,
+        userId: user.id,
+      }));
 
-    setRecommendation((prev) => ({
-      ...prev,
-      media: [...prev.media, ...newMedia].slice(0, 3),
-    }));
+      setRecommendation((prev) => ({
+        ...prev,
+        media: [...prev.media, ...newMedia].slice(0, 3),
+      }));
+    }
   };
 
   const removeFile = (id: string) => {
@@ -111,7 +119,9 @@ export default function RecommendationForm({
     });
 
     recommendation.media.forEach((file, index) => {
-      formData.append(`media[${index}]`, file.file, file.file.name);
+      if (file.file) {
+        formData.append(`media[${index}]`, file.file, file.file.name);
+      }
     });
 
     formData.append("highlights", recommendation.highlights.join(","));
@@ -124,9 +134,9 @@ export default function RecommendationForm({
 
   function handleCancel() {
     if (initialRecommendation) {
-      updateDraft({ ...recommendation, createdAt: DateTime.now().toISO() });
+      updateDraft({ ...recommendation, createdAt: DateTime.now().toJSDate() });
     } else {
-      addDraft({ ...recommendation, createdAt: DateTime.now().toISO() });
+      addDraft({ ...recommendation, createdAt: DateTime.now().toJSDate() });
     }
 
     if (initialRecommendation) {
