@@ -29,9 +29,9 @@ export default async function RecommendationPage({
   }
   const recommendation = await getRecommendation(params.recommendationId);
 
-  if (!recommendation) {
-    notFound();
-  }
+  // if (!recommendation) {
+  //   notFound();
+  // }
 
   return (
     <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24">
