@@ -12,6 +12,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Cross1Icon } from "@radix-ui/react-icons";
 import { DateTime } from "luxon";
+import { createRecommendation } from "@/actions";
 
 export default function RecommendationForm({
   initialRecommendation,
@@ -79,10 +80,12 @@ export default function RecommendationForm({
 
     const newMedia = filesToAdd.map((file) => ({
       id: uuidv4(),
+      file: file,
       url: URL.createObjectURL(file),
       recommendationId: recommendation.id,
       createdAt: DateTime.now().toISO(),
     }));
+
     setRecommendation((prev) => ({
       ...prev,
       media: [...prev.media, ...newMedia].slice(0, 3),
@@ -96,12 +99,27 @@ export default function RecommendationForm({
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    updateDraft(recommendation);
-    // Here you would typically send the data to your backend
+
+    const formData = new FormData();
+
+    Object.entries(recommendation).forEach(([key, value]) => {
+      if (key !== "media" && key !== "highlights") {
+        formData.append(key, value as string);
+      }
+    });
+
+    recommendation.media.forEach((file, index) => {
+      formData.append(`media[${index}]`, file.file, file.file.name);
+    });
+
+    formData.append("highlights", recommendation.highlights.join(","));
+
+    await createRecommendation(formData);
+
     console.log("Submitting recommendation:", recommendation);
-    setSelectedStop(null);
+    // setSelectedStop(null);
   };
 
   function handleCancel() {
@@ -121,7 +139,11 @@ export default function RecommendationForm({
   }
 
   return (
-    <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+    <form
+      className="flex flex-col gap-4"
+      onSubmit={handleSubmit}
+      // action={createRecommendation}
+    >
       <div className="flex flex-col gap-4 border-b pb-6 px-4">
         <Label htmlFor="title" className="leading-6">
           Title of your recommendation

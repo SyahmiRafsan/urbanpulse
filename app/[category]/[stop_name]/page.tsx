@@ -1,6 +1,6 @@
 import Nav from "@/components/Nav";
 import RecommendationCard from "@/components/RecommendationCard";
-import { dummyRecommendations } from "@/services/recommendation";
+import { dummyRecommendations } from "@/services/dummies";
 import { ChevronDownIcon, PlusIcon } from "@radix-ui/react-icons";
 import React from "react";
 import {

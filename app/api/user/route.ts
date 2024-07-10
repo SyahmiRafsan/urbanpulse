@@ -6,6 +6,7 @@ export async function GET(): Promise<Response> {
   const getUser = cache(async () => {
     const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null;
 
+    console.log(sessionId);
     // console.log({ sessionId, cName: lucia.sessionCookieName });
 
     if (!sessionId) return null;

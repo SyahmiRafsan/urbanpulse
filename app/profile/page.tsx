@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/AuthContext";
-import { dummyRecommendations } from "@/services/recommendation";
+import { dummyRecommendations } from "@/services/dummies";
 import {
   ChatBubbleIcon,
   ExitIcon,

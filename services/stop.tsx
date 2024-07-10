@@ -2,7 +2,6 @@ import db from "@/db/drizzle";
 import { stopTable } from "@/db/schema";
 import { ALL_STOPS } from "@/lib/stops/all_stops";
 import { eq } from "drizzle-orm";
-import slugify from "slugify";
 
 const dummyStops = [
   {
@@ -58,7 +57,7 @@ export async function getStop(id: string) {
   };
 }
 
-export  function getStopJSON(id: string) {
+export function getStopJSON(id: string) {
   const stop = ALL_STOPS.filter((st) => String(st.stop_id) == id)[0];
 
   return stop;

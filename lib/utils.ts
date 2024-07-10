@@ -143,3 +143,11 @@ export function getRelativeTime(date: string): string {
     return `${Math.floor(seconds)}s`;
   }
 }
+
+export function getBackendUrl() {
+  const url =
+    process.env.NODE_ENV === "production"
+      ? "https://urbanpulse-asia.vercel.app"
+      : "http://localhost:5420";
+  return url;
+}

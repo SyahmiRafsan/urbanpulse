@@ -1,6 +1,5 @@
 import Nav from "@/components/Nav";
 import { Button } from "@/components/ui/button";
-import { getRecommendation } from "@/services/recommendation";
 import { PlusIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import React from "react";
@@ -10,15 +9,16 @@ import { Badge } from "@/components/ui/badge";
 import CommentCard from "@/components/CommentCard";
 import { getCategoryWithoutBus, getIconByStopCategory } from "@/lib/utils";
 import BackButton from "@/components/BackButton";
+import { getRecommendation } from "@/services/recommendation";
 
-export default function RecommendationPage({
+export default async function RecommendationPage({
   params,
 }: {
   params: { stop_name: string };
 }) {
   const stopId = params.stop_name.split("-").slice(-1)[0];
 
-  const recommendation = getRecommendation(stopId);
+  const recommendation = await getRecommendation(stopId);
 
   return (
     <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24">
@@ -53,7 +53,12 @@ export default function RecommendationPage({
                     )}
                     className="w-5 h-5"
                   />
-                  <p>{getCategoryWithoutBus(recommendation.category.toLocaleUpperCase())}{" "}{recommendation.stop_name}</p>
+                  <p>
+                    {getCategoryWithoutBus(
+                      recommendation.category.toLocaleUpperCase()
+                    )}{" "}
+                    {recommendation.stop_name}
+                  </p>
                 </Link>
               </Badge>
             </div>

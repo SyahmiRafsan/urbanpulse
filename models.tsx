@@ -15,11 +15,14 @@ interface Recommendation {
 interface Media {
   id: string;
   url: string;
+  file: File;
   recommendationId: string;
   createdAt: string;
 }
 
 type Category = "LRT" | "MRT" | "MR" | "BUS" | "BRT";
+
+type RecommendationHighlight = "ACCESSIBILITY" | "CONNECTIVITY" | "EFFICIENCY" | "ENVIRONMENTAL" | "QUALITY_OF_LIFE" | "SAFETY";
 
 interface Stop {
   id?: string;

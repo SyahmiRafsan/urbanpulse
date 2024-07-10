@@ -9,10 +9,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { dummyRecommendations } from "@/services/recommendation";
+import { dummyRecommendations } from "@/services/dummies";
 import LocationButton from "@/components/LocationButton";
 import StopTypes from "@/components/StopTypes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getRecommendations } from "@/services/recommendation";
 
 export default function Home() {
   const [filteredRecommendations, setFilteredRecommendations] =
@@ -21,6 +22,16 @@ export default function Home() {
   function handleFilter(recommendations: Recommendation[]) {
     setFilteredRecommendations(recommendations);
   }
+
+  useEffect(() => {
+    async function getRecs() {
+      const list: Recommendation[] = await getRecommendations();
+
+      setFilteredRecommendations(list);
+    }
+    getRecs();
+  }, []);
+
   return (
     <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24 min-h-[100svh]">
       <div className="max-w-[700px] border-x w-full bg-background gap-4">

@@ -59,8 +59,7 @@ export const sessionTable = pgTable("session", {
 export const recommendationTable = pgTable("recommendation", {
   id: uuid("id").defaultRandom().primaryKey(),
   title: varchar("title", { length: 100 }).notNull(),
-  description: text("content").notNull(),
-  stopName: text("stop_name").notNull(),
+  description: text("description").notNull(),
   stopId: uuid("stop_id")
     .notNull()
     .references(() => stopTable.id),
