@@ -21,6 +21,7 @@ interface Media {
   mediaId: string;
   file?: File;
   mediaType: MediaType;
+  mimeType: string;
 }
 
 type MediaType = "RECOMMENDATION" | "COMMENT";
@@ -49,4 +50,11 @@ interface DatabaseUserAttributes {
   email: string;
   name: string;
   image: string;
+}
+
+interface UploadedFile {
+  key: string;
+  buffer: Buffer;
+  originalname: string;
+  mimetype: string;
 }

@@ -113,6 +113,7 @@ export default function RecommendationForm({
         createdAt: DateTime.now().toJSDate(),
         mediaType: "RECOMMENDATION" as MediaType,
         userId: user.id,
+        mimeType: file.type,
       }));
 
       setRecommendation((prev) => ({
@@ -134,20 +135,28 @@ export default function RecommendationForm({
 
     const formData = new FormData();
 
+    // Append form fields
     Object.entries(recommendation).forEach(([key, value]) => {
       if (key !== "media" && key !== "highlights") {
         formData.append(key, value as string);
       }
     });
 
+    // Append media files
     recommendation.media.forEach((file, index) => {
       if (file.file) {
-        formData.append(`media[${index}]`, file.file, file.file.name);
+        formData.append(
+          `media_${file.id}`,
+          file.file,
+          `${file.id}.${file.file.name.split(".")[1]}`
+        ); // Use file.id as the key
       }
     });
 
+    // Append highlights
     formData.append("highlights", recommendation.highlights.join(","));
 
+    // Call createRecommendation or updateRecommendation based on isDraft
     if (isDraft) {
       const newRecommendation = await createRecommendation(formData);
       console.log("Submitted recommendation:", newRecommendation);
@@ -158,6 +167,7 @@ export default function RecommendationForm({
       console.log("Updated:", updatedRecommendation);
     }
 
+    // Update recommendations and redirect
     setRecommendations(
       recommendations.map((rc) =>
         rc.id == recommendation.id ? recommendation : rc
@@ -323,7 +333,9 @@ export default function RecommendationForm({
 
       {isDraft ? (
         <div className="flex flex-col sm:flex-row justify-end gap-4 px-4">
-          {initialRecommendation && <DeletePostButton recommendation={recommendation} />}
+          {initialRecommendation && (
+            <DeletePostButton recommendation={recommendation} />
+          )}
           <Button
             variant={"outline"}
             type="button"
@@ -335,7 +347,7 @@ export default function RecommendationForm({
         </div>
       ) : (
         <div className="flex flex-col sm:flex-row justify-end gap-4 px-4">
-          <DeletePostButton recommendation={recommendation}/>
+          <DeletePostButton recommendation={recommendation} />
           <Button type="submit">Update</Button>
         </div>
       )}

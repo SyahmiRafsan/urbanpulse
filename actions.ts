@@ -1,10 +1,11 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { getStop } from "@/services/stop";
+import { lucia } from "@/auth";
+import { uploadToR2 } from "@/lib/r2";
 import db from "./db/drizzle";
-import { recommendationTable } from "./db/schema";
-import { getStop } from "./services/stop";
-import { lucia } from "./auth";
+import { recommendationTable } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 
 export async function createRecommendation(formData: FormData) {
@@ -17,13 +18,40 @@ export async function createRecommendation(formData: FormData) {
   if (sessionId && stop) {
     const { user } = await lucia.validateSession(sessionId);
 
-    // const response = await fetch(`${backend}/api/user`);
-    // if (!response.ok) {
-    //   throw new Error("Failed to fetch user data");
-    // }
-    // const user: DatabaseUserAttributes = await response.json();
-
     if (user) {
+      // Extract media files from FormData
+      const mediaFiles: UploadedFile[] = [];
+
+      const entries = Array.from(formData.entries());
+      for (const [key, value] of entries) {
+        if (key.startsWith("media_") && value instanceof File) {
+          mediaFiles.push({
+            key: value.name,
+            buffer: Buffer.from(await value.arrayBuffer()), // Convert File to Buffer
+            originalname: value.name,
+            mimetype: value.type,
+          });
+        }
+      }
+
+      console.log({ mediaFiles });
+
+      // Upload media files to R2
+      // const uploadedMediaUrls = await uploadToR2(mediaFiles);
+
+      // console.log({ uploadedMediaUrls });
+
+      // const media = Object.entries(uploadedMediaUrls).map(([key, url]) => ({
+      //   id: key.replace("media_", ""),
+      //   userId: user.id,
+      //   createdAt: new Date(),
+      //   url,
+      //   mediaId: rawFormData.id as string,
+      //   mediaType: "RECOMMENDATION" as MediaType,
+      // }));
+
+      // console.log(media);
+
       const formObj = {
         id: rawFormData.id as string,
         title: rawFormData.title as string,

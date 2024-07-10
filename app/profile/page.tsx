@@ -159,7 +159,7 @@ export default function ProfilePage() {
                   {hasFetchedUser ? (
                     recommendationsUser.length > 0 ? (
                       recommendationsUser.map((rec) => (
-                        <div key={rec.id}>
+                        <div key={rec.id} className="bg-card">
                           <RecommendationCard recommendation={rec} />
                         </div>
                       ))
