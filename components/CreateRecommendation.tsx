@@ -5,7 +5,7 @@ import React, { useEffect } from "react";
 import StopSearch from "./StopSearch";
 import StopSearchCard from "./StopSearchCard";
 import { useStopSearchStore } from "@/stores/StopSearchStore";
-import { useRecommendationStore } from "@/stores/RecommendationStore";
+import { useDraftStore } from "@/stores/DraftStore";
 import { CreateRecommendationState } from "@/lib/constants";
 import RecommendationForm from "./RecommendationForm";
 import Link from "next/link";
@@ -18,7 +18,7 @@ export default function CreateRecommendation() {
   const mode = searchParams.get("mode");
 
   const { selectedStop } = useStopSearchStore();
-  const { recommendationDrafts } = useRecommendationStore();
+  const { recommendationDrafts } = useDraftStore();
 
   const pathname = usePathname();
   const router = useRouter();

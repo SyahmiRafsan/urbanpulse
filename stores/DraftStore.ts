@@ -1,14 +1,14 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-interface RecommendationState {
+interface DraftState {
   recommendationDrafts: Recommendation[];
   updateDraft: (rec: Recommendation) => void;
   addDraft: (rec: Recommendation) => void;
 }
 
-export const useRecommendationStore = create(
-  persist<RecommendationState>(
+export const useDraftStore = create(
+  persist<DraftState>(
     (set, get) => ({
       recommendationDrafts: [],
       updateDraft: (updatedRec) =>

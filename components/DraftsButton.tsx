@@ -3,13 +3,13 @@
 import Link from "next/link";
 import React, { useEffect } from "react";
 import { Badge } from "./ui/badge";
-import { useRecommendationStore } from "@/stores/RecommendationStore";
+import { useDraftStore } from "@/stores/DraftStore";
 import { useAuth } from "@/hooks/AuthContext";
 
 export default function DraftsButton() {
   const { hasFetched, loggedIn } = useAuth();
 
-  const { recommendationDrafts } = useRecommendationStore();
+  const { recommendationDrafts } = useDraftStore();
   return (
     <>
       {hasFetched && loggedIn && (

@@ -3,7 +3,7 @@
 import BackButton from "@/components/BackButton";
 import Nav from "@/components/Nav";
 import RecommendationForm from "@/components/RecommendationForm";
-import { useRecommendationStore } from "@/stores/RecommendationStore";
+import { useDraftStore } from "@/stores/DraftStore";
 import React from "react";
 
 export default function CreateRecommendationPage({
@@ -11,7 +11,7 @@ export default function CreateRecommendationPage({
 }: {
   params: { recommendationId: string };
 }) {
-  const { recommendationDrafts } = useRecommendationStore();
+  const { recommendationDrafts } = useDraftStore();
 
   return (
     <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24 min-h-[100svh]">

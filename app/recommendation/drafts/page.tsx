@@ -2,12 +2,15 @@
 
 import BackButton from "@/components/BackButton";
 import RecommendationCard from "@/components/RecommendationCard";
-import { useRecommendationStore } from "@/stores/RecommendationStore";
+import { Button } from "@/components/ui/button";
+import { useDraftStore } from "@/stores/DraftStore";
+import { PlusIcon } from "@radix-ui/react-icons";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
 
 export default function CreateRecommendationPage() {
-  const { recommendationDrafts } = useRecommendationStore();
+  const { recommendationDrafts } = useDraftStore();
 
   const router = useRouter();
   return (
@@ -37,11 +40,20 @@ export default function CreateRecommendationPage() {
                 </div>
               ))
             ) : (
-              <div className="p-4 border-b">
+              <div className="p-4 border-b flex flex-col w-full">
                 <p>
-                  No saved draft so far. You can start creating recommendation
-                  and save as draft for later.
+                  You have no saved drafts. Start creating recommendations and
+                  save as draft for later.
                 </p>
+                <Link
+                  className="w-full pt-4 sm:w-fit"
+                  href={"/recommendation/create"}
+                >
+                  <Button className="w-full sm:w-fit">
+                    <PlusIcon className="mr-1" />
+                    <p>Create Recommendation</p>
+                  </Button>
+                </Link>
               </div>
             )}
           </div>

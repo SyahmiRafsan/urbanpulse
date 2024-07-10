@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useStopSearchStore } from "@/stores/StopSearchStore";
-import { useRecommendationStore } from "@/stores/RecommendationStore";
+import { useDraftStore } from "@/stores/DraftStore";
 import { RecommendationHighlights } from "@/lib/constants";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
@@ -21,7 +21,7 @@ export default function RecommendationForm({
   initialRecommendation?: Recommendation;
 }) {
   const { selectedStop, setSelectedStop } = useStopSearchStore();
-  const { updateDraft, addDraft } = useRecommendationStore();
+  const { updateDraft, addDraft } = useDraftStore();
   const { user } = useAuth();
   const router = useRouter();
 

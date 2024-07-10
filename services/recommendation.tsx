@@ -8,7 +8,17 @@ export async function getRecommendations() {
     with: { stop: true, media: true },
   });
 
-  console.log(recommendations);
+  // console.log(recommendations);
+  return recommendations;
+}
+
+export async function getRecommendationsByUserId(userId: string) {
+  const recommendations = await db.query.recommendationTable.findMany({
+    where: eq(recommendationTable.userId, userId),
+    with: { stop: true, media: true },
+  });
+
+  // console.log(recommendations);
   return recommendations;
 }
 
@@ -22,7 +32,7 @@ export async function getRecommendation(id: string) {
     where: eq(recommendationTable.id, id),
   });
 
-  console.log(recommendation);
+  // console.log(recommendation);
 
   return recommendation;
 }
