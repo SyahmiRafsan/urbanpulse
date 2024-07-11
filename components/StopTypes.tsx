@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { getIconByStopCategory } from "@/lib/utils";
 import { useStopSearchStore } from "@/stores/StopSearchStore";
+import { useRecommendationStore } from "@/stores/RecommendationStore";
 
 export default function StopTypes({
   stopsSetter,
@@ -15,6 +16,7 @@ export default function StopTypes({
   initialList: (Stop | Recommendation)[];
 }) {
   const { filteredStops, initialStops, setInitialStops } = useStopSearchStore();
+  const { sortType } = useRecommendationStore();
 
   // const [initialStops, setInitialStops] = useState(
   //   initialList || []
@@ -72,6 +74,10 @@ export default function StopTypes({
       recommendationsSetter(stopsWithType as unknown as Recommendation[]);
     }
   }, [selectedType]);
+
+  useEffect(() => {
+    setSelectedType(["all"]);
+  }, [sortType]);
 
   return (
     <div className="flex flex-row gap-2 items-center overflow-x-auto">

@@ -11,20 +11,12 @@ import {
   recommendationUpvotesTable,
   stopTable,
 } from "@/db/schema";
-import {
-  and,
-  desc,
-  eq,
-  exists,
-  ExtractTablesWithRelations,
-  sql,
-} from "drizzle-orm";
+import { and, desc, eq, ExtractTablesWithRelations, sql } from "drizzle-orm";
 import { cache } from "react";
 import { PgTransaction } from "drizzle-orm/pg-core";
 import { PostgresJsQueryResultHKT } from "drizzle-orm/postgres-js";
 import * as schema from "@/db/schema";
-import { arraysEqualUploadFile, getArrayDifferences } from "./lib/utils";
-import { DateTime } from "luxon";
+import { getArrayDifferences } from "./lib/utils";
 
 export const getUser = cache(async () => {
   const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null;

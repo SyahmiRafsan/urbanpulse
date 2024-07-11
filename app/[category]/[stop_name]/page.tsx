@@ -1,13 +1,6 @@
 import Nav from "@/components/Nav";
-import { ChevronDownIcon } from "@radix-ui/react-icons";
 import React from "react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import { getStopJSON } from "@/services/stop";
 import {
   getCategoryWithoutBus,
@@ -19,6 +12,7 @@ import StopMap from "@/components/StopMap";
 import { notFound } from "next/navigation";
 import StopPageCreateButton from "@/components/StopPageCreateButton";
 import StopFeed from "@/components/StopFeed";
+import FeedSort from "@/components/FeedSort";
 
 export default async function StopPage({
   params,
@@ -81,22 +75,8 @@ export default async function StopPage({
               {/* Start Feed */}
               <div className="bg-card border-t pt-4">
                 <h2 className="text-lg font-semibold px-4">Community Feed</h2>
-                <div className="px-4 mb-2">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button className="flex flex-row items-center">
-                        <p className="font-medium">Nearby</p>
-                        <ChevronDownIcon className="w-4 h-4 ml-1" />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-fit">
-                      <DropdownMenuGroup>
-                        <DropdownMenuItem>Nearby</DropdownMenuItem>
-                        <DropdownMenuItem>Latest</DropdownMenuItem>
-                        <DropdownMenuItem>Most upvoted</DropdownMenuItem>
-                      </DropdownMenuGroup>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                <div className="px-4 my-2">
+                  <FeedSort />
                 </div>
                 <StopFeed />
               </div>

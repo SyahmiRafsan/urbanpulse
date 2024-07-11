@@ -7,6 +7,8 @@ interface RecommendationState {
     hasFetched?: boolean
   ) => void;
   hasFetched: boolean;
+  sortType: SortType;
+  setSortType: (sortType: SortType) => void;
   recommendationsUser: Recommendation[];
   setRecommendationsUser: (
     recommendationsUser: Recommendation[],
@@ -23,6 +25,8 @@ export const useRecommendationStore = create<RecommendationState>((set) => ({
       hasFetched: hasFetched !== undefined ? hasFetched : true,
     }),
   hasFetched: false,
+  sortType: "nearby",
+  setSortType: (sortType: SortType) => set({ sortType }),
   recommendationsUser: [],
   setRecommendationsUser: (recommendationsUser, hasFetchedUser) =>
     set({
