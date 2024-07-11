@@ -231,7 +231,8 @@ export default function RecommendationForm({
             rc.id == recommendation.id
               ? { ...updatedRecommendation, media: recommendation.media }
               : rc
-          )
+          ),
+          false
         );
 
         setRecommendationsUser(
@@ -239,7 +240,8 @@ export default function RecommendationForm({
             rc.id == recommendation.id
               ? { ...updatedRecommendation, media: recommendation.media }
               : rc
-          )
+          ),
+          false
         );
 
         result = updatedRecommendation;
