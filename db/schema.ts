@@ -108,6 +108,7 @@ export const commentTable = pgTable("comment", {
 export const mediaTable = pgTable("media", {
   id: uuid("id").defaultRandom().primaryKey(),
   url: text("url").notNull(),
+  mimeType: text("mime_type").notNull(),
   mediaId: uuid("media_id").notNull(),
   mediaType: mediaTypeEnum("media_type").notNull(),
   createdAt: timestamp("created_at", {

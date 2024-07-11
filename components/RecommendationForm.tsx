@@ -62,6 +62,7 @@ export default function RecommendationForm({
           highlights: [],
           media: [],
           createdAt: DateTime.now().toJSDate(),
+          userId: user?.id || "",
         }
   );
 

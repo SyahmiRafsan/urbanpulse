@@ -13,8 +13,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { CreateRecommendationState } from "@/lib/constants";
+import { useAuth } from "@/hooks/AuthContext";
 
 export default function Nav() {
+  const { user } = useAuth();
+
   const links = [
     { label: "Feed", url: "/", icon: <HomeIcon className="w-5 h-5" /> },
     { label: "Map", url: "/map", icon: <DrawingPinIcon className="w-5 h-5" /> },
@@ -25,12 +28,12 @@ export default function Nav() {
     },
     {
       label: "Notifications",
-      url: "/notifications",
+      url: user ? "/notifications" : "/login",
       icon: <BellIcon className="w-5 h-5" />,
     },
     {
       label: "Profile",
-      url: "/profile",
+      url: user ? "/profile" : "/login",
       icon: <PersonIcon className="w-5 h-5" />,
     },
   ];
@@ -46,7 +49,8 @@ export default function Nav() {
               className={cn(
                 "flex items-center p-2 rounded-lg",
                 pathname !== link.url && "text-muted-foreground opacity-70",
-                link.label == "Recommend" && "text-primary-foreground opacity-100"
+                link.label == "Recommend" &&
+                  "text-primary-foreground opacity-100"
               )}
               size={"icon"}
               variant={link.label == "Recommend" ? "default" : "ghost"}

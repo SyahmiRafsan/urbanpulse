@@ -11,6 +11,7 @@ interface Recommendation {
   highlights: string[];
   media: Media[];
   createdAt: Date;
+  userId: string;
 }
 
 interface Media {

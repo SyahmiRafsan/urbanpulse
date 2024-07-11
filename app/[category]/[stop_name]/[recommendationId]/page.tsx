@@ -18,6 +18,7 @@ import BackButton from "@/components/BackButton";
 import { getRecommendation } from "@/services/recommendation";
 import { notFound } from "next/navigation";
 import DeletePostButton from "@/components/DeletePostButton";
+import { getUser } from "@/actions";
 
 export default async function RecommendationPage({
   params,
@@ -28,6 +29,8 @@ export default async function RecommendationPage({
     notFound();
   }
   const recommendation = await getRecommendation(params.recommendationId);
+
+  const user = await getUser();
 
   // if (!recommendation) {
   //   notFound();
@@ -112,12 +115,14 @@ export default async function RecommendationPage({
                 </div>
               )}
               <div className="flex flex-row gap-4 justify-between px-4 pt-4">
-                <Link href={`/recommendation/${recommendation.id}`}>
-                  <Button variant={"link"} size={"none"}>
-                    <Pencil1Icon className="mr-1" />
-                    Edit
-                  </Button>
-                </Link>
+                {user && recommendation.userId && user.id && (
+                  <Link href={`/recommendation/${recommendation.id}`}>
+                    <Button variant={"link"} size={"none"}>
+                      <Pencil1Icon className="mr-1" />
+                      Edit
+                    </Button>
+                  </Link>
+                )}
                 <DeletePostButton recommendation={recommendation} />
               </div>
             </div>
