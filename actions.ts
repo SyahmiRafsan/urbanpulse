@@ -74,30 +74,36 @@ export async function createRecommendation(
 
       console.log({ addRecTx });
 
-      const uploadedMediaWithRecommendationId = await uploadMedia(
-        formData,
-        rawFormData.id as string,
-        user.id,
-        "RECOMMENDATION"
-      );
+      const mediaFiles = await extractMediaFiles(formData, "media_");
 
-      console.log({ uploadedMediaWithRecommendationId });
+      if (mediaFiles.length > 0) {
+        const uploadedMediaWithRecommendationId = await uploadMedia(
+          formData,
+          rawFormData.id as string,
+          user.id,
+          "RECOMMENDATION"
+        );
 
-      const addMediaTx = await tx
-        .insert(mediaTable)
-        .values(uploadedMediaWithRecommendationId)
-        .returning();
+        console.log({ uploadedMediaWithRecommendationId });
 
-      console.log({ addMediaTx });
+        const addMediaTx = await tx
+          .insert(mediaTable)
+          .values(uploadedMediaWithRecommendationId)
+          .returning();
 
-      const recommendationWithMedia = {
-        ...addRecTx,
-        media: uploadedMediaWithRecommendationId,
-      };
+        console.log({ addMediaTx });
 
-      // console.log({recommendationWithMedia})
+        const recommendationWithMedia = {
+          ...addRecTx,
+          media: uploadedMediaWithRecommendationId,
+        };
 
-      return recommendationWithMedia;
+        // console.log({recommendationWithMedia})
+
+        return recommendationWithMedia;
+      } else {
+        return { ...addRecTx, media: [] };
+      }
     });
     return {
       ...addedRecommendation,

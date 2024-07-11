@@ -10,7 +10,7 @@ import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Cross1Icon } from "@radix-ui/react-icons";
+import { Cross1Icon, ReloadIcon } from "@radix-ui/react-icons";
 import { DateTime } from "luxon";
 import { createRecommendation, updateRecommendation } from "@/actions";
 import { useAuth } from "@/hooks/AuthContext";
@@ -39,6 +39,7 @@ export default function RecommendationForm({
   } = useRecommendationStore();
   const { user } = useAuth();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const [oldMedia, setOldMedia] = useState<Media[]>(
     initialRecommendation ? initialRecommendation.media : []
   );
@@ -140,123 +141,129 @@ export default function RecommendationForm({
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    setIsLoading(true);
+    try {
+      e.preventDefault();
 
-    const formData = new FormData();
+      const formData = new FormData();
 
-    // console.log(recommendation);
+      // console.log(recommendation);
 
-    // Append form fields
-    Object.entries(recommendation).forEach(([key, value]) => {
-      if (key !== "media" && key !== "highlights") {
-        formData.append(key, value as string);
-      }
-    });
-
-    // Append media files
-    recommendation.media.forEach((file, index) => {
-      if (file.file) {
-        if (file.url.startsWith("data:")) {
-          formData.append(
-            `media_${file.id}`,
-            base64ToBlob(file.url),
-            `${file.id}.${file.mimeType.split("image/")[1]}`
-          );
-        } else {
-          formData.append(
-            `media_${file.id}`,
-            file.file,
-            `${file.id}.${file.file.name.split(".")[1]}`
-          ); // Use file.id as the key
+      // Append form fields
+      Object.entries(recommendation).forEach(([key, value]) => {
+        if (key !== "media" && key !== "highlights") {
+          formData.append(key, value as string);
         }
-      }
-    });
+      });
 
-    oldMedia.forEach((file, index) => {
-      if (file.file) {
-        if (file.url.startsWith("data:")) {
-          formData.append(
-            `old_media_${file.id}`,
-            base64ToBlob(file.url),
-            `${file.id}.${file.mimeType.split("image/")[1]}`
-          );
-        } else {
-          formData.append(
-            `old_media_${file.id}`,
-            file.file,
-            `${file.id}.${file.file.name.split(".")[1]}`
-          ); // Use file.id as the key
-        }
-      }
-    });
-
-    const { added, deleted } = getArrayDifferences(
-      oldMedia,
-      recommendation.media
-    );
-
-    formData.append("mediaDeleted", JSON.stringify(deleted));
-    formData.append("mediaAdded", JSON.stringify(added));
-
-    // Append highlights
-    formData.append("highlights", recommendation.highlights.join(","));
-
-    // console.log(formData);
-
-    // Call createRecommendation or updateRecommendation based on isDraft
-
-    let result = recommendation;
-    if (isDraft) {
-      const newRecommendation = await createRecommendation(formData);
-      // console.log("Submitted recommendation:", newRecommendation);
-
-      removeDraft(recommendation);
-
-      setRecommendations([newRecommendation, ...recommendations], false);
-
-      setRecommendationsUser(
-        [newRecommendation, ...recommendationsUser],
-        false
-      );
-
-      result = newRecommendation;
-    } else {
-      const updatedRecommendation = await updateRecommendation(formData);
-      // console.log("Updated:", updatedRecommendation);
-
-      setRecommendations(
-        recommendations.map((rc) =>
-          rc.id == recommendation.id
-            ? { ...updatedRecommendation, media: recommendation.media }
-            : rc
-        )
-      );
-
-      setRecommendationsUser(
-        recommendationsUser.map((rc) =>
-          rc.id == recommendation.id
-            ? { ...updatedRecommendation, media: recommendation.media }
-            : rc
-        )
-      );
-
-      result = updatedRecommendation;
-    }
-
-    if (result)
-      router.push(
-        `/${recommendation.category.toLowerCase().toLowerCase()}/${slugify(
-          recommendation.stop.stopName,
-          {
-            lower: true,
-            strict: true,
+      // Append media files
+      recommendation.media.forEach((file, index) => {
+        if (file.file) {
+          if (file.url.startsWith("data:")) {
+            formData.append(
+              `media_${file.id}`,
+              base64ToBlob(file.url),
+              `${file.id}.${file.mimeType.split("image/")[1]}`
+            );
+          } else {
+            formData.append(
+              `media_${file.id}`,
+              file.file,
+              `${file.id}.${file.file.name.split(".")[1]}`
+            ); // Use file.id as the key
           }
-        )}-${recommendation.stopId}/${recommendation.id}`
+        }
+      });
+
+      oldMedia.forEach((file, index) => {
+        if (file.file) {
+          if (file.url.startsWith("data:")) {
+            formData.append(
+              `old_media_${file.id}`,
+              base64ToBlob(file.url),
+              `${file.id}.${file.mimeType.split("image/")[1]}`
+            );
+          } else {
+            formData.append(
+              `old_media_${file.id}`,
+              file.file,
+              `${file.id}.${file.file.name.split(".")[1]}`
+            ); // Use file.id as the key
+          }
+        }
+      });
+
+      const { added, deleted } = getArrayDifferences(
+        oldMedia,
+        recommendation.media
       );
 
-    router.refresh();
+      formData.append("mediaDeleted", JSON.stringify(deleted));
+      formData.append("mediaAdded", JSON.stringify(added));
 
-    setSelectedStop(null);
+      // Append highlights
+      formData.append("highlights", recommendation.highlights.join(","));
+
+      // console.log(formData);
+
+      // Call createRecommendation or updateRecommendation based on isDraft
+      let result = recommendation;
+      if (isDraft) {
+        const newRecommendation = await createRecommendation(formData);
+        // console.log("Submitted recommendation:", newRecommendation);
+
+        removeDraft(recommendation);
+
+        setRecommendations([newRecommendation, ...recommendations], false);
+
+        setRecommendationsUser(
+          [newRecommendation, ...recommendationsUser],
+          false
+        );
+
+        result = newRecommendation;
+      } else {
+        const updatedRecommendation = await updateRecommendation(formData);
+        // console.log("Updated:", updatedRecommendation);
+
+        setRecommendations(
+          recommendations.map((rc) =>
+            rc.id == recommendation.id
+              ? { ...updatedRecommendation, media: recommendation.media }
+              : rc
+          )
+        );
+
+        setRecommendationsUser(
+          recommendationsUser.map((rc) =>
+            rc.id == recommendation.id
+              ? { ...updatedRecommendation, media: recommendation.media }
+              : rc
+          )
+        );
+
+        result = updatedRecommendation;
+      }
+
+      if (result)
+        router.push(
+          `/${recommendation.category.toLowerCase().toLowerCase()}/${slugify(
+            recommendation.stop.stopName,
+            {
+              lower: true,
+              strict: true,
+            }
+          )}-${recommendation.stopId}/${recommendation.id}`
+        );
+
+      router.refresh();
+
+      setSelectedStop(null);
+    } catch (error) {
+      console.log(error);
+      alert(JSON.stringify(error));
+    }
+    setIsLoading(false);
   };
 
   function handleCancel() {
@@ -402,19 +409,25 @@ export default function RecommendationForm({
           {initialRecommendation && (
             <DeletePostButton recommendation={recommendation} />
           )}
-          <Button
-            variant={"outline"}
-            type="button"
-            onClick={() => handleCancel()}
-          >
-            Save
+          {!isLoading && (
+            <Button
+              variant={"outline"}
+              type="button"
+              onClick={() => handleCancel()}
+            >
+              Save
+            </Button>
+          )}
+          <Button type="submit" disabled={isLoading}>
+            {isLoading && <ReloadIcon className="mr-1 animate-spin" />} Post
           </Button>
-          <Button type="submit">Post</Button>
         </div>
       ) : (
         <div className="flex flex-col sm:flex-row justify-end gap-4 px-4">
           <DeletePostButton recommendation={recommendation} />
-          <Button type="submit">Update</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading && <ReloadIcon className="mr-1 animate-spin" />} Update
+          </Button>
         </div>
       )}
     </form>
