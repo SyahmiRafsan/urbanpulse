@@ -16,10 +16,9 @@ import { createRecommendation, updateRecommendation } from "@/actions";
 import { useAuth } from "@/hooks/AuthContext";
 import DeletePostButton from "./DeletePostButton";
 import {
-  base64ToBlob,
-  blobToBase64,
   capitalizeWords,
   getArrayDifferences,
+  getBlobFromUrl,
 } from "@/lib/utils";
 import { useRecommendationStore } from "@/stores/RecommendationStore";
 import slugify from "slugify";
@@ -115,11 +114,10 @@ export default function RecommendationForm({
 
     if (user) {
       const newMediaPromises = filesToAdd.map(async (file) => {
-        const base64Url = await blobToBase64(file);
         return {
           id: uuidv4(),
           file: file,
-          url: base64Url,
+          url: URL.createObjectURL(file),
           mediaId: recommendation.id,
           createdAt: DateTime.now().toJSDate(),
           mediaType: "RECOMMENDATION" as MediaType,
@@ -152,6 +150,10 @@ export default function RecommendationForm({
     try {
       e.preventDefault();
 
+      if (recommendation.highlights.length == 0) {
+        throw Error("Please select at least one highlight.");
+      }
+
       const formData = new FormData();
 
       // Append form fields
@@ -162,39 +164,39 @@ export default function RecommendationForm({
       });
 
       // Append media files
-      const mediaPromises = recommendation.media.map(async (file) => {
-        if (file.file) {
-          if (file.url.startsWith("data:")) {
-            const blob = base64ToBlob(file.url, file.mimeType);
+      const mediaPromises = recommendation.media.map(async (media) => {
+        if (media.file) {
+          if (media.url.startsWith("blob:")) {
+            const blob = await getBlobFromUrl(media.url);
             formData.append(
-              `media_${file.id}`,
+              `media_${media.id}`,
               blob,
-              `${file.id}.${file.mimeType.split("/")[1]}`
+              `${media.id}.${media.mimeType.split("/")[1]}`
             );
           } else {
             formData.append(
-              `media_${file.id}`,
-              file.file,
-              `${file.id}.${file.file.name.split(".")[1]}`
+              `media_${media.id}`,
+              media.file,
+              `${media.id}.${media.mimeType.split("image/")[1]}`
             );
           }
         }
       });
 
-      const oldMediaPromises = oldMedia.map(async (file) => {
-        if (file.file) {
-          if (file.url.startsWith("data:")) {
-            const blob = base64ToBlob(file.url, file.mimeType);
+      const oldMediaPromises = oldMedia.map(async (media) => {
+        if (media.file) {
+          if (media.url.startsWith("blob:")) {
+            const blob = await getBlobFromUrl(media.url);
             formData.append(
-              `old_media_${file.id}`,
+              `old_media_${media.id}`,
               blob,
-              `${file.id}.${file.mimeType.split("/")[1]}`
+              `${media.id}.${media.mimeType.split("/")[1]}`
             );
           } else {
             formData.append(
-              `old_media_${file.id}`,
-              file.file,
-              `${file.id}.${file.file.name.split(".")[1]}`
+              `old_media_${media.id}`,
+              media.file,
+              `${media.id}.${media.mimeType.split("image/")[1]}`
             );
           }
         }
@@ -264,9 +266,10 @@ export default function RecommendationForm({
       setSelectedStop(null);
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("An error occurred while submitting the form.");
+      alert(`${error}`);
+      setIsLoading(false);
     }
-    setIsLoading(false);
+   
   };
 
   function handleCancel() {

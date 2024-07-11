@@ -63,15 +63,14 @@ export default function RecommendationCard({
             ))}
           </div>
         </div>
-        {recommendation.media.length > 0 &&
-          !recommendation.media[0]?.url.startsWith("blob:") && (
-            <div className="w-20 h-20 ./md:w-24 /md:h-24 shrink-0">
-              <img
-                src={recommendation.media[0]?.url}
-                className="aspect-square object-cover rounded-lg"
-              />
-            </div>
-          )}
+        {recommendation.media.length > 0 && (
+          <div className="w-20 h-20 ./md:w-24 /md:h-24 shrink-0">
+            <img
+              src={recommendation.media[0]?.url}
+              className="aspect-square object-cover rounded-lg"
+            />
+          </div>
+        )}
       </Link>
       <div className="mt-4 flex flex-row gap-4 justify-between">
         <p className="text-sm text-muted-foreground">

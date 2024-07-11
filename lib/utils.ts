@@ -193,34 +193,8 @@ export function getArrayDifferences(
   return { added, deleted };
 }
 
-/**
- * Converts a Blob to a Base64 string.
- * @param blob - The Blob object to be converted.
- * @returns A promise that resolves to the Base64 string.
- */
-export function blobToBase64(blob: Blob): Promise<string> {
-  return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = () => reject(new Error('Failed to read blob as base64'));
-      reader.readAsDataURL(blob);
-  });
-}
-
-/**
-* Converts a Base64 string to a Blob object.
-* @param base64 - The Base64 string to be converted.
-* @param contentType - The content type of the Blob (e.g., 'image/png').
-* @returns A promise that resolves to the Blob object.
-*/
-export function base64ToBlob(base64: string, contentType: string = ''): Blob {
-  const [header, data] = base64.split(',');
-  const mimeString = header?.split(':')[1]?.split(';')[0] || contentType;
-  const byteString = atob(data);
-  const arrayBuffer = new ArrayBuffer(byteString.length);
-  const uint8Array = new Uint8Array(arrayBuffer);
-  for (let i = 0; i < byteString.length; i++) {
-      uint8Array[i] = byteString.charCodeAt(i);
-  }
-  return new Blob([arrayBuffer], { type: mimeString });
+export async function getBlobFromUrl(url: string) {
+  const response = await fetch(url);
+  const blob = await response.blob();
+  return blob;
 }
