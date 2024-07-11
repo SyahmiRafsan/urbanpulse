@@ -205,6 +205,7 @@ export default function RecommendationForm({
 
     // Call createRecommendation or updateRecommendation based on isDraft
 
+    let result = recommendation;
     if (isDraft) {
       const newRecommendation = await createRecommendation(formData);
       // console.log("Submitted recommendation:", newRecommendation);
@@ -217,6 +218,8 @@ export default function RecommendationForm({
         [newRecommendation, ...recommendationsUser],
         false
       );
+
+      result = newRecommendation;
     } else {
       const updatedRecommendation = await updateRecommendation(formData);
       // console.log("Updated:", updatedRecommendation);
@@ -236,17 +239,20 @@ export default function RecommendationForm({
             : rc
         )
       );
+
+      result = updatedRecommendation;
     }
 
-    router.push(
-      `/${recommendation.category.toLowerCase().toLowerCase()}/${slugify(
-        recommendation.stop.stopName,
-        {
-          lower: true,
-          strict: true,
-        }
-      )}-${recommendation.stopId}/${recommendation.id}`
-    );
+    if (result)
+      router.push(
+        `/${recommendation.category.toLowerCase().toLowerCase()}/${slugify(
+          recommendation.stop.stopName,
+          {
+            lower: true,
+            strict: true,
+          }
+        )}-${recommendation.stopId}/${recommendation.id}`
+      );
 
     router.refresh();
 
@@ -276,7 +282,6 @@ export default function RecommendationForm({
       // action={createRecommendation}
     >
       <div className="flex flex-col gap-4 border-b pb-6 px-4">
-       
         <Label htmlFor="title" className="leading-6">
           Title of your recommendation
         </Label>
@@ -392,8 +397,6 @@ export default function RecommendationForm({
         )}
       </div>
 
-      {JSON.stringify(recommendation.id)}
-      
       {isDraft ? (
         <div className="flex flex-col sm:flex-row justify-end gap-4 px-4">
           {initialRecommendation && (

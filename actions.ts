@@ -72,6 +72,8 @@ export async function createRecommendation(
         .values([formObj])
         .returning();
 
+      console.log({ addRecTx });
+
       const uploadedMediaWithRecommendationId = await uploadMedia(
         formData,
         rawFormData.id as string,
@@ -79,10 +81,14 @@ export async function createRecommendation(
         "RECOMMENDATION"
       );
 
+      console.log({ uploadedMediaWithRecommendationId });
+
       const addMediaTx = await tx
         .insert(mediaTable)
         .values(uploadedMediaWithRecommendationId)
         .returning();
+
+      console.log({ addMediaTx });
 
       const recommendationWithMedia = {
         ...addRecTx,
@@ -151,17 +157,17 @@ export async function updateRecommendation(
           )
           .returning();
 
-        // console.log({ oldMedia, newMedia });
+        console.log({ oldMedia, newMedia });
 
-        // console.log({
-        //   mediaAdded: mediaAdded.length,
-        //   mediaDeleted: mediaDeleted.length,
-        // });
+        console.log({
+          mediaAdded: mediaAdded.length,
+          mediaDeleted: mediaDeleted.length,
+        });
 
-        // console.log({
-        //   mediaAdded: mediaAdded,
-        //   mediaDeleted: mediaDeleted,
-        // });
+        console.log({
+          mediaAdded: mediaAdded,
+          mediaDeleted: mediaDeleted,
+        });
 
         if (mediaDeleted) {
           const deletedUrls = await deleteMediaTableWithR2(
@@ -176,7 +182,7 @@ export async function updateRecommendation(
             user.id
           );
 
-          // console.log({ deletedUrls });
+          console.log({ deletedUrls });
         }
 
         if (mediaAdded.length > 0) {
@@ -185,7 +191,7 @@ export async function updateRecommendation(
             newMedia
           ).added;
 
-          // console.log({ oldMedia, newMedia, appendedNewMedia });
+          console.log({ appendedNewMedia });
 
           const uploadedMedia = await uploadToR2(
             appendedNewMedia as unknown as UploadedFile[]
