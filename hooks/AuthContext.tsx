@@ -6,6 +6,7 @@ import React, {
   useState,
   useEffect,
   ReactNode,
+  cache,
 } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import LoginCard from "@/components/LoginCard";
@@ -44,7 +45,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchUserData = cache(async () => {
       try {
         const response = await fetch("/api/user");
         if (!response.ok) {
@@ -62,7 +63,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setIsLoading(false);
         setHasFetched(true);
       }
-    };
+    });
 
     if (!hasFetched) {
       fetchUserData();

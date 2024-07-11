@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Pencil1Icon, PlusIcon, TrashIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import React from "react";
-
 import slugify from "slugify";
 import { Badge } from "@/components/ui/badge";
 import CommentCard from "@/components/CommentCard";

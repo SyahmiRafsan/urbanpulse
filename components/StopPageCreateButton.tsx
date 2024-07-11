@@ -11,7 +11,7 @@ export default function StopPageCreateButton({ stop }: { stop: Stop }) {
   const { setSelectedStop } = useStopSearchStore();
   return (
     <Link
-      href={`/recommendation/create?mode=${CreateRecommendationState.SELECTED}`}
+      href={`/recommendation/create?mode=${CreateRecommendationState.SELECTED}&draft=true`}
       onClick={() => setSelectedStop(stop)}
     >
       <Button>

@@ -1,7 +1,5 @@
 import Nav from "@/components/Nav";
-import RecommendationCard from "@/components/RecommendationCard";
-import { dummyRecommendations } from "@/services/dummies";
-import { ChevronDownIcon, PlusIcon } from "@radix-ui/react-icons";
+import { ChevronDownIcon } from "@radix-ui/react-icons";
 import React from "react";
 import {
   DropdownMenu,
@@ -20,6 +18,7 @@ import BackButton from "@/components/BackButton";
 import StopMap from "@/components/StopMap";
 import { notFound } from "next/navigation";
 import StopPageCreateButton from "@/components/StopPageCreateButton";
+import StopFeed from "@/components/StopFeed";
 
 export default async function StopPage({
   params,
@@ -99,11 +98,7 @@ export default async function StopPage({
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
-                {dummyRecommendations.map((rec) => (
-                  <div key={rec.id}>
-                    <RecommendationCard recommendation={rec} />
-                  </div>
-                ))}
+                <StopFeed />
               </div>
               {/* End Feed */}
             </div>
