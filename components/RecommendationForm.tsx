@@ -114,25 +114,32 @@ export default function RecommendationForm({
     const filesToAdd = files.slice(0, remainingSlots);
 
     if (user) {
-      const newMedia = await Promise.all(
-        filesToAdd.map(async (file) => ({
+      const newMediaPromises = filesToAdd.map(async (file) => {
+        const base64Url = await blobToBase64(file);
+        return {
           id: uuidv4(),
           file: file,
-          url: await blobToBase64(file),
+          url: base64Url,
           mediaId: recommendation.id,
           createdAt: DateTime.now().toJSDate(),
           mediaType: "RECOMMENDATION" as MediaType,
           userId: user.id,
           mimeType: file.type,
-        }))
-      );
+        };
+      });
 
-      setRecommendation((prev) => ({
-        ...prev,
-        media: [...prev.media, ...newMedia].slice(0, 3),
-      }));
+      try {
+        const newMedia = await Promise.all(newMediaPromises);
+        setRecommendation((prev) => ({
+          ...prev,
+          media: [...prev.media, ...newMedia].slice(0, 3),
+        }));
+      } catch (error) {
+        alert(`Error processing files: ${JSON.stringify(error)}`);
+      }
     }
   };
+
   const removeFile = (id: string) => {
     setRecommendation((prev) => ({
       ...prev,
@@ -147,8 +154,6 @@ export default function RecommendationForm({
 
       const formData = new FormData();
 
-      // console.log(recommendation);
-
       // Append form fields
       Object.entries(recommendation).forEach(([key, value]) => {
         if (key !== "media" && key !== "highlights") {
@@ -157,41 +162,45 @@ export default function RecommendationForm({
       });
 
       // Append media files
-      recommendation.media.forEach((file, index) => {
+      const mediaPromises = recommendation.media.map(async (file) => {
         if (file.file) {
           if (file.url.startsWith("data:")) {
+            const blob = base64ToBlob(file.url, file.mimeType);
             formData.append(
               `media_${file.id}`,
-              base64ToBlob(file.url),
-              `${file.id}.${file.mimeType.split("image/")[1]}`
+              blob,
+              `${file.id}.${file.mimeType.split("/")[1]}`
             );
           } else {
             formData.append(
               `media_${file.id}`,
               file.file,
               `${file.id}.${file.file.name.split(".")[1]}`
-            ); // Use file.id as the key
+            );
           }
         }
       });
 
-      oldMedia.forEach((file, index) => {
+      const oldMediaPromises = oldMedia.map(async (file) => {
         if (file.file) {
           if (file.url.startsWith("data:")) {
+            const blob = base64ToBlob(file.url, file.mimeType);
             formData.append(
               `old_media_${file.id}`,
-              base64ToBlob(file.url),
-              `${file.id}.${file.mimeType.split("image/")[1]}`
+              blob,
+              `${file.id}.${file.mimeType.split("/")[1]}`
             );
           } else {
             formData.append(
               `old_media_${file.id}`,
               file.file,
               `${file.id}.${file.file.name.split(".")[1]}`
-            ); // Use file.id as the key
+            );
           }
         }
       });
+
+      await Promise.all([...mediaPromises, ...oldMediaPromises]);
 
       const { added, deleted } = getArrayDifferences(
         oldMedia,
@@ -204,18 +213,14 @@ export default function RecommendationForm({
       // Append highlights
       formData.append("highlights", recommendation.highlights.join(","));
 
-      // console.log(formData);
-
       // Call createRecommendation or updateRecommendation based on isDraft
       let result = recommendation;
       if (isDraft) {
         const newRecommendation = await createRecommendation(formData);
-        // console.log("Submitted recommendation:", newRecommendation);
 
         removeDraft(recommendation);
 
         setRecommendations([newRecommendation, ...recommendations], false);
-
         setRecommendationsUser(
           [newRecommendation, ...recommendationsUser],
           false
@@ -224,7 +229,6 @@ export default function RecommendationForm({
         result = newRecommendation;
       } else {
         const updatedRecommendation = await updateRecommendation(formData);
-        // console.log("Updated:", updatedRecommendation);
 
         setRecommendations(
           recommendations.map((rc) =>
@@ -247,23 +251,20 @@ export default function RecommendationForm({
         result = updatedRecommendation;
       }
 
-      if (result)
+      if (result) {
         router.push(
-          `/${recommendation.category.toLowerCase().toLowerCase()}/${slugify(
+          `/${recommendation.category.toLowerCase()}/${slugify(
             recommendation.stop.stopName,
-            {
-              lower: true,
-              strict: true,
-            }
+            { lower: true, strict: true }
           )}-${recommendation.stopId}/${recommendation.id}`
         );
+      }
 
       router.refresh();
-
       setSelectedStop(null);
     } catch (error) {
-      console.log(error);
-      alert(JSON.stringify(error));
+      console.error("Error submitting form:", error);
+      alert("An error occurred while submitting the form.");
     }
     setIsLoading(false);
   };
