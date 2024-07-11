@@ -15,7 +15,12 @@ import { DateTime } from "luxon";
 import { createRecommendation, updateRecommendation } from "@/actions";
 import { useAuth } from "@/hooks/AuthContext";
 import DeletePostButton from "./DeletePostButton";
-import { capitalizeWords, getArrayDifferences } from "@/lib/utils";
+import {
+  base64ToBlob,
+  blobToBase64,
+  capitalizeWords,
+  getArrayDifferences,
+} from "@/lib/utils";
 import { useRecommendationStore } from "@/stores/RecommendationStore";
 import slugify from "slugify";
 
@@ -42,7 +47,6 @@ export default function RecommendationForm({
     initialRecommendation
       ? {
           ...initialRecommendation,
-
           stopId: initialRecommendation.stop.stopId || "",
           highlights: initialRecommendation.highlights.map(
             (hl) => capitalizeWords(hl.replace(/_/g, " ")) // Replace `_` with space
@@ -103,22 +107,24 @@ export default function RecommendationForm({
     });
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const remainingSlots = 3 - recommendation.media.length;
     const filesToAdd = files.slice(0, remainingSlots);
 
     if (user) {
-      const newMedia = filesToAdd.map((file) => ({
-        id: uuidv4(),
-        file: file,
-        url: URL.createObjectURL(file),
-        mediaId: recommendation.id,
-        createdAt: DateTime.now().toJSDate(),
-        mediaType: "RECOMMENDATION" as MediaType,
-        userId: user.id,
-        mimeType: file.type,
-      }));
+      const newMedia = await Promise.all(
+        filesToAdd.map(async (file) => ({
+          id: uuidv4(),
+          file: file,
+          url: await blobToBase64(file),
+          mediaId: recommendation.id,
+          createdAt: DateTime.now().toJSDate(),
+          mediaType: "RECOMMENDATION" as MediaType,
+          userId: user.id,
+          mimeType: file.type,
+        }))
+      );
 
       setRecommendation((prev) => ({
         ...prev,
@@ -126,7 +132,6 @@ export default function RecommendationForm({
       }));
     }
   };
-
   const removeFile = (id: string) => {
     setRecommendation((prev) => ({
       ...prev,
@@ -139,7 +144,7 @@ export default function RecommendationForm({
 
     const formData = new FormData();
 
-    console.log(recommendation);
+    // console.log(recommendation);
 
     // Append form fields
     Object.entries(recommendation).forEach(([key, value]) => {
@@ -151,21 +156,37 @@ export default function RecommendationForm({
     // Append media files
     recommendation.media.forEach((file, index) => {
       if (file.file) {
-        formData.append(
-          `media_${file.id}`,
-          file.file,
-          `${file.id}.${file.file.name.split(".")[1]}`
-        ); // Use file.id as the key
+        if (file.url.startsWith("data:")) {
+          formData.append(
+            `media_${file.id}`,
+            base64ToBlob(file.url),
+            `${file.id}.${file.mimeType.split("image/")[1]}`
+          );
+        } else {
+          formData.append(
+            `media_${file.id}`,
+            file.file,
+            `${file.id}.${file.file.name.split(".")[1]}`
+          ); // Use file.id as the key
+        }
       }
     });
 
     oldMedia.forEach((file, index) => {
       if (file.file) {
-        formData.append(
-          `old_media_${file.id}`,
-          file.file,
-          `${file.id}.${file.file.name.split(".")[1]}`
-        ); // Use file.id as the key
+        if (file.url.startsWith("data:")) {
+          formData.append(
+            `old_media_${file.id}`,
+            base64ToBlob(file.url),
+            `${file.id}.${file.mimeType.split("image/")[1]}`
+          );
+        } else {
+          formData.append(
+            `old_media_${file.id}`,
+            file.file,
+            `${file.id}.${file.file.name.split(".")[1]}`
+          ); // Use file.id as the key
+        }
       }
     });
 
@@ -180,13 +201,13 @@ export default function RecommendationForm({
     // Append highlights
     formData.append("highlights", recommendation.highlights.join(","));
 
-    console.log(formData);
+    // console.log(formData);
 
     // Call createRecommendation or updateRecommendation based on isDraft
 
     if (isDraft) {
       const newRecommendation = await createRecommendation(formData);
-      console.log("Submitted recommendation:", newRecommendation);
+      // console.log("Submitted recommendation:", newRecommendation);
 
       removeDraft(recommendation);
 
@@ -198,7 +219,7 @@ export default function RecommendationForm({
       );
     } else {
       const updatedRecommendation = await updateRecommendation(formData);
-      console.log("Updated:", updatedRecommendation);
+      // console.log("Updated:", updatedRecommendation);
 
       setRecommendations(
         recommendations.map((rc) =>
