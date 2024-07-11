@@ -276,6 +276,7 @@ export default function RecommendationForm({
       // action={createRecommendation}
     >
       <div className="flex flex-col gap-4 border-b pb-6 px-4">
+       
         <Label htmlFor="title" className="leading-6">
           Title of your recommendation
         </Label>
@@ -391,6 +392,8 @@ export default function RecommendationForm({
         )}
       </div>
 
+      {JSON.stringify(recommendation.id)}
+      
       {isDraft ? (
         <div className="flex flex-col sm:flex-row justify-end gap-4 px-4">
           {initialRecommendation && (
