@@ -5,13 +5,26 @@ import { getStop } from "@/services/stop";
 import { lucia } from "@/auth";
 import { deleteFromR2, uploadToR2 } from "@/lib/r2";
 import db from "./db/drizzle";
-import { mediaTable, recommendationTable } from "@/db/schema";
-import { and, eq, ExtractTablesWithRelations } from "drizzle-orm";
+import {
+  mediaTable,
+  recommendationTable,
+  recommendationUpvotesTable,
+  stopTable,
+} from "@/db/schema";
+import {
+  and,
+  desc,
+  eq,
+  exists,
+  ExtractTablesWithRelations,
+  sql,
+} from "drizzle-orm";
 import { cache } from "react";
 import { PgTransaction } from "drizzle-orm/pg-core";
 import { PostgresJsQueryResultHKT } from "drizzle-orm/postgres-js";
 import * as schema from "@/db/schema";
 import { arraysEqualUploadFile, getArrayDifferences } from "./lib/utils";
+import { DateTime } from "luxon";
 
 export const getUser = cache(async () => {
   const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null;
@@ -277,6 +290,257 @@ export async function deleteRecommendation(recommendation: Recommendation) {
   } else {
     throw new Error("Unauthorized user");
   }
+}
+
+export async function upvoteRecommendation(
+  userId: string,
+  recommendationId: string
+): Promise<void> {
+  const upvote = await db.transaction(async (tx) => {
+    // Insert into the recommendationUpvotesTable
+    const [upvotedUser] = await tx
+      .insert(schema.recommendationUpvotesTable)
+      .values({
+        userId,
+        recommendationId,
+        upvotedAt: new Date(),
+      });
+
+    // Increment the upvotesCount in the recommendationTable
+    await tx
+      .update(recommendationTable)
+      .set({ upvotesCount: sql.raw(`upvotes_count + 1`) })
+      .where(eq(recommendationTable.id, recommendationId));
+
+    return upvotedUser;
+  });
+
+  return upvote;
+}
+
+export async function fetchRecommendationsWithUpvoteStatus(
+  options: FetchRecommendationsOptions
+) {
+  const { userId, sortType, userLat, userLon } = options;
+
+  // Base query setup
+  let baseQuery = db
+    .select({
+      id: recommendationTable.id,
+      title: recommendationTable.title,
+      description: recommendationTable.description,
+      stopId: recommendationTable.stopId,
+      upvotesCount: recommendationTable.upvotesCount,
+      commentsCount: recommendationTable.commentsCount,
+      category: recommendationTable.category,
+      highlights: recommendationTable.highlights,
+      createdAt: recommendationTable.createdAt,
+      updatedAt: recommendationTable.updatedAt,
+      userId: recommendationTable.userId,
+      // Conditionally add userUpvoted field if userId is provided
+      userUpvoted: userId
+        ? sql<boolean>`
+            EXISTS (
+              SELECT 1
+              FROM ${recommendationUpvotesTable}
+              WHERE ${recommendationUpvotesTable.recommendationId} = ${recommendationTable.id}
+                AND ${recommendationUpvotesTable.userId} = ${userId}
+            )
+          `
+        : sql<null>`NULL`,
+      stop: {
+        id: stopTable.id,
+        stopId: stopTable.stopId,
+        stopName: stopTable.stopName,
+        stopLat: stopTable.stopLat,
+        stopLon: stopTable.stopLon,
+        category: stopTable.category,
+        updatedAt: stopTable.updatedAt,
+      },
+      media: {
+        id: mediaTable.id,
+        url: mediaTable.url,
+        userId: mediaTable.userId,
+        createdAt: mediaTable.createdAt,
+        mediaId: mediaTable.mediaId,
+        mediaType: mediaTable.mediaType,
+        mimeType: mediaTable.mimeType,
+      },
+    })
+    .from(recommendationTable)
+    .leftJoin(stopTable, eq(stopTable.id, recommendationTable.stopId))
+    .leftJoin(mediaTable, eq(mediaTable.mediaId, recommendationTable.id)); // Join the media table
+
+  let userQuery;
+  // Conditionally add the recommendationUpvotesTable join and groupBy if userId is provided
+  if (userId) {
+    userQuery = baseQuery
+      .leftJoin(
+        recommendationUpvotesTable,
+        eq(recommendationUpvotesTable.recommendationId, recommendationTable.id)
+      )
+      .groupBy(
+        recommendationTable.id,
+        stopTable.id, // Add stopTable.id to group by clause
+        stopTable.stopId,
+        stopTable.stopName,
+        stopTable.stopLat,
+        stopTable.stopLon,
+        stopTable.category,
+        stopTable.updatedAt,
+        recommendationTable.userId,
+        mediaTable.id, // Group by media table fields
+        mediaTable.url,
+        mediaTable.mediaType
+      );
+  } else {
+    userQuery = baseQuery.groupBy(
+      recommendationTable.id,
+      stopTable.id, // Add stopTable.id to group by clause
+      stopTable.stopId,
+      stopTable.stopName,
+      stopTable.stopLat,
+      stopTable.stopLon,
+      stopTable.category,
+      stopTable.updatedAt,
+      mediaTable.id, // Group by media table fields
+      mediaTable.url,
+      mediaTable.mediaType
+    );
+  }
+
+  // Apply sorting based on the sortType
+  let sortedQuery;
+  switch (sortType) {
+    case "nearby":
+      if (userLat === undefined || userLon === undefined) {
+        throw new Error(
+          "userLat and userLon must be provided for nearby sorting"
+        );
+      }
+      sortedQuery = userQuery.orderBy(
+        sql`
+        6371 * 2 * ASIN(
+          SQRT(
+            POWER(
+              SIN(
+                RADIANS(${stopTable.stopLat} - ${userLat}) / 2
+              ), 2
+            ) +
+            COS(RADIANS(${userLat})) * COS(RADIANS(${stopTable.stopLat})) *
+            POWER(
+              SIN(
+                RADIANS(${stopTable.stopLon} - ${userLon}) / 2
+              ), 2
+            )
+          )
+        )
+      `
+      );
+      break;
+
+    case "latest":
+      sortedQuery = userQuery.orderBy(desc(recommendationTable.createdAt));
+      break;
+
+    case "most_upvoted":
+      sortedQuery = userQuery.orderBy(desc(recommendationTable.upvotesCount));
+      break;
+
+    default:
+      throw new Error("Invalid sortType");
+  }
+
+  const recommendations = await sortedQuery.execute();
+
+  // Map the results to include stop information under the 'stop' key and media as an array
+  return recommendations.reduce(
+    (acc, rec) => {
+      // Find or create the recommendation entry
+      let recommendation = acc.find((r) => r.id === rec.id);
+
+      if (
+        !recommendation &&
+        rec.stop &&
+        rec.stop.stopId &&
+        rec.stop.updatedAt
+      ) {
+        recommendation = {
+          id: rec.id,
+          title: rec.title,
+          description: rec.description,
+          stopId: rec.stopId,
+          upvotesCount: rec.upvotesCount,
+          commentsCount: rec.commentsCount,
+          category: rec.category,
+          highlights: rec.highlights,
+          createdAt: rec.createdAt,
+          updatedAt: rec.updatedAt,
+          userId: rec.userId,
+          userUpvoted: rec.userUpvoted,
+          stop: {
+            id: rec.stop.id,
+            stopId: rec.stop.stopId,
+            stopName: rec.stop.stopName,
+            stopLat: rec.stop.stopLat,
+            stopLon: rec.stop.stopLon,
+            category: rec.stop.category,
+            updatedAt: rec.stop.updatedAt,
+          },
+          media: [], // Initialize media as an empty array
+        };
+        acc.push(recommendation);
+      }
+
+      // Add media to the recommendation's media array
+      if (recommendation && rec.media && rec.media.id) {
+        recommendation.media.push({
+          id: rec.media.id,
+          url: rec.media.url,
+          userId: rec.media.userId,
+          createdAt: rec.media.createdAt,
+          mediaId: rec.media.mediaId,
+          mediaType: rec.media.mediaType,
+          mimeType: rec.media.mimeType,
+        });
+      }
+
+      return acc;
+    },
+    [] as Array<{
+      id: string;
+      title: string;
+      description: string;
+      stopId: string;
+      upvotesCount: number;
+      commentsCount: number;
+      category: string;
+      highlights: string[];
+      createdAt: Date;
+      updatedAt: Date;
+      userId: string;
+      userUpvoted: boolean | null;
+      media: {
+        id: string;
+        userId: string;
+        createdAt: Date;
+        url: string;
+        mediaId: string;
+        file?: File;
+        mediaType: MediaType;
+        mimeType: string;
+      }[];
+      stop: {
+        id: string;
+        stopId: string;
+        stopName: string;
+        stopLat: string;
+        stopLon: string;
+        category: string;
+        updatedAt: Date;
+      };
+    }>
+  );
 }
 
 // Custom Drizzle transaction type

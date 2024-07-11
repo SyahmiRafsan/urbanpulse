@@ -61,3 +61,12 @@ interface UploadedFile {
   mimetype: string;
   url?: string;
 }
+
+type SortType = "nearby" | "latest" | "most_upvoted";
+
+interface FetchRecommendationsOptions {
+  userId?: string;
+  sortType: SortType;
+  userLat?: number;
+  userLon?: number;
+}

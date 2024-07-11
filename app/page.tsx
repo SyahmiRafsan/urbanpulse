@@ -15,6 +15,8 @@ import { useEffect, useState } from "react";
 import { getRecommendations } from "@/services/recommendation";
 import { useRecommendationStore } from "@/stores/RecommendationStore";
 import RecommendationSkeleton from "@/components/RecommendationSkeleton";
+import { fetchRecommendationsWithUpvoteStatus } from "@/actions";
+import { useLocationStore } from "@/stores/LocationStore";
 
 export default function Home() {
   const { setRecommendations, recommendations, hasFetched } =
@@ -23,10 +25,18 @@ export default function Home() {
   const [filteredRecommendations, setFilteredRecommendations] =
     useState<Recommendation[]>(recommendations);
 
+  const { coordinates } = useLocationStore();
+
   useEffect(() => {
     async function getRecs() {
-      const list: Recommendation[] = await getRecommendations();
-      // console.log(list);
+      const list: Recommendation[] = await fetchRecommendationsWithUpvoteStatus(
+        {
+          sortType: "nearby",
+          userLat: coordinates.lat,
+          userLon: coordinates.lon,
+        }
+      );
+      console.log(list);
       setFilteredRecommendations(list);
       setRecommendations(list);
     }

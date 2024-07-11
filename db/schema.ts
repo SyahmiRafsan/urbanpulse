@@ -8,6 +8,7 @@ import {
   pgEnum,
   varchar,
   decimal,
+  primaryKey,
 } from "drizzle-orm/pg-core";
 
 export const categoryEnum = pgEnum("category", [
@@ -143,12 +144,37 @@ export const stopTable = pgTable("stop", {
     .$onUpdate(() => new Date()),
 });
 
+// RecommendationUpvotes table
+export const recommendationUpvotesTable = pgTable(
+  "recommendation_upvotes",
+  {
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => userTable.id, { onDelete: "cascade" }),
+    recommendationId: uuid("recommendation_id")
+      .notNull()
+      .references(() => recommendationTable.id, { onDelete: "cascade" }),
+    upvotedAt: timestamp("upvoted_at", {
+      withTimezone: true,
+      mode: "date",
+    })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => {
+    return {
+      pk: primaryKey({ columns: [table.userId, table.recommendationId] }),
+    };
+  }
+);
+
 // Define the relationships for the user table
 export const UserRelations = relations(userTable, ({ one, many }) => ({
   sessions: many(sessionTable),
   recommendations: many(recommendationTable),
   comments: many(commentTable),
   media: many(mediaTable),
+  upvotes: many(recommendationTable),
 }));
 
 // Define the relationships for the session table
@@ -173,6 +199,7 @@ export const RecommendationRelations = relations(
     }),
     comments: many(commentTable),
     media: many(mediaTable),
+    upvotes: many(recommendationUpvotesTable),
   })
 );
 
