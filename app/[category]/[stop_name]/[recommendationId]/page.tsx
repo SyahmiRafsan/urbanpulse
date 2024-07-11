@@ -104,10 +104,10 @@ export default async function RecommendationPage({
               </div>
               {recommendation.media.length > 0 && (
                 <div className="flex flex-row gap-4 overflow-x-auto px-4">
-                  {[1, 2, 3].map((img) => (
+                  {recommendation.media.map((media) => (
                     <img
-                      src={recommendation.media[0].url}
-                      key={img}
+                      src={media.url}
+                      key={media.id}
                       className="rounded-lg max-h-[200px]"
                     />
                   ))}

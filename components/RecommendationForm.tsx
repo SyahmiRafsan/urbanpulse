@@ -34,6 +34,9 @@ export default function RecommendationForm({
   } = useRecommendationStore();
   const { user } = useAuth();
   const router = useRouter();
+  const [oldMedia, setOldMedia] = useState<Media[]>(
+    initialRecommendation ? initialRecommendation.media : []
+  );
 
   const [recommendation, setRecommendation] = useState<Recommendation>(
     initialRecommendation
@@ -43,7 +46,6 @@ export default function RecommendationForm({
           highlights: initialRecommendation.highlights.map(
             (hl) => capitalizeWords(hl.replace(/_/g, " ")) // Replace `_` with space
           ),
-          media: [],
         }
       : {
           id: uuidv4(),
@@ -136,6 +138,8 @@ export default function RecommendationForm({
 
     const formData = new FormData();
 
+    console.log(recommendation);
+
     // Append form fields
     Object.entries(recommendation).forEach(([key, value]) => {
       if (key !== "media" && key !== "highlights") {
@@ -154,32 +158,51 @@ export default function RecommendationForm({
       }
     });
 
+    oldMedia.forEach((file, index) => {
+      if (file.file) {
+        formData.append(
+          `old_media_${file.id}`,
+          file.file,
+          `${file.id}.${file.file.name.split(".")[1]}`
+        ); // Use file.id as the key
+      }
+    });
+
     // Append highlights
     formData.append("highlights", recommendation.highlights.join(","));
 
+    console.log(formData);
+
     // Call createRecommendation or updateRecommendation based on isDraft
+
     if (isDraft) {
       const newRecommendation = await createRecommendation(formData);
       console.log("Submitted recommendation:", newRecommendation);
 
       removeDraft(recommendation);
+
+      setRecommendations([newRecommendation, ...recommendations], false);
+
+      setRecommendationsUser(
+        [newRecommendation, ...recommendationsUser],
+        false
+      );
     } else {
       const updatedRecommendation = await updateRecommendation(formData);
       console.log("Updated:", updatedRecommendation);
+
+      setRecommendations(
+        recommendations.map((rc) =>
+          rc.id == recommendation.id ? updatedRecommendation : rc
+        )
+      );
+
+      setRecommendationsUser(
+        recommendationsUser.map((rc) =>
+          rc.id == recommendation.id ? updatedRecommendation : rc
+        )
+      );
     }
-
-    // Update recommendations and redirect
-    setRecommendations(
-      recommendations.map((rc) =>
-        rc.id == recommendation.id ? recommendation : rc
-      )
-    );
-
-    setRecommendationsUser(
-      recommendationsUser.map((rc) =>
-        rc.id == recommendation.id ? recommendation : rc
-      )
-    );
 
     router.push(
       `/${recommendation.category.toLowerCase().toLowerCase()}/${slugify(
@@ -305,6 +328,19 @@ export default function RecommendationForm({
             disabled={recommendation.media.length == 3}
           />
         </div>
+
+        <pre className="max-h-[200px] overflow-auto">
+          {JSON.stringify(recommendation, null, 2)}
+        </pre>
+        <pre className="max-h-[200px] overflow-auto">
+          {JSON.stringify(oldMedia !== recommendation.media)}{" "}
+        </pre>
+        <pre className="max-h-[200px] overflow-auto">
+          {JSON.stringify(oldMedia, null, 2)}
+        </pre>
+        <pre className="max-h-[200px] overflow-auto">
+          {JSON.stringify(recommendation.media, null, 2)}
+        </pre>
 
         {recommendation.media.length > 0 && (
           <div className="flex flex-row gap-4 overflow-x-auto px-4 pb-4">

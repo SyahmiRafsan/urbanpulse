@@ -11,7 +11,7 @@ export async function getRecommendations() {
   // console.log(recommendations);
   return recommendations;
 }
-
+// TODO getRecommendation single with id & userId
 export async function getRecommendationsByUserId(userId: string) {
   const recommendations = await db.query.recommendationTable.findMany({
     where: eq(recommendationTable.userId, userId),

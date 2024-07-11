@@ -54,8 +54,10 @@ interface DatabaseUserAttributes {
 }
 
 interface UploadedFile {
+  id: string;
   key: string;
   buffer: Buffer;
   originalname: string;
   mimetype: string;
+  url?: string;
 }

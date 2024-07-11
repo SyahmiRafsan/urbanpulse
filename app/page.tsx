@@ -64,7 +64,7 @@ export default function Home() {
             </DropdownMenu>
             <LocationButton />
           </div>
-          <div className="flex flex-row gap-2 items-center overflow-x-auto sticky top-0 bg-card border-b">
+          <div className="flex flex-row gap-2 items-center overflow-x-auto sticky top-0 bg-card">
             <div className="px-4 py-2">
               <StopTypes
                 recommendationsSetter={handleFilter}

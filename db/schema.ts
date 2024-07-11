@@ -109,7 +109,11 @@ export const mediaTable = pgTable("media", {
   id: uuid("id").defaultRandom().primaryKey(),
   url: text("url").notNull(),
   mimeType: text("mime_type").notNull(),
-  mediaId: uuid("media_id").notNull(),
+  mediaId: uuid("media_id")
+    .notNull()
+    .references(() => recommendationTable.id, {
+      onDelete: "cascade",
+    }),
   mediaType: mediaTypeEnum("media_type").notNull(),
   createdAt: timestamp("created_at", {
     withTimezone: true,

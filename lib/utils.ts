@@ -159,7 +159,42 @@ export function checkUUID(id: string) {
 // Function to capitalize the first character of each word in a string
 export function capitalizeWords(str: string): string {
   return str
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+}
+
+export function arraysEqualUploadFile(
+  a: UploadedFile[],
+  b: UploadedFile[]
+): boolean {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i].id !== b[i].id || a[i].key !== b[i].key) {
+      return false;
+    }
+  }
+  return true;
+}
+
+// Helper function to get the difference between two arrays
+export function getArrayDifferences(
+  oldArray: UploadedFile[],
+  newArray: UploadedFile[]
+): { added: UploadedFile[]; deleted: UploadedFile[] } {
+  const added = newArray.filter(
+    (newItem) =>
+      !oldArray.some(
+        (oldItem) => oldItem.id === newItem.id && oldItem.key === newItem.key
+      )
+  );
+
+  const deleted = oldArray.filter(
+    (oldItem) =>
+      !newArray.some(
+        (newItem) => newItem.id === oldItem.id && newItem.key === oldItem.key
+      )
+  );
+
+  return { added, deleted };
 }

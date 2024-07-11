@@ -45,7 +45,7 @@ export default function DeletePostButton({
       removeDraft(recommendation);
       router.replace("/recommendation/drafts");
     } else {
-      await deleteRecommendation(recommendation.id);
+      await deleteRecommendation(recommendation);
       setRecommendations(
         recommendations.filter((rc) => rc.id !== recommendation.id),
         false
