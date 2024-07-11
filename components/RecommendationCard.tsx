@@ -63,7 +63,7 @@ export default function RecommendationCard({
             ))}
           </div>
         </div>
-        {recommendation.media.length > 0 && (
+        {recommendation.media.length > 0 && !isDraft && (
           <div className="w-20 h-20 ./md:w-24 /md:h-24 shrink-0">
             <img
               src={recommendation.media[0]?.url}

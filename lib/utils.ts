@@ -193,8 +193,16 @@ export function getArrayDifferences(
   return { added, deleted };
 }
 
-export async function getBlobFromUrl(url: string) {
-  const response = await fetch(url);
-  const blob = await response.blob();
-  return blob;
+export async function getBlobFromUrl(url:string) {
+  try {
+      const response = await fetch(url);
+      if (!response.ok) {
+          throw new Error(`Failed to fetch blob. Status: ${response.status}`);
+      }
+      const blob = await response.blob();
+      return blob;
+  } catch (error) {
+      console.error(`Error fetching blob from URL: ${url}`, error);
+      throw error;
+  }
 }

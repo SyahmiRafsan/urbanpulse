@@ -38,9 +38,15 @@ export default function RecommendationForm({
   } = useRecommendationStore();
   const { user } = useAuth();
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+  const isDraft = searchParams.get("draft");
+
   const [isLoading, setIsLoading] = useState(false);
+
+  // TODO enabled media for draft
   const [oldMedia, setOldMedia] = useState<Media[]>(
-    initialRecommendation ? initialRecommendation.media : []
+    isDraft ? [] : initialRecommendation ? initialRecommendation.media : []
   );
 
   const [recommendation, setRecommendation] = useState<Recommendation>(
@@ -51,6 +57,7 @@ export default function RecommendationForm({
           highlights: initialRecommendation.highlights.map(
             (hl) => capitalizeWords(hl.replace(/_/g, " ")) // Replace `_` with space
           ),
+          media: isDraft ? [] : initialRecommendation.media,
         }
       : {
           id: uuidv4(),
@@ -72,9 +79,6 @@ export default function RecommendationForm({
           userId: user?.id || "",
         }
   );
-
-  const searchParams = useSearchParams();
-  const isDraft = searchParams.get("draft");
 
   useEffect(() => {
     if (selectedStop) {
@@ -269,7 +273,6 @@ export default function RecommendationForm({
       alert(`${error}`);
       setIsLoading(false);
     }
-   
   };
 
   function handleCancel() {
@@ -386,19 +389,19 @@ export default function RecommendationForm({
 
         {recommendation.media.length > 0 && (
           <div className="flex flex-row gap-4 overflow-x-auto px-4 pb-4">
-            {recommendation.media.map((file) => (
+            {recommendation.media.map((media) => (
               <div
-                key={file.id}
+                key={media.id}
                 className="relative flex-shrink-0 animate-in slide-in-from-top-4 transition-all"
               >
                 <img
-                  src={file.url}
+                  src={media.url}
                   className="rounded-lg w-[200px] h-[133px] aspect-video object-cover shadow-sm"
                 />
                 <Button
                   variant={"outline"}
                   type="button"
-                  onClick={() => removeFile(file.id)}
+                  onClick={() => removeFile(media.id)}
                   className="absolute top-2 right-2 rounded-full"
                   size={"icon"}
                 >
