@@ -11,7 +11,7 @@ import { cache } from "react";
 import { PgTransaction } from "drizzle-orm/pg-core";
 import { PostgresJsQueryResultHKT } from "drizzle-orm/postgres-js";
 import * as schema from "@/db/schema";
-import { arraysEqualUploadFile } from "./lib/utils";
+import { arraysEqualUploadFile, getArrayDifferences } from "./lib/utils";
 
 export const getUser = cache(async () => {
   const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null;
@@ -131,11 +131,12 @@ export async function updateRecommendation(
         ),
     };
 
-    const oldMedia = await extractMediaFiles(formData, "media_");
+    const mediaDeleted = JSON.parse(rawFormData.mediaDeleted as string);
+    const mediaAdded = JSON.parse(rawFormData.mediaAdded as string);
+    const newMedia = await extractMediaFiles(formData, "media_");
+    const oldMedia = await extractMediaFiles(formData, "old_media_");
 
-    const newMedia = await extractMediaFiles(formData, "old_media_");
-
-    const mediaUpdated = !arraysEqualUploadFile(oldMedia, newMedia);
+    // const mediaUpdated = !arraysEqualUploadFile(oldMedia, newMedia);
 
     const updatedRecommendation: Recommendation = await db.transaction(
       async (tx: MyTransaction) => {
@@ -152,36 +153,60 @@ export async function updateRecommendation(
 
         // console.log({ oldMedia, newMedia });
 
-        if (mediaUpdated) {
-          console.log("Media updated: ", mediaUpdated);
+        // console.log({
+        //   mediaAdded: mediaAdded.length,
+        //   mediaDeleted: mediaDeleted.length,
+        // });
 
-          await deleteMediaTableWithR2(
+        // console.log({
+        //   mediaAdded: mediaAdded,
+        //   mediaDeleted: mediaDeleted,
+        // });
+
+        if (mediaDeleted) {
+          const deletedUrls = await deleteMediaTableWithR2(
             tx,
-            oldMedia.map((med) => {
+            mediaDeleted.map((del: Media) => {
               return {
-                id: med.id,
-                url: med.url as string,
+                id: del.id,
+                url: del.url as string,
               };
             }),
             recommendationId,
             user.id
           );
 
-          const uploadedMediaWithRecommendationId = await uploadMedia(
-            formData,
-            rawFormData.id as string,
-            user.id,
-            "RECOMMENDATION"
+          // console.log({ deletedUrls });
+        }
+
+        if (mediaAdded.length > 0) {
+          const appendedNewMedia = getArrayDifferences(
+            oldMedia,
+            newMedia
+          ).added;
+
+          // console.log({ oldMedia, newMedia, appendedNewMedia });
+
+          const uploadedMedia = await uploadToR2(
+            appendedNewMedia as unknown as UploadedFile[]
           );
 
           const addMediaTx = await tx
             .insert(mediaTable)
-            .values(uploadedMediaWithRecommendationId)
+            .values(
+              uploadedMedia.map((media) => {
+                return {
+                  ...media,
+                  mediaId: recommendationId,
+                  userId: user.id,
+                  mediaType: "RECOMMENDATION" as MediaType,
+                };
+              })
+            )
             .returning();
 
           return {
             ...txUpdated,
-            media: addMediaTx,
             stop: {
               id: stop.id || "",
               stopId: stop.stopId || "",
@@ -192,7 +217,6 @@ export async function updateRecommendation(
 
         return {
           ...txUpdated,
-          media: oldMedia,
           stop: {
             id: stop.id || "",
             stopId: stop.stopId || "",
@@ -258,9 +282,21 @@ async function deleteMediaTableWithR2(
 ) {
   const deletedUrls = await deleteFromR2(mediaArray);
 
-  tx.delete(mediaTable).where(
-    and(eq(mediaTable.mediaId, mediaId), eq(mediaTable.userId, userId))
-  );
+  const deleteTxs = mediaArray.map(async (media) => {
+    await tx
+      .delete(mediaTable)
+      .where(
+        and(
+          eq(mediaTable.mediaId, mediaId),
+          eq(mediaTable.id, media.id),
+          eq(mediaTable.userId, userId)
+        )
+      );
+  });
+
+  const urls = await Promise.all(deleteTxs);
+
+  return deletedUrls;
 }
 
 async function uploadMedia(
@@ -277,9 +313,9 @@ async function uploadMedia(
   // console.log({ uploadedMedia });
 
   const uploadedMediaWithRecommendationId: Media[] = uploadedMedia.map(
-    (rec) => {
+    (media) => {
       return {
-        ...rec,
+        ...media,
         mediaId,
         userId,
         mediaType: mediaType as MediaType,

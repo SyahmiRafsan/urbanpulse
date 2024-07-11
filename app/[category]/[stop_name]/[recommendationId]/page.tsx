@@ -88,8 +88,13 @@ export default async function RecommendationPage({
                 />
                 <p className="font-medium">{recommendation.user.name}</p>
                 <p className="text-muted-foreground text-sm">
-                  • {getRelativeTime(recommendation.updatedAt)}
+                  • {getRelativeTime(recommendation.createdAt)}
                 </p>
+                {/* {recommendation.createdAt !== recommendation.updatedAt && (
+                  <p className="text-muted-foreground text-sm">
+                    ({getRelativeTime(recommendation.updatedAt)})
+                  </p>
+                )} */}
               </div>
               <div className="flex flex-col gap-2 px-4">
                 <p className="font-bold text-lg">{recommendation.title}</p>
@@ -108,7 +113,7 @@ export default async function RecommendationPage({
                     <img
                       src={media.url}
                       key={media.id}
-                      className="rounded-lg max-h-[200px]"
+                      className="rounded-lg w-[200px] h-[133px] aspect-video object-cover shadow-sm"
                     />
                   ))}
                 </div>

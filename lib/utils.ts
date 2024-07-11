@@ -179,21 +179,15 @@ export function arraysEqualUploadFile(
 
 // Helper function to get the difference between two arrays
 export function getArrayDifferences(
-  oldArray: UploadedFile[],
-  newArray: UploadedFile[]
-): { added: UploadedFile[]; deleted: UploadedFile[] } {
+  oldArray: { id: string }[],
+  newArray: { id: string }[]
+): { added: { id: string }[]; deleted: { id: string }[] } {
   const added = newArray.filter(
-    (newItem) =>
-      !oldArray.some(
-        (oldItem) => oldItem.id === newItem.id && oldItem.key === newItem.key
-      )
+    (newItem) => !oldArray.some((oldItem) => oldItem.id === newItem.id)
   );
 
   const deleted = oldArray.filter(
-    (oldItem) =>
-      !newArray.some(
-        (newItem) => newItem.id === oldItem.id && newItem.key === oldItem.key
-      )
+    (oldItem) => !newArray.some((newItem) => newItem.id === oldItem.id)
   );
 
   return { added, deleted };

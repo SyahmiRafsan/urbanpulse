@@ -15,7 +15,7 @@ import { DateTime } from "luxon";
 import { createRecommendation, updateRecommendation } from "@/actions";
 import { useAuth } from "@/hooks/AuthContext";
 import DeletePostButton from "./DeletePostButton";
-import { capitalizeWords } from "@/lib/utils";
+import { capitalizeWords, getArrayDifferences } from "@/lib/utils";
 import { useRecommendationStore } from "@/stores/RecommendationStore";
 import slugify from "slugify";
 
@@ -42,6 +42,7 @@ export default function RecommendationForm({
     initialRecommendation
       ? {
           ...initialRecommendation,
+
           stopId: initialRecommendation.stop.stopId || "",
           highlights: initialRecommendation.highlights.map(
             (hl) => capitalizeWords(hl.replace(/_/g, " ")) // Replace `_` with space
@@ -168,6 +169,14 @@ export default function RecommendationForm({
       }
     });
 
+    const { added, deleted } = getArrayDifferences(
+      oldMedia,
+      recommendation.media
+    );
+
+    formData.append("mediaDeleted", JSON.stringify(deleted));
+    formData.append("mediaAdded", JSON.stringify(added));
+
     // Append highlights
     formData.append("highlights", recommendation.highlights.join(","));
 
@@ -193,13 +202,17 @@ export default function RecommendationForm({
 
       setRecommendations(
         recommendations.map((rc) =>
-          rc.id == recommendation.id ? updatedRecommendation : rc
+          rc.id == recommendation.id
+            ? { ...updatedRecommendation, media: recommendation.media }
+            : rc
         )
       );
 
       setRecommendationsUser(
         recommendationsUser.map((rc) =>
-          rc.id == recommendation.id ? updatedRecommendation : rc
+          rc.id == recommendation.id
+            ? { ...updatedRecommendation, media: recommendation.media }
+            : rc
         )
       );
     }
@@ -213,6 +226,8 @@ export default function RecommendationForm({
         }
       )}-${recommendation.stopId}/${recommendation.id}`
     );
+
+    router.refresh();
 
     setSelectedStop(null);
   };
@@ -329,19 +344,6 @@ export default function RecommendationForm({
           />
         </div>
 
-        <pre className="max-h-[200px] overflow-auto">
-          {JSON.stringify(recommendation, null, 2)}
-        </pre>
-        <pre className="max-h-[200px] overflow-auto">
-          {JSON.stringify(oldMedia !== recommendation.media)}{" "}
-        </pre>
-        <pre className="max-h-[200px] overflow-auto">
-          {JSON.stringify(oldMedia, null, 2)}
-        </pre>
-        <pre className="max-h-[200px] overflow-auto">
-          {JSON.stringify(recommendation.media, null, 2)}
-        </pre>
-
         {recommendation.media.length > 0 && (
           <div className="flex flex-row gap-4 overflow-x-auto px-4 pb-4">
             {recommendation.media.map((file) => (
@@ -351,7 +353,7 @@ export default function RecommendationForm({
               >
                 <img
                   src={file.url}
-                  className="rounded-lg w-full h-[200px] shadow-sm"
+                  className="rounded-lg w-[200px] h-[133px] aspect-video object-cover shadow-sm"
                 />
                 <Button
                   variant={"outline"}
