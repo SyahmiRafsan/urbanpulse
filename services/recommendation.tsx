@@ -13,10 +13,12 @@ export async function getRecommendations() {
   return recommendations;
 }
 // TODO getRecommendation single with id & userId
+// TODO get userUpvoted
 export async function getRecommendationsByUserId(userId: string) {
   const recommendations = await db.query.recommendationTable.findMany({
     where: eq(recommendationTable.userId, userId),
     with: { stop: true, media: true },
+    
   });
 
   // console.log(recommendations);
@@ -34,7 +36,7 @@ export async function getRecommendation(id: string) {
       comments: true,
       media: true,
       user: { columns: { id: true, name: true, image: true } },
-      upvotes: { where: eq(recommendationUpvotesTable.recommendationId, id) },
+      // upvotes: { where: eq(recommendationUpvotesTable.recommendationId, id) },
     },
     where: eq(recommendationTable.id, id),
   });

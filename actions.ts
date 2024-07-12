@@ -317,7 +317,7 @@ export async function upvoteRecommendation(
   }
 }
 
-export async function removeUpvote(recommendationId: string) {
+export async function removeUpvoteRecommendation(recommendationId: string) {
   const user = await getUser();
 
   if (user) {

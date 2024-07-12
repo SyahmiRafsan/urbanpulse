@@ -1,7 +1,8 @@
 "use client";
 
-import { removeUpvote, upvoteRecommendation } from "@/actions";
+import { removeUpvoteRecommendation, upvoteRecommendation } from "@/actions";
 import { cn } from "@/lib/utils";
+import { useRecommendationStore } from "@/stores/RecommendationStore";
 import React, { useEffect, useState } from "react";
 
 interface UpvoteButtonProps
@@ -14,8 +15,17 @@ function UpvoteButton({
   className,
   ...props
 }: UpvoteButtonProps) {
-  const [voted, setVoted] = useState(recommendation.userUpvoted);
-  const [voteCount, setVoteCount] = useState(recommendation.upvotesCount);
+  const { isInUpvotes, addUpvote, removeUpvote, upvotes } =
+    useRecommendationStore();
+  const hasUpvoted = isInUpvotes(recommendation.id);
+  const [voted, setVoted] = useState(
+    hasUpvoted ? hasUpvoted : recommendation.userUpvoted
+  );
+  const [voteCount, setVoteCount] = useState(
+    upvotes[recommendation.id]
+      ? upvotes[recommendation.id]
+      : recommendation.upvotesCount
+  );
   const [isLoading, setIsLoading] = useState(false);
 
   async function submitVote(count: number) {
@@ -24,14 +34,16 @@ function UpvoteButton({
     setVoteCount(count + 1);
     setVoted(true);
     setIsLoading(false);
+    addUpvote(recommendation.id, voteCount + 1);
   }
 
   async function removeVote(count: number) {
     setIsLoading(true);
-    const vote = await removeUpvote(recommendation.id);
+    const vote = await removeUpvoteRecommendation(recommendation.id);
     setVoteCount(count - 1);
     setVoted(false);
     setIsLoading(false);
+    removeUpvote(recommendation.id);
   }
 
   const [isClient, setIsClient] = useState(false);
@@ -55,7 +67,7 @@ function UpvoteButton({
           )}
           disabled={isLoading}
           onClick={
-            recommendation.userUpvoted == null
+            voted == null
               ? () => null
               : voted
               ? () => removeVote(voteCount)
