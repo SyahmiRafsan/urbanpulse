@@ -51,6 +51,7 @@ export default function ProfilePage() {
     }
     if (!hasFetchedUser && user) {
       getRecs(user.id);
+      setUserName(user.name);
     }
   }, [hasFetched]);
 

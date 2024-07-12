@@ -6,11 +6,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "./ui/button";
 
@@ -29,8 +25,11 @@ export default function ImageDialog() {
             cannot undo this action.
           </DialogDescription>
         </DialogHeader> */}
-        <img src={image?.url} className="w-full h-fit rounded-lg border" />
-        <DialogFooter className="mt-4 gap-4 flex hidden">
+        <img
+          src={image?.url}
+          className="w-full h-auto max-h-[80svh] rounded-lg border"
+        />
+        <DialogFooter className="mt-4 gap-4">
           <DialogClose asChild>
             <Button
               type="button"
