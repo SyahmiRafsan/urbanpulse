@@ -1,17 +1,9 @@
-import Nav from "@/components/Nav";
 import { Button } from "@/components/ui/button";
-import {
-  ChatBubbleIcon,
-  Pencil1Icon,
-  PlusIcon,
-  Share2Icon,
-  TrashIcon,
-} from "@radix-ui/react-icons";
+import { ChatBubbleIcon, Pencil1Icon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import React from "react";
 import slugify from "slugify";
 import { Badge } from "@/components/ui/badge";
-import CommentCard from "@/components/CommentCard";
 import {
   capitalizeWords,
   checkUUID,
@@ -26,7 +18,6 @@ import DeletePostButton from "@/components/DeletePostButton";
 import { getUser } from "@/actions";
 import UpvoteButton from "@/components/UpvoteButton";
 import ShareButton from "@/components/ShareButton";
-import CommentInput from "@/components/CommentInput";
 import MainCommentCard from "@/components/MainCommentCard";
 import RecommendationImage from "@/components/RecommendationImage";
 
@@ -139,7 +130,7 @@ export default async function RecommendationPage({
                   ))}
                 </div>
               )}
-              <div className="flex flex-row gap-4 justify-between px-4 pt-4">
+              <div className="flex flex-row gap-4 justify-between px-4">
                 {user && recommendation.userId && user.id && (
                   <Link href={`/recommendation/${recommendation.id}`}>
                     <Button variant={"link"} size={"none"}>

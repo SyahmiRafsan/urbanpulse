@@ -1,5 +1,6 @@
 "use client";
 
+import { updateUserInfo } from "@/actions";
 import BackButton from "@/components/BackButton";
 import DraftsButton from "@/components/DraftsButton";
 import Nav from "@/components/Nav";
@@ -17,11 +18,12 @@ import {
   Pencil1Icon,
   PlusIcon,
   TrashIcon,
+  UpdateIcon,
 } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 export default function ProfilePage() {
   const pathname = usePathname();
@@ -29,8 +31,9 @@ export default function ProfilePage() {
   const isEditing = searchParams.get("editing");
 
   const router = useRouter();
-  const { user, hasFetched, loggedIn, logout } = useAuth();
-
+  const { user, setName, hasFetched, loggedIn, logout } = useAuth();
+  const [userName, setUserName] = useState(user?.name);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     if (hasFetched && !loggedIn) {
       router.push("/login");
@@ -50,6 +53,17 @@ export default function ProfilePage() {
       getRecs(user.id);
     }
   }, [hasFetched]);
+
+  async function handleUpdate() {
+    setIsLoading(true);
+    if (userName) {
+      const update = await updateUserInfo(userName);
+
+      setName(userName);
+      router.push(`${pathname}`);
+    }
+    setIsLoading(false);
+  }
 
   return (
     <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24 min-h-[100svh]">
@@ -92,7 +106,12 @@ export default function ProfilePage() {
                   <div className="flex flex-col max-w-[400px] items-center w-full gap-4">
                     <div className="w-full">
                       <Label htmlFor="name">Name</Label>
-                      <Input id="name" name="name" value={user?.name} />
+                      <Input
+                        id="name"
+                        name="name"
+                        value={userName}
+                        onChange={(e) => setUserName(e.target.value)}
+                      />
                     </div>
                     <div className="w-full">
                       <Label htmlFor="email">Email</Label>
@@ -116,7 +135,16 @@ export default function ProfilePage() {
                   </div>
                 ) : (
                   <div className="w-full p-4 fixed max-w-[400px] md:static md:p-0 md:pt-4 bottom-0 animate-in slide-in-from-bottom-4 flex justify-end">
-                    <Button className="w-full md:w-fit">Save</Button>
+                    <Button
+                      className="w-full md:w-fit"
+                      onClick={() => handleUpdate()}
+                      disabled={isLoading}
+                    >
+                      {isLoading && (
+                        <UpdateIcon className="animate-spin mr-1" />
+                      )}{" "}
+                      Save
+                    </Button>
                   </div>
                 )}
               </div>

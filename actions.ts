@@ -577,6 +577,21 @@ export async function fetchRecommendationsWithUpvoteStatus(
   );
 }
 
+export async function updateUserInfo(name: string) {
+  const user = await getUser();
+
+  if (user) {
+    const updatedUser = await db
+      .update(userTable)
+      .set({ name: name })
+      .where(eq(userTable.id, user.id));
+
+    return updatedUser;
+  } else {
+    throw Error("User is not logged in");
+  }
+}
+
 // Custom Drizzle transaction type
 type MyTransaction = PgTransaction<
   PostgresJsQueryResultHKT,

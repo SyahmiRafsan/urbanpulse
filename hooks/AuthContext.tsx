@@ -13,6 +13,7 @@ import LoginCard from "@/components/LoginCard";
 import { useRouter } from "next/navigation";
 
 interface AuthContextType {
+  setName: (name: string) => void;
   user: DatabaseUserAttributes | null;
   loggedIn: boolean;
   isLoading: boolean;
@@ -90,9 +91,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     router.push("/auth/login");
   }
 
+  function setName(name: string) {
+    setUser((user) => {
+      if (user === null) {
+        // If user is null, you might want to handle this case differently.
+        return null;
+      }
+      return { ...user, name };
+    });
+  }
   return (
     <AuthContext.Provider
       value={{
+        setName,
         user,
         loggedIn,
         isLoading,
