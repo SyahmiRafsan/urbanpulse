@@ -25,6 +25,7 @@ import { notFound } from "next/navigation";
 import DeletePostButton from "@/components/DeletePostButton";
 import { getUser } from "@/actions";
 import UpvoteButton from "@/components/UpvoteButton";
+import ShareButton from "@/components/ShareButton";
 
 export default async function RecommendationPage({
   params,
@@ -55,9 +56,7 @@ export default async function RecommendationPage({
             <button className="flex flex-row items-center justify-center gap-2 w-full p-4 md:px-6 border-x">
               <ChatBubbleIcon /> {recommendation.commentsCount}
             </button>
-            <button className="flex flex-row items-center justify-center w-full p-4 md:px-6">
-              <Share2Icon />
-            </button>
+            <ShareButton recommendation={recommendation}/>
           </div>
         </div>
         <div className="flex flex-col gap-4">
@@ -119,7 +118,9 @@ export default async function RecommendationPage({
               </div>
               <div className="flex flex-col gap-2 px-4">
                 <p className="font-bold text-lg">{recommendation.title}</p>
-                <p className="">{recommendation.description}</p>
+                <p className="whitespace-break-spaces">
+                  {recommendation.description}
+                </p>
               </div>
               <div className="flex flex-row gap-1 flex-wrap px-4">
                 {recommendation.highlights.map((h) => (

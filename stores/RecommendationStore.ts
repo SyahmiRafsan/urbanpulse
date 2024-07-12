@@ -27,7 +27,7 @@ export const useRecommendationStore = create<RecommendationState>(
     recommendations: [],
     setRecommendations: (recommendations, hasFetched) =>
       set({
-        recommendations: recommendations.filter((rec) => rec.userUpvoted), // Only include recommendations where userUpvoted is true
+        recommendations: recommendations,
         hasFetched: hasFetched !== undefined ? hasFetched : true,
         upvotes: recommendations
           .filter((rec) => rec.userUpvoted) // Map only recommendations where userUpvoted is true
@@ -42,9 +42,7 @@ export const useRecommendationStore = create<RecommendationState>(
     recommendationsUser: [],
     setRecommendationsUser: (recommendationsUser, hasFetchedUser) =>
       set({
-        recommendationsUser: recommendationsUser.filter(
-          (rec) => rec.userUpvoted
-        ), // Only include recommendations where userUpvoted is true
+        recommendationsUser: recommendationsUser,
         hasFetchedUser: hasFetchedUser !== undefined ? hasFetchedUser : true,
         upvotes: recommendationsUser
           .filter((rec) => rec.userUpvoted) // Map only recommendations where userUpvoted is true
