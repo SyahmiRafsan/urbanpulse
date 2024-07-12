@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Button } from "./ui/button";
-import { TrashIcon } from "@radix-ui/react-icons";
+import { TrashIcon, UpdateIcon } from "@radix-ui/react-icons";
 import {
   Dialog,
   DialogClose,
@@ -39,8 +39,10 @@ export default function DeletePostButton({
 
   const router = useRouter();
   const { user } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
   async function handleDelete() {
+    setIsLoading(true);
     if (isDraft) {
       removeDraft(recommendation);
       router.replace("/recommendation/drafts");
@@ -58,6 +60,7 @@ export default function DeletePostButton({
     }
 
     setOpen(false);
+    setIsLoading(false);
   }
 
   return (
@@ -88,7 +91,9 @@ export default function DeletePostButton({
                 type="button"
                 variant={"destructive"}
                 onClick={() => handleDelete()}
+                disabled={isLoading}
               >
+                {isLoading && <UpdateIcon className="animate-spin mr-1" />}{" "}
                 Delete
               </Button>
             </DialogFooter>
