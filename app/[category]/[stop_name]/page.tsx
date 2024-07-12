@@ -74,9 +74,11 @@ export default async function StopPage({
               {/* End CTA */}
               {/* Start Feed */}
               <div className="bg-card border-t pt-4">
-                <h2 className="text-lg font-semibold px-4">Community Feed</h2>
-                <div className="px-4 my-2">
-                  <FeedSort />
+                <div className="flex flex-wrap gap-4 justify-between items-center">
+                  <h2 className="text-lg font-semibold px-4">Community Feed</h2>
+                  <div className="px-4 my-2">
+                    <FeedSort />
+                  </div>
                 </div>
                 <StopFeed />
               </div>

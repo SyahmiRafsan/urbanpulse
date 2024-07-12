@@ -10,6 +10,7 @@ import { fetchRecommendationsWithUpvoteStatus } from "@/actions";
 import { useLocationStore } from "@/stores/LocationStore";
 import FeedSort from "@/components/FeedSort";
 import { useAuth } from "@/hooks/AuthContext";
+import Logo from "@/components/Logo";
 
 export default function Home() {
   const { setRecommendations, recommendations, hasFetched, sortType } =
@@ -53,10 +54,15 @@ export default function Home() {
         <Nav />
         <div className="flex flex-col gap-4 pt-4">
           {/* Start Top */}
-          <h1 className="text-lg font-semibold px-4">Community Feed</h1>
-          <div className="flex flex-row gap-4 justify-between px-4">
-            <FeedSort />
+          <div className="flex flex-wrap gap-4 justify-between items-center px-4">
+            <Logo />
             <LocationButton />
+          </div>
+          <div className="flex flex-wrap gap-4 justify-between items-center">
+            <h1 className="text-lg font-semibold px-4">Community Feed</h1>
+            <div className="flex flex-row gap-4 justify-between px-4">
+              <FeedSort />
+            </div>
           </div>
           <div className="flex flex-row gap-2 items-center overflow-x-auto sticky top-0 bg-card">
             <div className="px-4 py-2">

@@ -1,6 +1,7 @@
 "use client";
 
 import BackButton from "@/components/BackButton";
+import Nav from "@/components/Nav";
 import RecommendationCard from "@/components/RecommendationCard";
 import { Button } from "@/components/ui/button";
 import { useDraftStore } from "@/stores/DraftStore";
@@ -16,6 +17,7 @@ export default function CreateRecommendationPage() {
   return (
     <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24 min-h-[100svh]">
       <div className="max-w-[700px] border-x w-full bg-background gap-4">
+      <Nav />
         <div className="flex flex-col gap-4 pt-4">
           {/* Start Top */}
           <div className="items-start flex-col flex bg-card px-4">

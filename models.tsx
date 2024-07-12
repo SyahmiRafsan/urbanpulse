@@ -15,6 +15,7 @@ interface Recommendation {
   userId: string;
   userUpvoted?: boolean | null;
   user?: DatabaseUserAttributes;
+  comments?: RecommendationComment[];
 }
 
 interface Media {
@@ -26,6 +27,16 @@ interface Media {
   file?: File;
   mediaType: MediaType;
   mimeType: string;
+}
+
+interface RecommendationComment {
+  id: string;
+  recommendationId: string;
+  content: string;
+  createdAt: Date;
+  userId: string;
+  media: Media[];
+  user?: DatabaseUserAttributes;
 }
 
 type MediaType = "RECOMMENDATION" | "COMMENT";

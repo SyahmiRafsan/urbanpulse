@@ -1,31 +1,49 @@
+import { useAuth } from "@/hooks/AuthContext";
+import { getRelativeTime } from "@/lib/utils";
+import { TrashIcon } from "@radix-ui/react-icons";
 import React from "react";
 
-export default function CommentCard() {
+export default function CommentCard({
+  comment,
+  deleteComment,
+}: {
+  comment: RecommendationComment;
+  deleteComment: (comment: RecommendationComment) => void;
+}) {
+  const { user } = useAuth();
+
   return (
-    <div className="bg-card border-b py-4 flex flex-col gap-4">
-      <div className="flex flex-row gap-2 items-center px-4">
-        <img
-          src="https://ui-avatars.com/api/?name=Syahmi+Rafsan"
-          className="rounded-full w-5 h-5"
-        />
-        <p className="font-medium">SyahmiRafsan</p>
-        <p className="text-muted-foreground text-sm">• 4h</p>
-      </div>
-      <div className="flex flex-col gap-2 px-4">
-        <p className="">
-          Please add ramps to help wheel-chaired people like my grandma.
-        </p>
-      </div>
-      <div className="flex flex-row gap-4 overflow-x-auto px-4">
-        {[1, 2, 3].map((img) => (
-          <img
-            src={
-              "https://upload.wikimedia.org/wikipedia/commons/2/2d/Bus_Stop_on_Vauxhall_Bridge_Road_-_geograph.org.uk_-_598333.jpg"
-            }
-            key={img}
-            className="rounded-lg max-h-[100px]"
-          />
-        ))}
+    <div className="bg-card border-t py-4 pl-4 flex flex-row gap-2">
+      <img src={comment.user?.image} className="rounded-full w-5 h-5" />
+
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-row gap-2 items-center pr-4">
+          <p className="font-medium">{comment.user?.name}</p>
+          <p className="text-muted-foreground text-sm">
+            • {getRelativeTime(comment.createdAt)}
+          </p>
+        </div>
+        <div className="flex flex-col gap-2 pr-4">
+          <p className="whitespace-break-spaces">{comment.content}</p>
+        </div>
+        {comment.media.length > 0 && (
+          <div className="flex flex-row gap-4 overflow-x-auto px-4">
+            {comment.media.map((img) => (
+              <img
+                src={img.url}
+                key={img.id}
+                className="rounded-lg w-[100px] h-[66px] aspect-video object-cover shadow-sm"
+              />
+            ))}
+          </div>
+        )}
+        {user && user.id && comment.userId && (
+          <div className="">
+            <button onClick={() => deleteComment(comment)}>
+              <TrashIcon className="text-red-600" />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

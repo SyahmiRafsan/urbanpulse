@@ -26,6 +26,8 @@ import DeletePostButton from "@/components/DeletePostButton";
 import { getUser } from "@/actions";
 import UpvoteButton from "@/components/UpvoteButton";
 import ShareButton from "@/components/ShareButton";
+import CommentInput from "@/components/CommentInput";
+import MainCommentCard from "@/components/MainCommentCard";
 
 export default async function RecommendationPage({
   params,
@@ -49,14 +51,14 @@ export default async function RecommendationPage({
         {/* <Nav /> */}
         <div className="fixed w-full md:w-fit flex flex-row bottom-0 sm:bottom-4 left-0 justify-center m-auto inset-x-0 z-50 items-center animate-in slide-in-from-bottom-full">
           <div className="sm:max-w-fit /max-w-[700px] sm:rounded-md flex flex-row justify-between sm:justify-center w-full bg-white drop-shadow-2xl border-t sm:border">
+            <ShareButton recommendation={recommendation} />
+            <button className="flex flex-row items-center justify-center gap-2 w-full p-4 md:px-6 border-x">
+              <ChatBubbleIcon /> {recommendation.commentsCount}
+            </button>
             <UpvoteButton
               recommendation={recommendation}
               className="w-full p-4 md:px-6 justify-center"
             />
-            <button className="flex flex-row items-center justify-center gap-2 w-full p-4 md:px-6 border-x">
-              <ChatBubbleIcon /> {recommendation.commentsCount}
-            </button>
-            <ShareButton recommendation={recommendation}/>
           </div>
         </div>
         <div className="flex flex-col gap-4">
@@ -155,30 +157,10 @@ export default async function RecommendationPage({
           )}
           {/* End Recommendation */}
           {/* Start Comments */}
-          <div className="bg-card border-y py-4">
-            <h2 className="text-sm font-semibold px-4">
-              Comments ({recommendation?.commentsCount})
-            </h2>
-            {recommendation?.commentsCount ||
-              (0 > 0 && (
-                <div>
-                  <CommentCard />
-                  <CommentCard />
-                  <CommentCard />
-                </div>
-              ))}
-          </div>
+          <MainCommentCard recommendation={recommendation} />
           {/* End Comments */}
           {/* Start CTA */}
-          <div className="bg-card p-4 py-6 border-y flex flex-col gap-4 items-center">
-            <p className="font-medium">
-              Share your thoughts on this recommendation
-            </p>
-            <Button>
-              <PlusIcon className="mr-1" />
-              Add Comment
-            </Button>
-          </div>
+
           {/* End CTA */}
         </div>
       </div>
