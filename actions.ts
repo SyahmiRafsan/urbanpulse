@@ -387,7 +387,7 @@ export async function fetchRecommendationsWithUpvoteStatus(
         url: mediaTable.url,
         userId: mediaTable.userId,
         createdAt: mediaTable.createdAt,
-        mediaId: mediaTable.recommendationId,
+        recommendationId: mediaTable.recommendationId,
 
         mimeType: mediaTable.mimeType,
       },
@@ -533,7 +533,7 @@ export async function fetchRecommendationsWithUpvoteStatus(
           url: rec.media.url,
           userId: rec.media.userId,
           createdAt: rec.media.createdAt,
-          mediaId: rec.media.mediaId,
+          recommendationId: rec.media.recommendationId,
           mimeType: rec.media.mimeType,
         });
       }
@@ -558,7 +558,7 @@ export async function fetchRecommendationsWithUpvoteStatus(
         userId: string;
         createdAt: Date;
         url: string;
-        mediaId: string;
+        recommendationId: string;
         file?: File;
 
         mimeType: string;
