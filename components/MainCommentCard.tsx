@@ -17,7 +17,7 @@ export default function MainCommentCard({
     setComments((prev) => [comment, ...prev]);
   }
 
-  function deleteComment(comment: RecommendationComment) {
+  function removeComment(comment: RecommendationComment) {
     setComments((prev) => prev.filter((cmt) => cmt.id !== comment.id));
   }
 
@@ -38,7 +38,7 @@ export default function MainCommentCard({
             <CommentCard
               key={cmt.id}
               comment={cmt}
-              deleteComment={deleteComment}
+              removeComment={removeComment}
             />
           ))}
       </div>

@@ -23,11 +23,21 @@ interface Media {
   userId: string;
   createdAt: Date;
   url: string;
-  mediaId: string;
+  recommendationId: string;
   file?: File;
-  mediaType: MediaType;
   mimeType: string;
 }
+
+interface MediaComment {
+  id: string;
+  userId: string;
+  createdAt: Date;
+  url: string;
+  commentId: string;
+  file?: File;
+  mimeType: string;
+}
+
 
 interface RecommendationComment {
   id: string;
@@ -35,7 +45,7 @@ interface RecommendationComment {
   content: string;
   createdAt: Date;
   userId: string;
-  media: Media[];
+  media: MediaComment[];
   user?: DatabaseUserAttributes;
 }
 

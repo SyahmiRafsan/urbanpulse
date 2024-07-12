@@ -2,14 +2,14 @@ import { create } from "zustand";
 
 interface ImageState {
   isOpen: boolean;
-  image: Media | null;
-  setImage: (image: Media) => void;
+  image: Media | MediaComment | null;
+  setImage: (image: Media | MediaComment) => void;
   clearImage: () => void;
 }
 
 export const useImageStore = create<ImageState>((set) => ({
   isOpen: false,
   image: null,
-  setImage: (image: Media) => set({ image, isOpen: true }),
+  setImage: (image: Media | MediaComment) => set({ image, isOpen: true }),
   clearImage: () => set({ image: null, isOpen: false }),
 }));

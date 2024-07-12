@@ -12,6 +12,7 @@ import {
   stopTable,
   commentTable,
   userTable,
+  mediaCommentTable,
 } from "@/db/schema";
 import { and, desc, eq, ExtractTablesWithRelations, sql } from "drizzle-orm";
 import { cache } from "react";
@@ -87,8 +88,7 @@ export async function createRecommendation(
         const uploadedMediaWithRecommendationId = await uploadMedia(
           formData,
           rawFormData.id as string,
-          user.id,
-          "RECOMMENDATION"
+          user.id
         );
 
         console.log({ uploadedMediaWithRecommendationId });
@@ -216,9 +216,8 @@ export async function updateRecommendation(
               uploadedMedia.map((media) => {
                 return {
                   ...media,
-                  mediaId: recommendationId,
+                  recommendationId: recommendationId,
                   userId: user.id,
-                  mediaType: "RECOMMENDATION" as MediaType,
                 };
               })
             )
@@ -254,7 +253,7 @@ export async function deleteRecommendation(recommendation: Recommendation) {
   if (user) {
     const deletedRecommendation = await db.transaction(
       async (tx: MyTransaction) => {
-        const txDeletedRec = tx
+        const [txDeletedRec] = await tx
           .delete(recommendationTable)
           .where(
             and(
@@ -266,7 +265,7 @@ export async function deleteRecommendation(recommendation: Recommendation) {
 
         // Use the refactored deleteMediaTableWithR2 function within the transaction
         if (recommendation.media) {
-          await deleteMediaTableWithR2(
+          const media = await deleteMediaTableWithR2(
             tx,
             recommendation.media.map((med) => {
               return {
@@ -388,14 +387,17 @@ export async function fetchRecommendationsWithUpvoteStatus(
         url: mediaTable.url,
         userId: mediaTable.userId,
         createdAt: mediaTable.createdAt,
-        mediaId: mediaTable.mediaId,
-        mediaType: mediaTable.mediaType,
+        mediaId: mediaTable.recommendationId,
+
         mimeType: mediaTable.mimeType,
       },
     })
     .from(recommendationTable)
     .leftJoin(stopTable, eq(stopTable.id, recommendationTable.stopId))
-    .leftJoin(mediaTable, eq(mediaTable.mediaId, recommendationTable.id)); // Join the media table
+    .leftJoin(
+      mediaTable,
+      eq(mediaTable.recommendationId, recommendationTable.id)
+    ); // Join the media table
 
   let userQuery;
   // Conditionally add the recommendationUpvotesTable join and groupBy if userId is provided
@@ -416,8 +418,7 @@ export async function fetchRecommendationsWithUpvoteStatus(
         stopTable.updatedAt,
         recommendationTable.userId,
         mediaTable.id, // Group by media table fields
-        mediaTable.url,
-        mediaTable.mediaType
+        mediaTable.url
       );
   } else {
     userQuery = baseQuery.groupBy(
@@ -430,8 +431,7 @@ export async function fetchRecommendationsWithUpvoteStatus(
       stopTable.category,
       stopTable.updatedAt,
       mediaTable.id, // Group by media table fields
-      mediaTable.url,
-      mediaTable.mediaType
+      mediaTable.url
     );
   }
 
@@ -534,7 +534,6 @@ export async function fetchRecommendationsWithUpvoteStatus(
           userId: rec.media.userId,
           createdAt: rec.media.createdAt,
           mediaId: rec.media.mediaId,
-          mediaType: rec.media.mediaType,
           mimeType: rec.media.mimeType,
         });
       }
@@ -561,7 +560,7 @@ export async function fetchRecommendationsWithUpvoteStatus(
         url: string;
         mediaId: string;
         file?: File;
-        mediaType: MediaType;
+
         mimeType: string;
       }[];
       stop: {
@@ -575,6 +574,107 @@ export async function fetchRecommendationsWithUpvoteStatus(
       };
     }>
   );
+}
+
+export async function createComment(
+  formData: FormData
+): Promise<RecommendationComment> {
+  const rawFormData = Object.fromEntries(formData);
+  // console.log(rawFormData);
+
+  const stop = await getStop(String(rawFormData.stopId));
+
+  const user = await getUser();
+
+  if (user && stop) {
+    const formObj = {
+      id: rawFormData.id as string,
+      content: rawFormData.content as string,
+      userId: user.id,
+      recommendationId: rawFormData.recommendationId as string,
+    };
+
+    const addComment = await db.transaction(async (tx) => {
+      const [addCommentTx] = await tx
+        .insert(commentTable)
+        .values([formObj])
+        .returning();
+
+      console.log({ addCommentTx });
+
+      const mediaFiles = await extractMediaFiles(formData, "media_");
+
+      if (mediaFiles.length > 0) {
+        const uploadedMediaWithCommentId = await uploadMediaComment(
+          formData,
+          rawFormData.id as string,
+          user.id
+        );
+
+        console.log({ uploadedMediaWithCommentId });
+
+        const addMediaTx = await tx
+          .insert(mediaCommentTable)
+          .values(uploadedMediaWithCommentId)
+          .returning();
+
+        console.log({ addMediaTx });
+
+        const recommendationWithMedia = {
+          ...addCommentTx,
+          media: uploadedMediaWithCommentId,
+        };
+
+        // console.log({recommendationWithMedia})
+
+        return recommendationWithMedia;
+      } else {
+        return { ...addCommentTx, media: [] };
+      }
+    });
+    return addComment;
+  } else throw Error("Unauthorised user");
+}
+
+export async function deleteComment(comment: RecommendationComment) {
+  const user = await getUser();
+
+  if (user) {
+    const deletedComment = await db.transaction(
+      async (tx: MyTransaction) => {
+        const [txDeletedComment] = await tx
+          .delete(commentTable)
+          .where(
+            and(
+              eq(commentTable.id, comment.id),
+              eq(commentTable.userId, user.id)
+            )
+          )
+          .returning();
+
+        // Use the refactored deleteMediaTableWithR2 function within the transaction
+        if (comment.media) {
+        const media=  await deleteMediaCommentTableWithR2(
+            tx,
+            comment.media.map((med) => {
+              return {
+                id: med.id,
+                url: med.url,
+              };
+            }),
+            comment.id,
+            user.id
+          );
+        }
+
+        return txDeletedComment;
+      }
+    );
+
+    return deletedComment;
+  } else {
+    throw new Error("Unauthorized user");
+  }
 }
 
 export async function updateUserInfo(name: string) {
@@ -602,7 +702,7 @@ type MyTransaction = PgTransaction<
 async function deleteMediaTableWithR2(
   tx: MyTransaction,
   mediaArray: { id: string; url: string }[],
-  mediaId: string,
+  recommendationId: string,
   userId: string
 ) {
   const deletedUrls = await deleteFromR2(mediaArray);
@@ -612,7 +712,7 @@ async function deleteMediaTableWithR2(
       .delete(mediaTable)
       .where(
         and(
-          eq(mediaTable.mediaId, mediaId),
+          eq(mediaTable.recommendationId, recommendationId),
           eq(mediaTable.id, media.id),
           eq(mediaTable.userId, userId)
         )
@@ -624,11 +724,35 @@ async function deleteMediaTableWithR2(
   return deletedUrls;
 }
 
+async function deleteMediaCommentTableWithR2(
+  tx: MyTransaction,
+  mediaArray: { id: string; url: string }[],
+  commentId: string,
+  userId: string
+) {
+  const deletedUrls = await deleteFromR2(mediaArray);
+
+  const deleteTxs = mediaArray.map(async (media) => {
+    await tx
+      .delete(mediaCommentTable)
+      .where(
+        and(
+          eq(mediaCommentTable.commentId, commentId),
+          eq(mediaCommentTable.id, media.id),
+          eq(mediaCommentTable.userId, userId)
+        )
+      );
+  });
+
+  const urls = await Promise.all(deleteTxs);
+
+  return deletedUrls;
+}
+
 async function uploadMedia(
   formData: FormData,
-  mediaId: string,
-  userId: string,
-  mediaType: MediaType
+  recommendationId: string,
+  userId: string
 ) {
   const mediaFiles = await extractMediaFiles(formData, "media_");
 
@@ -641,14 +765,38 @@ async function uploadMedia(
     (media) => {
       return {
         ...media,
-        mediaId,
+        recommendationId,
         userId,
-        mediaType: mediaType as MediaType,
       };
     }
   );
 
   return uploadedMediaWithRecommendationId;
+}
+
+async function uploadMediaComment(
+  formData: FormData,
+  commentId: string,
+  userId: string
+) {
+  const mediaFiles = await extractMediaFiles(formData, "media_");
+
+  // Upload media files to R2
+  const uploadedMedia = await uploadToR2(mediaFiles);
+
+  // console.log({ uploadedMedia });
+
+  const uploadedMediaWithCommentId: MediaComment[] = uploadedMedia.map(
+    (media) => {
+      return {
+        ...media,
+        commentId,
+        userId,
+      };
+    }
+  );
+
+  return uploadedMediaWithCommentId;
 }
 
 async function extractMediaFiles(formData: FormData, splitter: string) {

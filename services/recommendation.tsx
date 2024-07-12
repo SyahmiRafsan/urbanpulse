@@ -18,7 +18,6 @@ export async function getRecommendationsByUserId(userId: string) {
   const recommendations = await db.query.recommendationTable.findMany({
     where: eq(recommendationTable.userId, userId),
     with: { stop: true, media: true },
-    
   });
 
   // console.log(recommendations);
@@ -33,7 +32,7 @@ export async function getRecommendation(id: string) {
   const recommendation = await db.query.recommendationTable.findFirst({
     with: {
       stop: true,
-      comments: true,
+      comments: { with: { media: true, user: true } },
       media: true,
       user: { columns: { id: true, name: true, image: true } },
       // upvotes: { where: eq(recommendationUpvotesTable.recommendationId, id) },
@@ -45,7 +44,7 @@ export async function getRecommendation(id: string) {
 
   const userUpvoted = user ? await hasUserUpvoted(id, user.id) : null;
 
-  // console.log({ user, userUpvoted });
+  console.log({ recommendation });
 
   return { ...recommendation, userUpvoted } as Recommendation;
 }

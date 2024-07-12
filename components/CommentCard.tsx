@@ -1,18 +1,26 @@
+import { deleteComment } from "@/actions";
 import { useAuth } from "@/hooks/AuthContext";
 import { getRelativeTime } from "@/lib/utils";
 import { useImageStore } from "@/stores/ImageStore";
 import { TrashIcon } from "@radix-ui/react-icons";
 import React from "react";
+import DeleteCommentButton from "./DeleteCommentButton";
 
 export default function CommentCard({
   comment,
-  deleteComment,
+  removeComment,
 }: {
   comment: RecommendationComment;
-  deleteComment: (comment: RecommendationComment) => void;
+  removeComment: (comment: RecommendationComment) => void;
 }) {
   const { user } = useAuth();
   const { setImage } = useImageStore();
+
+  async function handleDelete(comment: RecommendationComment) {
+    const deletedComment = await deleteComment(comment);
+    removeComment({ ...deletedComment, media: [] });
+  }
+
   return (
     <div className="bg-card border-t py-4 pl-4 flex flex-row gap-2">
       <img src={comment.user?.image} className="rounded-full w-5 h-5" />
@@ -27,7 +35,7 @@ export default function CommentCard({
         <div className="flex flex-col gap-2 pr-4">
           <p className="whitespace-break-spaces">{comment.content}</p>
         </div>
-        {comment.media.length > 0 && (
+        {comment?.media && comment?.media?.length > 0 && (
           <div className="flex flex-row gap-4 overflow-x-auto pR-4">
             {comment.media.map((media) => (
               <img
@@ -41,9 +49,7 @@ export default function CommentCard({
         )}
         {user && user.id && comment.userId && (
           <div className="">
-            <button onClick={() => deleteComment(comment)}>
-              <TrashIcon className="text-red-600" />
-            </button>
+            <DeleteCommentButton handleDelete={() => handleDelete(comment)} />
           </div>
         )}
       </div>

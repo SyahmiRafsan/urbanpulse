@@ -92,7 +92,7 @@ export const commentTable = pgTable("comment", {
   id: uuid("id").defaultRandom().primaryKey(),
   recommendationId: uuid("recommendation_id")
     .notNull()
-    .references(() => stopTable.id, { onDelete: "cascade" }),
+    .references(() => recommendationTable.id, { onDelete: "cascade" }),
   content: text("content").notNull(),
   createdAt: timestamp("created_at", {
     withTimezone: true,
@@ -110,12 +110,11 @@ export const mediaTable = pgTable("media", {
   id: uuid("id").defaultRandom().primaryKey(),
   url: text("url").notNull(),
   mimeType: text("mime_type").notNull(),
-  mediaId: uuid("media_id")
+  recommendationId: uuid("recommendation_id")
     .notNull()
     .references(() => recommendationTable.id, {
       onDelete: "cascade",
     }),
-  mediaType: mediaTypeEnum("media_type").notNull(),
   createdAt: timestamp("created_at", {
     withTimezone: true,
     mode: "date",
@@ -125,6 +124,25 @@ export const mediaTable = pgTable("media", {
   userId: uuid("user_id")
     .notNull()
     .references(() => userTable.id, { onDelete: "cascade" }),
+});
+
+// Media Comment Table
+export const mediaCommentTable = pgTable("media_comment", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  url: text("url").notNull(),
+  mimeType: text("mime_type").notNull(),
+  createdAt: timestamp("created_at", {
+    withTimezone: true,
+    mode: "date",
+  })
+    .defaultNow()
+    .notNull(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => userTable.id, { onDelete: "cascade" }),
+  commentId: uuid("comment_id")
+    .notNull()
+    .references(() => commentTable.id, { onDelete: "cascade" }), // Specific to comments
 });
 
 // Stop table
@@ -215,7 +233,7 @@ export const RecommendationRelations = relations(
 );
 
 // Define the relationships for the comment table
-export const CommentRelations = relations(commentTable, ({ one }) => ({
+export const CommentRelations = relations(commentTable, ({ one, many }) => ({
   user: one(userTable, {
     fields: [commentTable.userId],
     references: [userTable.id],
@@ -224,6 +242,7 @@ export const CommentRelations = relations(commentTable, ({ one }) => ({
     fields: [commentTable.recommendationId],
     references: [recommendationTable.id],
   }),
+  media: many(mediaCommentTable),
 }));
 
 // Define the relationships for the media table
@@ -233,10 +252,24 @@ export const MediaRelations = relations(mediaTable, ({ one }) => ({
     references: [userTable.id],
   }),
   recommendation: one(recommendationTable, {
-    fields: [mediaTable.mediaId],
+    fields: [mediaTable.recommendationId],
     references: [recommendationTable.id],
   }),
 }));
+
+export const MediaCommentRelations = relations(
+  mediaCommentTable,
+  ({ one }) => ({
+    user: one(userTable, {
+      fields: [mediaCommentTable.userId],
+      references: [userTable.id],
+    }),
+    comment: one(commentTable, {
+      fields: [mediaCommentTable.commentId],
+      references: [commentTable.id],
+    }),
+  })
+);
 
 // Define the relationships for the stop table
 export const StopRelations = relations(stopTable, ({ many }) => ({

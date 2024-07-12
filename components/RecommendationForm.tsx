@@ -122,9 +122,8 @@ export default function RecommendationForm({
           id: uuidv4(),
           file: file,
           url: URL.createObjectURL(file),
-          mediaId: recommendation.id,
+          recommendationId: recommendation.id,
           createdAt: DateTime.now().toJSDate(),
-          mediaType: "RECOMMENDATION" as MediaType,
           userId: user.id,
           mimeType: file.type,
         };

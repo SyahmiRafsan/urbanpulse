@@ -2,12 +2,19 @@
 
 import React, { useState } from "react";
 import { Textarea } from "./ui/textarea";
-import { Cross1Icon, ImageIcon, PaperPlaneIcon } from "@radix-ui/react-icons";
+import {
+  Cross1Icon,
+  ImageIcon,
+  PaperPlaneIcon,
+  UpdateIcon,
+} from "@radix-ui/react-icons";
 import { useAuth } from "@/hooks/AuthContext";
 import { v4 as uuidv4 } from "uuid";
 import { DateTime } from "luxon";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import { createComment } from "@/actions";
+import { getBlobFromUrl } from "@/lib/utils";
 
 export default function CommentInput({
   recommendationId,
@@ -17,7 +24,7 @@ export default function CommentInput({
   addComment: (comment: RecommendationComment) => void;
 }) {
   const { user, loginCheck } = useAuth();
-
+  const [isLoading, setIsLoading] = useState(false);
   const commentConfig: RecommendationComment = {
     id: uuidv4(),
     userId: user?.id || "",
@@ -40,9 +47,8 @@ export default function CommentInput({
           id: uuidv4(),
           file: file,
           url: URL.createObjectURL(file),
-          mediaId: comment.id,
+          commentId: comment.id,
           createdAt: DateTime.now().toJSDate(),
-          mediaType: "COMMENT" as MediaType,
           userId: user.id,
           mimeType: file.type,
         };
@@ -72,10 +78,49 @@ export default function CommentInput({
     user: DatabaseUserAttributes
   ) {
     e.preventDefault();
+    setIsLoading(true);
     if (loginCheck()) {
       //   alert(comment);
+
+      const formData = new FormData();
+
+      // Append form fields
+      Object.entries(comment).forEach(([key, value]) => {
+        if (key !== "media" && key !== "highlights") {
+          formData.append(key, value as string);
+        }
+      });
+
+      // Append media files
+      const mediaPromises = comment.media.map(async (media) => {
+        if (media.file) {
+          if (media.url.startsWith("blob:")) {
+            const blob = await getBlobFromUrl(media.url);
+            formData.append(
+              `media_${media.id}`,
+              blob,
+              `${media.id}.${media.mimeType.split("/")[1]}`
+            );
+          } else {
+            formData.append(
+              `media_${media.id}`,
+              media.file,
+              `${media.id}.${media.mimeType.split("image/")[1]}`
+            );
+          }
+        }
+      });
+
+      await Promise.all([...mediaPromises]);
+
+      // console.log(formData);
+
+      const addedComment = await createComment(formData);
+
+      // console.log(addedComment);
+
       addComment({
-        ...comment,
+        ...addedComment,
         userId: user.id,
         user: {
           id: user.id,
@@ -84,8 +129,11 @@ export default function CommentInput({
           email: "",
         },
       });
+
       setComment(commentConfig);
     }
+
+    setIsLoading(false);
   }
 
   return (
@@ -124,8 +172,8 @@ export default function CommentInput({
               />
             </button>
 
-            <button type="submit">
-              <PaperPlaneIcon />
+            <button type="submit" disabled={isLoading}>
+              {!isLoading ? <PaperPlaneIcon /> : <UpdateIcon className="animate-spin" />}
             </button>
           </div>
           <div>
