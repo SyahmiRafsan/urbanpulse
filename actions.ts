@@ -10,6 +10,8 @@ import {
   recommendationTable,
   recommendationUpvotesTable,
   stopTable,
+  commentTable,
+  userTable,
 } from "@/db/schema";
 import { and, desc, eq, ExtractTablesWithRelations, sql } from "drizzle-orm";
 import { cache } from "react";
@@ -263,17 +265,20 @@ export async function deleteRecommendation(recommendation: Recommendation) {
           .returning();
 
         // Use the refactored deleteMediaTableWithR2 function within the transaction
-        await deleteMediaTableWithR2(
-          tx,
-          recommendation.media.map((med) => {
-            return {
-              id: med.id,
-              url: med.url,
-            };
-          }),
-          recommendation.id,
-          user.id
-        );
+        if (recommendation.media) {
+          await deleteMediaTableWithR2(
+            tx,
+            recommendation.media.map((med) => {
+              return {
+                id: med.id,
+                url: med.url,
+              };
+            }),
+            recommendation.id,
+            user.id
+          );
+        }
+
         return txDeletedRec;
       }
     );
@@ -285,29 +290,58 @@ export async function deleteRecommendation(recommendation: Recommendation) {
 }
 
 export async function upvoteRecommendation(
-  userId: string,
   recommendationId: string
 ): Promise<void> {
-  const upvote = await db.transaction(async (tx) => {
-    // Insert into the recommendationUpvotesTable
-    const [upvotedUser] = await tx
-      .insert(schema.recommendationUpvotesTable)
-      .values({
-        userId,
-        recommendationId,
-        upvotedAt: new Date(),
-      });
+  const user = await getUser();
 
-    // Increment the upvotesCount in the recommendationTable
-    await tx
-      .update(recommendationTable)
-      .set({ upvotesCount: sql.raw(`upvotes_count + 1`) })
-      .where(eq(recommendationTable.id, recommendationId));
+  if (user) {
+    const upvote = await db.transaction(async (tx) => {
+      // Insert into the recommendationUpvotesTable
+      const [upvotedUser] = await tx
+        .insert(schema.recommendationUpvotesTable)
+        .values({
+          userId: user.id,
+          recommendationId,
+          upvotedAt: new Date(),
+        });
 
-    return upvotedUser;
-  });
+      // Increment the upvotesCount in the recommendationTable
+      await tx
+        .update(recommendationTable)
+        .set({ upvotesCount: sql.raw(`upvotes_count + 1`) })
+        .where(eq(recommendationTable.id, recommendationId));
 
-  return upvote;
+      return upvotedUser;
+    });
+    return upvote;
+  }
+}
+
+export async function removeUpvote(recommendationId: string) {
+  const user = await getUser();
+
+  if (user) {
+    const removed = await db.transaction(async (tx) => {
+      // Delete from the recommendationUpvotesTable
+      const [removedVoteUser] = await tx
+        .delete(recommendationUpvotesTable)
+        .where(
+          and(
+            eq(recommendationUpvotesTable.userId, user.id),
+            eq(recommendationUpvotesTable.recommendationId, recommendationId)
+          )
+        );
+
+      // Decrement the upvotesCount in the recommendationTable
+      await tx
+        .update(recommendationTable)
+        .set({ upvotesCount: sql.raw(`upvotes_count - 1`) })
+        .where(eq(recommendationTable.id, recommendationId));
+
+      return removedVoteUser;
+    });
+    return removed;
+  }
 }
 
 export async function fetchRecommendationsWithUpvoteStatus(
@@ -427,16 +461,24 @@ export async function fetchRecommendationsWithUpvoteStatus(
             )
           )
         )
-      `
+      `,
+        desc(recommendationTable.upvotesCount),
+        desc(recommendationTable.createdAt)
       );
       break;
 
     case "latest":
-      sortedQuery = userQuery.orderBy(desc(recommendationTable.createdAt));
+      sortedQuery = userQuery.orderBy(
+        desc(recommendationTable.createdAt),
+        desc(recommendationTable.upvotesCount)
+      );
       break;
 
     case "most_upvoted":
-      sortedQuery = userQuery.orderBy(desc(recommendationTable.upvotesCount));
+      sortedQuery = userQuery.orderBy(
+        desc(recommendationTable.upvotesCount),
+        desc(recommendationTable.createdAt)
+      );
       break;
 
     default:

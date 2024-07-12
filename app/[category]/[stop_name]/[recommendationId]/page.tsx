@@ -1,6 +1,12 @@
 import Nav from "@/components/Nav";
 import { Button } from "@/components/ui/button";
-import { Pencil1Icon, PlusIcon, TrashIcon } from "@radix-ui/react-icons";
+import {
+  ChatBubbleIcon,
+  Pencil1Icon,
+  PlusIcon,
+  Share2Icon,
+  TrashIcon,
+} from "@radix-ui/react-icons";
 import Link from "next/link";
 import React from "react";
 import slugify from "slugify";
@@ -18,6 +24,7 @@ import { getRecommendation } from "@/services/recommendation";
 import { notFound } from "next/navigation";
 import DeletePostButton from "@/components/DeletePostButton";
 import { getUser } from "@/actions";
+import UpvoteButton from "@/components/UpvoteButton";
 
 export default async function RecommendationPage({
   params,
@@ -38,7 +45,21 @@ export default async function RecommendationPage({
   return (
     <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24">
       <div className="max-w-[700px] border-x border-b w-full min-h-[100svh] bg-background gap-4 bg-neutral-50">
-        <Nav />
+        {/* <Nav /> */}
+        <div className="fixed w-full md:w-fit flex flex-row bottom-0 sm:bottom-4 left-0 justify-center m-auto inset-x-0 z-50 items-center animate-in slide-in-from-bottom-full">
+          <div className="sm:max-w-fit /max-w-[700px] sm:rounded-md flex flex-row justify-between sm:justify-center w-full bg-white drop-shadow-2xl border-t sm:border">
+            <UpvoteButton
+              recommendation={recommendation}
+              className="w-full p-4 md:px-6 justify-center"
+            />
+            <button className="flex flex-row items-center justify-center gap-2 w-full p-4 md:px-6 border-x">
+              <ChatBubbleIcon /> {recommendation.commentsCount}
+            </button>
+            <button className="flex flex-row items-center justify-center w-full p-4 md:px-6">
+              <Share2Icon />
+            </button>
+          </div>
+        </div>
         <div className="flex flex-col gap-4">
           {/* Start Recommendation */}
           {recommendation && (
@@ -83,10 +104,10 @@ export default async function RecommendationPage({
               <div className="flex flex-row gap-2 items-center px-4">
                 <img
                   // src="https://ui-avatars.com/api/?name=Syahmi+Rafsan"
-                  src={recommendation.user.image}
+                  src={recommendation?.user?.image}
                   className="rounded-full w-5 h-5"
                 />
-                <p className="font-medium">{recommendation.user.name}</p>
+                <p className="font-medium">{recommendation?.user?.name}</p>
                 <p className="text-muted-foreground text-sm">
                   • {getRelativeTime(recommendation.createdAt)}
                 </p>
@@ -134,7 +155,7 @@ export default async function RecommendationPage({
           {/* End Recommendation */}
           {/* Start Comments */}
           <div className="bg-card border-y py-4">
-            <h2 className="text-lg font-semibold px-4">
+            <h2 className="text-sm font-semibold px-4">
               Comments ({recommendation?.commentsCount})
             </h2>
             {recommendation?.commentsCount ||

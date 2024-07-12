@@ -9,6 +9,7 @@ import RecommendationSkeleton from "@/components/RecommendationSkeleton";
 import { fetchRecommendationsWithUpvoteStatus } from "@/actions";
 import { useLocationStore } from "@/stores/LocationStore";
 import FeedSort from "@/components/FeedSort";
+import { useAuth } from "@/hooks/AuthContext";
 
 export default function Home() {
   const { setRecommendations, recommendations, hasFetched, sortType } =
@@ -17,9 +18,12 @@ export default function Home() {
   const [filteredRecommendations, setFilteredRecommendations] =
     useState<Recommendation[]>(recommendations);
 
+  const { user, hasFetched: authHasFetched } = useAuth();
+
   const { coordinates } = useLocationStore();
   async function getRecs(type: SortType) {
     const list: Recommendation[] = await fetchRecommendationsWithUpvoteStatus({
+      userId: user?.id,
       sortType: sortType,
       userLat: coordinates.lat,
       userLon: coordinates.lon,
@@ -34,12 +38,14 @@ export default function Home() {
 
   useEffect(() => {
     // TODO fetch and filter after that
-    if (!hasFetched) {
-      getRecs("nearby");
-    } else {
-      getRecs(sortType);
+    if (authHasFetched) {
+      if (!hasFetched) {
+        getRecs("nearby");
+      } else {
+        getRecs(sortType);
+      }
     }
-  }, [sortType]);
+  }, [sortType, authHasFetched]);
 
   return (
     <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24 min-h-[100svh]">

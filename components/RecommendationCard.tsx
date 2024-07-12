@@ -1,6 +1,6 @@
 import React from "react";
 import { Badge } from "./ui/badge";
-import { ChatBubbleIcon, ThickArrowUpIcon } from "@radix-ui/react-icons";
+import { ChatBubbleIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import slugify from "slugify";
 import {
@@ -10,6 +10,7 @@ import {
   getRelativeTime,
 } from "@/lib/utils";
 import { DateTime } from "luxon";
+import UpvoteButton from "./UpvoteButton";
 
 export default function RecommendationCard({
   recommendation,
@@ -98,9 +99,7 @@ export default function RecommendationCard({
             >
               <ChatBubbleIcon /> <p>{recommendation.commentsCount}</p>
             </Link>
-            <div className="flex flex-row items-center gap-1">
-              <ThickArrowUpIcon /> <p>{recommendation.upvotesCount}</p>
-            </div>
+            <UpvoteButton recommendation={recommendation} />
           </div>
         )}
       </div>

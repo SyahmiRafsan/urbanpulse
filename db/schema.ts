@@ -185,6 +185,17 @@ export const SessionRelations = relations(sessionTable, ({ one }) => ({
   }),
 }));
 
+// Define the relationships for the recommendation upvotes table
+export const RecommendationUpvotesTableRelations = relations(
+  recommendationUpvotesTable,
+  ({ one, many }) => ({
+    recommendation: one(recommendationTable, {
+      fields: [recommendationUpvotesTable.recommendationId],
+      references: [recommendationTable.id],
+    }),
+  })
+);
+
 // Define the relationships for the recommendation table
 export const RecommendationRelations = relations(
   recommendationTable,

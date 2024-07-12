@@ -7,6 +7,7 @@ import { getRecommendations } from "@/services/recommendation";
 import RecommendationSkeleton from "./RecommendationSkeleton";
 import { useLocationStore } from "@/stores/LocationStore";
 import { fetchRecommendationsWithUpvoteStatus } from "@/actions";
+import { useAuth } from "@/hooks/AuthContext";
 
 export default function StopFeed() {
   const { setRecommendations, recommendations, hasFetched, sortType } =
@@ -15,9 +16,12 @@ export default function StopFeed() {
   const [filteredRecommendations, setFilteredRecommendations] =
     useState<Recommendation[]>(recommendations);
 
+  const { user, hasFetched: authHasFetched } = useAuth();
+
   const { coordinates } = useLocationStore();
   async function getRecs(type: SortType) {
     const list: Recommendation[] = await fetchRecommendationsWithUpvoteStatus({
+      userId: user?.id,
       sortType: sortType,
       userLat: coordinates.lat,
       userLon: coordinates.lon,
@@ -32,12 +36,14 @@ export default function StopFeed() {
 
   useEffect(() => {
     // TODO fetch and filter after that
-    if (!hasFetched) {
-      getRecs("nearby");
-    } else {
-      getRecs(sortType);
+    if (authHasFetched) {
+      if (!hasFetched) {
+        getRecs("nearby");
+      } else {
+        getRecs(sortType);
+      }
     }
-  }, [sortType]);
+  }, [sortType, authHasFetched]);
 
   return (
     <div>

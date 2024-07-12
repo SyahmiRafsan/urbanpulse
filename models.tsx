@@ -11,7 +11,10 @@ interface Recommendation {
   highlights: string[];
   media: Media[];
   createdAt: Date;
+  updatedAt?: Date;
   userId: string;
+  userUpvoted?: boolean | null;
+  user?: DatabaseUserAttributes;
 }
 
 interface Media {
