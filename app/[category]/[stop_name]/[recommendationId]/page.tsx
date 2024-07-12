@@ -28,6 +28,7 @@ import UpvoteButton from "@/components/UpvoteButton";
 import ShareButton from "@/components/ShareButton";
 import CommentInput from "@/components/CommentInput";
 import MainCommentCard from "@/components/MainCommentCard";
+import RecommendationImage from "@/components/RecommendationImage";
 
 export default async function RecommendationPage({
   params,
@@ -134,11 +135,7 @@ export default async function RecommendationPage({
               {recommendation.media.length > 0 && (
                 <div className="flex flex-row gap-4 overflow-x-auto px-4">
                   {recommendation.media.map((media) => (
-                    <img
-                      src={media.url}
-                      key={media.id}
-                      className="rounded-lg w-[200px] h-[133px] aspect-video object-cover shadow-sm"
-                    />
+                    <RecommendationImage media={media} key={media.id} />
                   ))}
                 </div>
               )}

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/hooks/AuthContext";
+import ImageDialog from "@/components/ImageDialog";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,6 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <AuthProvider>
+        <ImageDialog />
         <body className={inter.className}>{children}</body>
       </AuthProvider>
     </html>

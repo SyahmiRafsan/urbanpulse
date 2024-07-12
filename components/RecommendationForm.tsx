@@ -396,7 +396,7 @@ export default function RecommendationForm({
               >
                 <img
                   src={media.url}
-                  className="rounded-lg w-[200px] h-[133px] aspect-video object-cover shadow-sm"
+                  className="rounded-lg w-[200px] h-[133px] aspect-video object-cover shadow-sm border"
                 />
                 <Button
                   variant={"outline"}

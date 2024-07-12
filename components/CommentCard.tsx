@@ -1,5 +1,6 @@
 import { useAuth } from "@/hooks/AuthContext";
 import { getRelativeTime } from "@/lib/utils";
+import { useImageStore } from "@/stores/ImageStore";
 import { TrashIcon } from "@radix-ui/react-icons";
 import React from "react";
 
@@ -11,7 +12,7 @@ export default function CommentCard({
   deleteComment: (comment: RecommendationComment) => void;
 }) {
   const { user } = useAuth();
-
+  const { setImage } = useImageStore();
   return (
     <div className="bg-card border-t py-4 pl-4 flex flex-row gap-2">
       <img src={comment.user?.image} className="rounded-full w-5 h-5" />
@@ -27,12 +28,13 @@ export default function CommentCard({
           <p className="whitespace-break-spaces">{comment.content}</p>
         </div>
         {comment.media.length > 0 && (
-          <div className="flex flex-row gap-4 overflow-x-auto px-4">
-            {comment.media.map((img) => (
+          <div className="flex flex-row gap-4 overflow-x-auto pR-4">
+            {comment.media.map((media) => (
               <img
-                src={img.url}
-                key={img.id}
-                className="rounded-lg w-[100px] h-[66px] aspect-video object-cover shadow-sm"
+                src={media.url}
+                key={media.id}
+                className="rounded-lg w-[100px] h-[66px] aspect-video object-cover shadow-sm border"
+                onClick={() => setImage(media)}
               />
             ))}
           </div>
