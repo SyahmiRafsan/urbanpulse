@@ -2,9 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import { getIconByStopCategory } from "@/lib/utils";
+import { filterStopsByRadius, getIconByStopCategory } from "@/lib/utils";
 import { useStopSearchStore } from "@/stores/StopSearchStore";
 import { useRecommendationStore } from "@/stores/RecommendationStore";
+import { useLocationStore } from "@/stores/LocationStore";
 
 export default function StopTypes({
   stopsSetter,
@@ -15,9 +16,16 @@ export default function StopTypes({
   recommendationsSetter?: (recommendations: Recommendation[]) => void | null;
   initialList: (Stop | Recommendation)[];
 }) {
-  const { filteredStops, initialStops, setInitialStops } = useStopSearchStore();
+  const {
+    setFilteredStops,
+    filteredStops,
+    initialStops,
+    setInitialStops,
+    stops,
+  } = useStopSearchStore();
   const { sortType } = useRecommendationStore();
 
+  const { coordinates } = useLocationStore();
   // const [initialStops, setInitialStops] = useState(
   //   initialList || []
   // );
@@ -30,10 +38,19 @@ export default function StopTypes({
   ];
 
   useEffect(() => {
-    if (initialStops.length == 0) {
+    // TODO refactor to differentiate setters vs setFilteredStops
+    if (initialStops.length == 0 && coordinates) {
       setInitialStops(filteredStops);
+
+      if (coordinates) {
+        const stopsInRadius = filterStopsByRadius(coordinates, stops, 500);
+        setFilteredStops(stopsInRadius);
+        console.log({ coordinates, sir: stopsInRadius.length });
+        console.log("found coord");
+      }
+      console.log("running");
     }
-  }, [filteredStops]);
+  }, [filteredStops, coordinates]);
 
   const [selectedType, setSelectedType] = useState(["all"]);
 

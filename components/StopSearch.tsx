@@ -23,19 +23,13 @@ export default function StopSearch() {
   const {
     setFilteredStops,
     filteredStops,
-    stops,
+
     setQuery,
     setIsFullscreen,
     setSelectedStop,
   } = useStopSearchStore();
 
   const { coordinates } = useLocationStore();
-
-  useEffect(() => {
-    if (coordinates) {
-      setFilteredStops(filterStopsByRadius(coordinates, stops, 500));
-    }
-  }, [coordinates]);
 
   function handleCardClick(stop: Stop) {
     setQuery(String(stop.stop_name));
