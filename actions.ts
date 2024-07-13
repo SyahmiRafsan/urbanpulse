@@ -20,6 +20,7 @@ import { PgTransaction } from "drizzle-orm/pg-core";
 import { PostgresJsQueryResultHKT } from "drizzle-orm/postgres-js";
 import * as schema from "@/db/schema";
 import { getArrayDifferences } from "./lib/utils";
+import { encrypt } from "./lib/enc";
 
 export const getUser = cache(async () => {
   const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null;
@@ -640,36 +641,31 @@ export async function deleteComment(comment: RecommendationComment) {
   const user = await getUser();
 
   if (user) {
-    const deletedComment = await db.transaction(
-      async (tx: MyTransaction) => {
-        const [txDeletedComment] = await tx
-          .delete(commentTable)
-          .where(
-            and(
-              eq(commentTable.id, comment.id),
-              eq(commentTable.userId, user.id)
-            )
-          )
-          .returning();
+    const deletedComment = await db.transaction(async (tx: MyTransaction) => {
+      const [txDeletedComment] = await tx
+        .delete(commentTable)
+        .where(
+          and(eq(commentTable.id, comment.id), eq(commentTable.userId, user.id))
+        )
+        .returning();
 
-        // Use the refactored deleteMediaTableWithR2 function within the transaction
-        if (comment.media) {
-        const media=  await deleteMediaCommentTableWithR2(
-            tx,
-            comment.media.map((med) => {
-              return {
-                id: med.id,
-                url: med.url,
-              };
-            }),
-            comment.id,
-            user.id
-          );
-        }
-
-        return txDeletedComment;
+      // Use the refactored deleteMediaTableWithR2 function within the transaction
+      if (comment.media) {
+        const media = await deleteMediaCommentTableWithR2(
+          tx,
+          comment.media.map((med) => {
+            return {
+              id: med.id,
+              url: med.url,
+            };
+          }),
+          comment.id,
+          user.id
+        );
       }
-    );
+
+      return txDeletedComment;
+    });
 
     return deletedComment;
   } else {
@@ -683,7 +679,7 @@ export async function updateUserInfo(name: string) {
   if (user) {
     const updatedUser = await db
       .update(userTable)
-      .set({ name: name })
+      .set({ name: encrypt(name) })
       .where(eq(userTable.id, user.id));
 
     return updatedUser;

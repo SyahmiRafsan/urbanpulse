@@ -3,7 +3,7 @@ import db from "@/db/drizzle";
 import { eq, sql } from "drizzle-orm";
 import { recommendationTable, recommendationUpvotesTable } from "@/db/schema";
 import { getUser } from "@/actions";
-import { decrypt, decryptUserFields } from "@/lib/enc";
+import { decryptUserFields } from "@/lib/enc";
 
 export async function getRecommendations() {
   const recommendations = await db.query.recommendationTable.findMany({
