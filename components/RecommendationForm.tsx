@@ -257,7 +257,7 @@ export default function RecommendationForm({
       }
 
       if (result) {
-        router.push(
+        router.replace(
           `/${recommendation.category.toLowerCase()}/${slugify(
             recommendation.stop.stopName,
             { lower: true, strict: true }
@@ -265,7 +265,6 @@ export default function RecommendationForm({
         );
       }
 
-      router.refresh();
       setSelectedStop(null);
     } catch (error) {
       console.error("Error submitting form:", error);

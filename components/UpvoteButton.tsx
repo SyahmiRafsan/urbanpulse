@@ -1,6 +1,7 @@
 "use client";
 
 import { removeUpvoteRecommendation, upvoteRecommendation } from "@/actions";
+import useIsClient from "@/hooks/useIsClient";
 import { cn } from "@/lib/utils";
 import { useRecommendationStore } from "@/stores/RecommendationStore";
 import React, { useEffect, useState } from "react";
@@ -46,13 +47,7 @@ function UpvoteButton({
     removeUpvote(recommendation.id);
   }
 
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    if (!isClient) {
-      setIsClient(true);
-    }
-  }, []);
+  const isClient = useIsClient();
 
   return (
     <>

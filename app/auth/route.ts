@@ -1,11 +1,12 @@
-import { cookies } from "next/headers";
-import { OAuth2RequestError } from "arctic";
 import { google, lucia } from "@/auth";
 import db from "@/db/drizzle";
-import { eq } from "drizzle-orm";
 import { userTable } from "@/db/schema";
-import { encrypt } from "@/lib/enc";
+import { hashEmail, encrypt, decrypt } from "@/lib/enc";
+import { OAuth2RequestError } from "arctic";
+import { eq } from "drizzle-orm";
+import { cookies } from "next/headers";
 
+// Function to fetch Google user profile
 async function fetchGoogleUserProfile(accessToken: string) {
   const response = await fetch(
     "https://www.googleapis.com/oauth2/v1/userinfo?alt=json",
@@ -49,8 +50,11 @@ export async function GET(request: Request): Promise<Response> {
 
     const googleUser = await fetchGoogleUserProfile(tokens.accessToken);
 
+    // Hash the email for user existence check
+    const hashedEmail = hashEmail(googleUser.email);
+
     const existingUser = await db.query.userTable.findFirst({
-      where: eq(userTable.email, String(await encrypt(googleUser.email))),
+      where: eq(userTable.emailHash, hashedEmail),
     });
 
     if (existingUser) {
@@ -70,12 +74,16 @@ export async function GET(request: Request): Promise<Response> {
       });
     }
 
-    // Replace this with your own DB client.
+    // Encrypt the email for storage
+    const encryptedEmail = encrypt(googleUser.email);
+
+    // Insert new user
     const newUser = await db
       .insert(userTable)
       .values([
         {
-          email: encrypt(googleUser.email),
+          email: encryptedEmail, // Store the encrypted email
+          emailHash: hashedEmail, // Store the hashed email for lookups
           name: encrypt(googleUser.name),
           image: encrypt(googleUser.picture),
         },

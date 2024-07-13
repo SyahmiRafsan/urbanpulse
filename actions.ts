@@ -21,6 +21,7 @@ import { PostgresJsQueryResultHKT } from "drizzle-orm/postgres-js";
 import * as schema from "@/db/schema";
 import { getArrayDifferences } from "./lib/utils";
 import { encrypt } from "./lib/enc";
+import { revalidatePath } from "next/cache";
 
 export const getUser = cache(async () => {
   const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null;
@@ -113,6 +114,9 @@ export async function createRecommendation(
         return { ...addRecTx, media: [] };
       }
     });
+
+    revalidatePath("/[category]/[stop_name]/[recommendationId]", "page");
+
     return {
       ...addedRecommendation,
       stop: {
@@ -244,6 +248,9 @@ export async function updateRecommendation(
         } as unknown as Recommendation;
       }
     );
+
+    revalidatePath("/[category]/[stop_name]/[recommendationId]", "page");
+
     return updatedRecommendation;
   } else throw Error("Unauthorised user");
 }
@@ -633,6 +640,9 @@ export async function createComment(
         return { ...addCommentTx, media: [] };
       }
     });
+
+    revalidatePath("/[category]/[stop_name]/[recommendationId]", "page");
+
     return addComment;
   } else throw Error("Unauthorised user");
 }
@@ -667,6 +677,8 @@ export async function deleteComment(comment: RecommendationComment) {
       return txDeletedComment;
     });
 
+    revalidatePath("/[category]/[stop_name]/[recommendationId]", "page");
+   
     return deletedComment;
   } else {
     throw new Error("Unauthorized user");

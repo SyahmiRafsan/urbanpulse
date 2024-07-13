@@ -6,20 +6,13 @@ import { useLocationStore } from "@/stores/LocationStore";
 import { Input } from "./ui/input";
 import { useStopSearchStore } from "@/stores/StopSearchStore";
 import { cn } from "@/lib/utils";
+import useIsClient from "@/hooks/useIsClient";
 
 export default function LocationButton() {
   const [loading, setLoading] = useState(false);
   const { district, setDistrict, setCoordinates, coordinates } =
     useLocationStore();
   const { setInitialStops, setFilteredStops } = useStopSearchStore();
-
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    if (!isClient) {
-      setIsClient(true);
-    }
-  }, []);
 
   const handleClick = async () => {
     try {
@@ -43,6 +36,8 @@ export default function LocationButton() {
   };
 
   const [showCoord, setShowCoord] = useState(false);
+
+  const isClient = useIsClient();
 
   return (
     <>

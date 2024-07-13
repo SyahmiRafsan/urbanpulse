@@ -1,10 +1,12 @@
+"use client";
+
 import { deleteComment } from "@/actions";
 import { useAuth } from "@/hooks/AuthContext";
 import { getRelativeTime } from "@/lib/utils";
 import { useImageStore } from "@/stores/ImageStore";
-import { TrashIcon } from "@radix-ui/react-icons";
 import React from "react";
 import DeleteCommentButton from "./DeleteCommentButton";
+import useIsClient from "@/hooks/useIsClient";
 
 export default function CommentCard({
   comment,
@@ -20,7 +22,7 @@ export default function CommentCard({
     const deletedComment = await deleteComment(comment);
     removeComment({ ...deletedComment, media: [] });
   }
-
+  const isClient = useIsClient();
   return (
     <div className="bg-card border-t py-4 pl-4 flex flex-row gap-2">
       <img src={comment.user?.image} className="rounded-full w-5 h-5" />
@@ -28,9 +30,11 @@ export default function CommentCard({
       <div className="flex flex-col gap-2">
         <div className="flex flex-row gap-2 items-center pr-4">
           <p className="font-medium">{comment.user?.name}</p>
-          <p className="text-muted-foreground text-sm">
-            • {getRelativeTime(comment.createdAt)}
-          </p>
+          {isClient && (
+            <p className="text-muted-foreground text-sm">
+              • {getRelativeTime(comment.createdAt)}
+            </p>
+          )}
         </div>
         <div className="flex flex-col gap-2 pr-4">
           <p className="whitespace-break-spaces">{comment.content}</p>

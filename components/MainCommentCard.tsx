@@ -14,7 +14,7 @@ export default function MainCommentCard({
   );
 
   function addComment(comment: RecommendationComment) {
-    setComments((prev) => [comment, ...prev]);
+    setComments((prev) => [...prev, comment]);
   }
 
   function removeComment(comment: RecommendationComment) {

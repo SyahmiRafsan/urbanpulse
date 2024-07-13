@@ -3,21 +3,30 @@ import {
   createDecipheriv,
   randomBytes,
   scryptSync,
+  createHash,
 } from "crypto";
 
-// Ensure the secret key is stored in an environment variable
+// Ensure the secret key and salt are stored in environment variables
 const secretKey = process.env.ENCRYPTION_SECRET_KEY;
+const salt = process.env.ENCRYPTION_SALT;
 
 if (!secretKey) {
   throw new Error("ENCRYPTION_SECRET_KEY environment variable is not set.");
 }
 
+if (!salt) {
+  throw new Error("ENCRYPTION_SALT environment variable is not set.");
+}
+
+// Convert salt from hex string to Buffer
+const saltBuffer = Buffer.from(salt, "hex");
+
 // Derive a key from the secret
-const key = scryptSync(secretKey, "salt", 32); // 32 bytes for AES-256
+const key = scryptSync(secretKey, saltBuffer, 32); // 32 bytes for AES-256
 
 // Function to encrypt data
 export function encrypt(text: string): string {
-  const iv = randomBytes(16); // Initialization vector
+  const iv = randomBytes(16); // Generate a new random IV for each encryption
   const cipher = createCipheriv("aes-256-ctr", key, iv);
   const encryptedText = Buffer.concat([
     cipher.update(text, "utf8"),
@@ -68,4 +77,11 @@ export function decryptUserFields(
 
   // Return a new user object with decrypted fields, including the ID field
   return decryptedUser as unknown as DatabaseUserAttributes;
+}
+
+// Function to hash data for consistent, unique representation
+export function hashEmail(email: string): string {
+  const hash = createHash("sha256");
+  hash.update(email);
+  return hash.digest("hex");
 }
