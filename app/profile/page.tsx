@@ -66,6 +66,12 @@ export default function ProfilePage() {
     setIsLoading(false);
   }
 
+  const maskEmail = (email: string) => {
+    const [localPart, domain] = email.split("@");
+    const maskedLocalPart = localPart.replace(/./g, "*");
+    return `${maskedLocalPart}@${domain}`;
+  };
+
   return (
     <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24 min-h-[100svh]">
       <div className="max-w-[700px] border-x w-full bg-background gap-4">
@@ -101,7 +107,9 @@ export default function ProfilePage() {
                 {!isEditing ? (
                   <div className="flex flex-col items-center">
                     <h1 className="font-medium text-lg">{user?.name}</h1>
-                    <p className="text-muted-foreground">{user?.email}</p>
+                    <p className="text-muted-foreground">
+                      {maskEmail(user?.email || "")}
+                    </p>
                   </div>
                 ) : (
                   <div className="flex flex-col max-w-[400px] items-center w-full gap-4">
@@ -193,7 +201,7 @@ export default function ProfilePage() {
                         </div>
                       ))
                     ) : (
-                      <div className="p-4 border-b flex sm:flex-row flex-col gap-4 items-center">
+                      <div className="p-4 border-b flex sm:flex-row flex-col gap-4 items-center bg-card">
                         <img src="/artwork/rail.svg" className="max-w-sm" />
                         <div className="flex flex-col gap-4">
                           <p className="font-medium text-center sm:text-left">

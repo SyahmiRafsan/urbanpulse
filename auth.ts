@@ -3,6 +3,7 @@ import { Lucia } from "lucia";
 import { sessionTable, userTable } from "@/db/schema";
 import db from "@/db/drizzle";
 import { Google } from "arctic";
+import { decrypt } from "./lib/enc";
 
 const adapter = new DrizzlePostgreSQLAdapter(db, sessionTable, userTable); // your adapter
 
@@ -19,9 +20,9 @@ export const lucia = new Lucia(adapter, {
   getUserAttributes: (attributes) => {
     return {
       // attributes has the type of DatabaseUserAttributes
-      email: attributes.email,
-      image: attributes.image,
-      name: attributes.name,
+      email: decrypt(attributes.email),
+      image: decrypt(attributes.image),
+      name: decrypt(attributes.name),
     };
   },
 });

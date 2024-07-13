@@ -5,6 +5,7 @@ import { SewingPinFilledIcon, UpdateIcon } from "@radix-ui/react-icons";
 import { useLocationStore } from "@/stores/LocationStore";
 import { Input } from "./ui/input";
 import { useStopSearchStore } from "@/stores/StopSearchStore";
+import { cn } from "@/lib/utils";
 
 export default function LocationButton() {
   const [loading, setLoading] = useState(false);
@@ -61,14 +62,18 @@ export default function LocationButton() {
             className="flex items-center text-sm text-red-600"
           >
             {district ? (
-              <UpdateIcon className="mr-1" />
+              <UpdateIcon
+                className={cn("mr-1 w-3 h-3", loading ? "animate-spin" : "")}
+              />
             ) : (
-              <SewingPinFilledIcon className="w-5 h-5" />
+              <SewingPinFilledIcon className="w-4 h-4" />
             )}
             {!loading ? (
-              <p>{district ? district : "Set My Location"}</p>
+              <p className="font-medium">
+                {district ? district : "Set My Location"}
+              </p>
             ) : (
-              <p>Fetching...</p>
+              <p className="animate-pulse">Fetching...</p>
             )}
           </button>
           {showCoord && (

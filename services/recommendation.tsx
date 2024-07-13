@@ -3,6 +3,7 @@ import db from "@/db/drizzle";
 import { eq, sql } from "drizzle-orm";
 import { recommendationTable, recommendationUpvotesTable } from "@/db/schema";
 import { getUser } from "@/actions";
+import { decrypt, decryptUserFields } from "@/lib/enc";
 
 export async function getRecommendations() {
   const recommendations = await db.query.recommendationTable.findMany({
@@ -32,7 +33,12 @@ export async function getRecommendation(id: string) {
   const recommendation = await db.query.recommendationTable.findFirst({
     with: {
       stop: true,
-      comments: { with: { media: true, user: true } },
+      comments: {
+        with: {
+          media: true,
+          user: { columns: { id: true, name: true, image: true } },
+        },
+      },
       media: true,
       user: { columns: { id: true, name: true, image: true } },
       // upvotes: { where: eq(recommendationUpvotesTable.recommendationId, id) },
@@ -44,9 +50,31 @@ export async function getRecommendation(id: string) {
 
   const userUpvoted = user ? await hasUserUpvoted(id, user.id) : null;
 
-  console.log({ recommendation });
+  // Decrypt the main user fields
+  const decryptedUser = {
+    ...decryptUserFields(recommendation?.user as DatabaseUserAttributes),
+    id: recommendation?.user.id,
+  };
 
-  return { ...recommendation, userUpvoted } as Recommendation;
+  // Decrypt the user fields in comments
+  // Decrypt the user fields in comments
+  const decryptedComments = recommendation?.comments.map((comment) => ({
+    ...comment,
+    user: comment.user
+      ? {
+          ...decryptUserFields(recommendation?.user as DatabaseUserAttributes),
+          id: comment?.user.id,
+        }
+      : null,
+  }));
+
+  const decryptedRecommendation = {
+    ...recommendation,
+    user: decryptedUser,
+    comments: decryptedComments,
+  };
+
+  return { ...decryptedRecommendation, userUpvoted } as Recommendation;
 }
 
 async function hasUserUpvoted(

@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/hooks/AuthContext";
 import ImageDialog from "@/components/ImageDialog";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,6 +30,12 @@ export default function RootLayout({
       <AuthProvider>
         <ImageDialog />
         <body className={inter.className}>{children}</body>
+        {process.env.NODE_ENV == "production" && (
+          <Script
+            src="https://cloud.umami.is/script.js"
+            data-website-id={process.env.UMAMI_WEBSITE_ID}
+          />
+        )}
       </AuthProvider>
     </html>
   );

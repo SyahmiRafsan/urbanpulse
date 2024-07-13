@@ -1,10 +1,10 @@
 import { cookies } from "next/headers";
 import { OAuth2RequestError } from "arctic";
-import { generateIdFromEntropySize } from "lucia";
 import { google, lucia } from "@/auth";
 import db from "@/db/drizzle";
 import { eq } from "drizzle-orm";
 import { userTable } from "@/db/schema";
+import { encrypt } from "@/lib/enc";
 
 async function fetchGoogleUserProfile(accessToken: string) {
   const response = await fetch(
@@ -50,7 +50,7 @@ export async function GET(request: Request): Promise<Response> {
     const googleUser = await fetchGoogleUserProfile(tokens.accessToken);
 
     const existingUser = await db.query.userTable.findFirst({
-      where: eq(userTable.email, String(googleUser.email)),
+      where: eq(userTable.email, String(await encrypt(googleUser.email))),
     });
 
     if (existingUser) {
@@ -75,9 +75,9 @@ export async function GET(request: Request): Promise<Response> {
       .insert(userTable)
       .values([
         {
-          email: googleUser.email,
-          name: googleUser.name,
-          image: googleUser.picture,
+          email: await encrypt(googleUser.email),
+          name: await encrypt(googleUser.name),
+          image: await encrypt(googleUser.picture),
         },
       ])
       .returning();
