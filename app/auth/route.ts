@@ -75,9 +75,9 @@ export async function GET(request: Request): Promise<Response> {
       .insert(userTable)
       .values([
         {
-          email: await encrypt(googleUser.email),
-          name: await encrypt(googleUser.name),
-          image: await encrypt(googleUser.picture),
+          email: encrypt(googleUser.email),
+          name: encrypt(googleUser.name),
+          image: encrypt(googleUser.picture),
         },
       ])
       .returning();
