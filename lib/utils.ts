@@ -147,7 +147,7 @@ export function getRelativeTime(date: Date): string {
 export function getBackendUrl() {
   const url =
     process.env.NODE_ENV === "production"
-      ? "https://urbanpulse-asia.vercel.app"
+      ? "https://urbanpulse.asia"
       : "http://localhost:5420";
   return url;
 }

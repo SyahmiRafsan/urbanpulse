@@ -15,7 +15,7 @@ export async function GET(): Promise<Response> {
 
   const url =
     process.env.NODE_ENV === "production"
-      ? "https://urbanpulse-asia.vercel.app/"
+      ? "https://urbanpulse.asia/"
       : "http://localhost:5420/";
   return Response.redirect(url);
 }

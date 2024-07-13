@@ -28,7 +28,7 @@ export const lucia = new Lucia(adapter, {
 
 export const redirectURI = `${
   process.env.NODE_ENV === "production"
-    ? "https://urbanpulse-asia.vercel.app"
+    ? "https://urbanpulse.asia"
     : "http://localhost:5420"
 }/auth/`;
 
