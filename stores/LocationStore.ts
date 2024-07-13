@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 interface LocationState {
-  coordinates: { lat: number; lon: number };
+  coordinates: Coordinate;
   district: string | null;
   setCoordinates: (lat: number, lon: number) => void;
   setDistrict: (district: string) => void;

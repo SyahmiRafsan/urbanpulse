@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import { SewingPinFilledIcon, UpdateIcon } from "@radix-ui/react-icons";
 import { useLocationStore } from "@/stores/LocationStore";
 import { Input } from "./ui/input";
+import { useStopSearchStore } from "@/stores/StopSearchStore";
 
 export default function LocationButton() {
   const [loading, setLoading] = useState(false);
   const { district, setDistrict, setCoordinates, coordinates } =
     useLocationStore();
+  const { setInitialStops, setFilteredStops } = useStopSearchStore();
 
   const [isClient, setIsClient] = useState(false);
 
@@ -24,8 +26,9 @@ export default function LocationButton() {
 
       const position = await getCurrentPosition();
       const { latitude, longitude } = position.coords;
-
       setCoordinates(latitude, longitude);
+      setInitialStops([]);
+      setFilteredStops([]);
 
       const district = await fetchDistrict(latitude, longitude);
       setDistrict(district);
@@ -33,6 +36,7 @@ export default function LocationButton() {
       console.error("Error fetching location:", error);
       setLoading(false);
     } finally {
+      console.log("Done setting user's location");
       setLoading(false);
     }
   };
@@ -62,7 +66,7 @@ export default function LocationButton() {
               <SewingPinFilledIcon className="w-5 h-5" />
             )}
             {!loading ? (
-              <p>{district ? district : "Get My Location"}</p>
+              <p>{district ? district : "Set My Location"}</p>
             ) : (
               <p>Fetching...</p>
             )}

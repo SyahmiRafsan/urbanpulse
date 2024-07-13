@@ -136,30 +136,6 @@ export default function StopsMap({
     });
   };
 
-  const fetchStopsData = async (bounds: L.LatLngBounds, zoom: number) => {
-    // Adjust API endpoint or query based on zoom level
-    const southWest = bounds.getSouthWest();
-    const northEast = bounds.getNorthEast();
-
-    // Get the lat/lon coordinates for the bounds
-    const southWestLat = southWest.lat;
-    const southWestLon = southWest.lng;
-    const northEastLat = northEast.lat;
-    const northEastLon = northEast.lng;
-
-    console.log({ southWest, northEast });
-
-    // Example API call to get stops data within the bounds and zoom level
-    // const response = await fetch(
-    //   `/api/stops?neLat=${northEastLat}&neLon=${northEastLon}&swLat=${southWestLat}&swLon=${southWestLon}&zoom=${zoom}`
-    // );
-    // if (!response.ok) {
-    //   throw new Error("Failed to fetch stops data");
-    // }
-    // const data = await response.json();
-    // return data;
-  };
-
   function stopMarker(stop: Stop) {
     return (
       <Marker

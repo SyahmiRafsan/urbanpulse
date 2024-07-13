@@ -96,6 +96,17 @@ export function filterStopsByRadius(
   });
 }
 
+export function getClosestStops(
+  coordinates: Coordinates,
+  stops: Stop[],
+  radius: number = METER_RADIUS_SEARCH
+) {
+  const stopsInRadius = filterStopsByRadius(coordinates, stops, radius);
+
+  return stopsInRadius;
+}
+
+
 /**
  * Converts a number to a string with 'k' suffix for thousands.
  *
@@ -193,16 +204,17 @@ export function getArrayDifferences(
   return { added, deleted };
 }
 
-export async function getBlobFromUrl(url:string) {
+export async function getBlobFromUrl(url: string) {
   try {
-      const response = await fetch(url);
-      if (!response.ok) {
-          throw new Error(`Failed to fetch blob. Status: ${response.status}`);
-      }
-      const blob = await response.blob();
-      return blob;
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch blob. Status: ${response.status}`);
+    }
+    const blob = await response.blob();
+    return blob;
   } catch (error) {
-      console.error(`Error fetching blob from URL: ${url}`, error);
-      throw error;
+    console.error(`Error fetching blob from URL: ${url}`, error);
+    throw error;
   }
 }
+

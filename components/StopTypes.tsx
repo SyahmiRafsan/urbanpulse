@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import { filterStopsByRadius, getIconByStopCategory } from "@/lib/utils";
+import { getClosestStops, getIconByStopCategory } from "@/lib/utils";
 import { useStopSearchStore } from "@/stores/StopSearchStore";
 import { useRecommendationStore } from "@/stores/RecommendationStore";
 import { useLocationStore } from "@/stores/LocationStore";
+import { METER_RADIUS_SEARCH } from "@/lib/constants";
 
 export default function StopTypes({
   stopsSetter,
@@ -26,9 +27,6 @@ export default function StopTypes({
   const { sortType } = useRecommendationStore();
 
   const { coordinates } = useLocationStore();
-  // const [initialStops, setInitialStops] = useState(
-  //   initialList || []
-  // );
   const types = [
     { label: "Bus", value: "bus" },
     { label: "LRT", value: "lrt" },
@@ -37,18 +35,23 @@ export default function StopTypes({
     // { label: "KTM", value: "ktm" },
   ];
 
+  // const [initialCoordinates, setInitialCoordinates] =
+  //   useState<Coordinate>(null);
+
   useEffect(() => {
     // TODO refactor to differentiate setters vs setFilteredStops
+
     if (initialStops.length == 0 && coordinates) {
       setInitialStops(filteredStops);
-
       if (coordinates) {
-        const stopsInRadius = filterStopsByRadius(coordinates, stops, 500);
-        setFilteredStops(stopsInRadius);
-        console.log({ coordinates, sir: stopsInRadius.length });
-        console.log("found coord");
+        const closestStops = getClosestStops(
+          coordinates,
+          stops,
+          METER_RADIUS_SEARCH
+        );
+        setFilteredStops(closestStops);
       }
-      console.log("running");
+      console.log("Resetting stops");
     }
   }, [filteredStops, coordinates]);
 

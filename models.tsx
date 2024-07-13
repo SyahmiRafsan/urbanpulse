@@ -94,3 +94,8 @@ interface FetchRecommendationsOptions {
   userLat?: number;
   userLon?: number;
 }
+
+interface Coordinate {
+  lat: number;
+  lon: number;
+}
