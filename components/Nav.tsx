@@ -2,10 +2,10 @@
 
 import {
   BellIcon,
-  DrawingPinIcon,
   HomeIcon,
   PersonIcon,
   PlusIcon,
+  SewingPinIcon,
 } from "@radix-ui/react-icons";
 import React from "react";
 import { Button } from "./ui/button";
@@ -20,7 +20,7 @@ export default function Nav() {
 
   const links = [
     { label: "Feed", url: "/", icon: <HomeIcon className="w-5 h-5" /> },
-    { label: "Map", url: "/map", icon: <DrawingPinIcon className="w-5 h-5" /> },
+    { label: "Map", url: "/map", icon: <SewingPinIcon className="w-5 h-5" /> },
     {
       label: "Recommend",
       url: `/recommendation/create?mode=${CreateRecommendationState.SEARCHING}`,

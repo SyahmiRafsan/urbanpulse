@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { DrawingPinIcon } from "@radix-ui/react-icons";
+import { SewingPinFilledIcon, UpdateIcon } from "@radix-ui/react-icons";
 import { useLocationStore } from "@/stores/LocationStore";
 import { Input } from "./ui/input";
 
@@ -54,11 +54,15 @@ export default function LocationButton() {
                 : () => handleClick()
             }
             disabled={loading}
-            className="flex gap-1 items-center text-muted-foreground text-sm"
+            className="flex items-center text-sm text-red-600"
           >
-            <DrawingPinIcon className="w-5 h-5" />
+            {district ? (
+              <UpdateIcon className="mr-1" />
+            ) : (
+              <SewingPinFilledIcon className="w-5 h-5" />
+            )}
             {!loading ? (
-              <p>{district ? district : "Get Location"}</p>
+              <p>{district ? district : "Get My Location"}</p>
             ) : (
               <p>Fetching...</p>
             )}

@@ -40,6 +40,9 @@ export default function NotificationsPage() {
               You&apos;ll get updates on new comments and upvotes, when people
               interact with your posts
             </p>
+            <div className="text-sm bg-neutral-100 border px-2 py-1">
+              <pre>This feature is still under development.</pre>
+            </div>
           </div>
           {/* End Body */}
         </div>

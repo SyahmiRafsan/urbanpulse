@@ -193,10 +193,10 @@ export default function ProfilePage() {
                         </div>
                       ))
                     ) : (
-                      <div className="p-4 border-y flex sm:flex-row flex-col gap-4 items-center">
+                      <div className="p-4 border-b flex sm:flex-row flex-col gap-4 items-center">
                         <img src="/artwork/rail.svg" className="max-w-sm" />
                         <div className="flex flex-col gap-4">
-                          <p className="font-medium">
+                          <p className="font-medium text-center sm:text-left">
                             Post your first recommendation
                           </p>
                           <p className="text-sm text-center sm:text-left">

@@ -1,8 +1,6 @@
 "use client";
 
 import {
-  filterStopsByRadius,
-  getIconByStopCategory,
   haversineDistance,
 } from "@/lib/utils";
 import React, { useEffect } from "react";
@@ -12,6 +10,7 @@ import StopSearchInput from "./StopSearchInput";
 import StopTypes from "./StopTypes";
 import SearchStopMap from "./StopSearchMap";
 import StopSearchCard from "./StopSearchCard";
+import LocationButton from "./LocationButton";
 
 export default function StopSearch() {
   // const [filteredStops, setFilteredStops] = useState<Stop[]>(
@@ -51,9 +50,12 @@ export default function StopSearch() {
           />
         </div>
       </div>
-      <p className="text-muted-foreground px-4">
-        Nearby stops ({filteredStops.length})
-      </p>
+      <div className="flex flex-row gap-4 items-center justify-between  px-4">
+        <p className="text-muted-foreground">
+          Nearby stops ({filteredStops.length})
+        </p>
+        <LocationButton />
+      </div>
       <div className="mt-4">
         {filteredStops.length > 0 ? (
           filteredStops
