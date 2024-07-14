@@ -41,19 +41,21 @@ export default function StopTypes({
   useEffect(() => {
     // TODO refactor to differentiate setters vs setFilteredStops
 
-    if (initialStops.length == 0 && coordinates) {
-      setInitialStops(filteredStops);
-      if (coordinates) {
-        const closestStops = getClosestStops(
-          coordinates,
-          stops,
-          METER_RADIUS_SEARCH
-        );
-        setFilteredStops(closestStops);
-      }
-      console.log("Resetting stops");
+    // if (filteredStops.length == 0 && coordinates) {
+
+    if (coordinates) {
+      const closestStops = getClosestStops(
+        coordinates,
+        stops,
+        METER_RADIUS_SEARCH
+      );
+      setFilteredStops(closestStops);
+      setInitialStops(closestStops);
+      console.log("Received closestStops", closestStops.length);
     }
-  }, [filteredStops, coordinates]);
+    console.log("Resetting stops");
+    // }
+  }, [coordinates]);
 
   const [selectedType, setSelectedType] = useState(["all"]);
 

@@ -85,6 +85,7 @@ export default function StopsMap({
     selectedStop,
     setSelectedStop,
     setIsFullscreen,
+    hideStopsWhenSearching,
   } = useStopSearchStore();
 
   const handleMapMove = async (bounds: L.LatLngBounds, zoom: number) => {
@@ -208,6 +209,12 @@ export default function StopsMap({
 
       {stopsShown
         .filter((st) => st.stop_id !== selectedStop?.stop_id)
+        .filter((st) =>
+          hideStopsWhenSearching
+            ? st.stop_name.toLowerCase().includes(query.toLowerCase()) ||
+              String(st.stop_id).toLowerCase().includes(query.toLowerCase())
+            : st
+        )
         .map((stop, idx) => (
           <Marker
             key={idx}
@@ -275,10 +282,13 @@ export default function StopsMap({
           </Marker>
         ))}
 
+      {/* Single stop marker for stop page */}
       {stop && stopMarker(stop)}
 
+      {/* Selected stop marker */}
       {!stop && selectedStop && selectedStopMarker(selectedStop)}
 
+      {/* User location marker */}
       <Marker
         position={[userLocation.lat, userLocation.lon]}
         icon={

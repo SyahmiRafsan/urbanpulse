@@ -13,6 +13,8 @@ interface StopSearchState {
   setInitialStops: (stops: Stop[]) => void;
   query: string;
   setQuery: (q: string) => void;
+  hideStopsWhenSearching: boolean;
+  setHideStopsWhenSearching: (hideStopsWhenSearching: boolean) => void;
 }
 
 export const useStopSearchStore = create<StopSearchState>((set) => ({
@@ -27,4 +29,7 @@ export const useStopSearchStore = create<StopSearchState>((set) => ({
   setInitialStops: (initialStops) => set({ initialStops }),
   query: "",
   setQuery: (query) => set({ query }),
+  hideStopsWhenSearching: true,
+  setHideStopsWhenSearching: (hideStopsWhenSearching: boolean) =>
+    set({ hideStopsWhenSearching }),
 }));
