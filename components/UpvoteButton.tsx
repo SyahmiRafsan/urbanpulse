@@ -16,35 +16,75 @@ function UpvoteButton({
   className,
   ...props
 }: UpvoteButtonProps) {
-  const { isInUpvotes, addUpvote, removeUpvote, upvotes } =
-    useRecommendationStore();
-  const hasUpvoted = isInUpvotes(recommendation.id);
-  const [voted, setVoted] = useState(
-    hasUpvoted ? hasUpvoted : recommendation.userUpvoted
-  );
-  const [voteCount, setVoteCount] = useState(
-    upvotes[recommendation.id]
-      ? upvotes[recommendation.id]
-      : recommendation.upvotesCount
-  );
+  const {
+    setRecommendations,
+    recommendations,
+    hasFetched,
+    setRecommendationsUser,
+    recommendationsUser,
+    hasFetchedUser,
+  } = useRecommendationStore();
+
+  const [voted, setVoted] = useState(recommendation.userUpvoted);
+  const [voteCount, setVoteCount] = useState(recommendation.upvotesCount);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    setVoteCount(recommendation.upvotesCount);
+  }, [recommendation.upvotesCount]);
 
   async function submitVote(count: number) {
     setIsLoading(true);
     const vote = await upvoteRecommendation(recommendation.id);
-    setVoteCount(count + 1);
+    const addedCount = count + 1;
+    setVoteCount(addedCount);
     setVoted(true);
     setIsLoading(false);
-    addUpvote(recommendation.id, voteCount + 1);
+
+    setRecommendations(
+      recommendations.map((rec) =>
+        rec.id == recommendation.id
+          ? { ...rec, upvotesCount: addedCount, userUpvoted: true }
+          : rec
+      ),
+      hasFetched ? true : false
+    );
+
+    setRecommendationsUser(
+      recommendationsUser.map((rec) =>
+        rec.id == recommendation.id
+          ? { ...rec, upvotesCount: addedCount, userUpvoted: true }
+          : rec
+      ),
+      hasFetchedUser ? true : false
+    );
   }
 
   async function removeVote(count: number) {
     setIsLoading(true);
     const vote = await removeUpvoteRecommendation(recommendation.id);
-    setVoteCount(count - 1);
+    const deletedCount = count - 1;
+    setVoteCount(deletedCount);
     setVoted(false);
     setIsLoading(false);
-    removeUpvote(recommendation.id);
+
+    setRecommendations(
+      recommendations.map((rec) =>
+        rec.id == recommendation.id
+          ? { ...rec, upvotesCount: deletedCount, userUpvoted: false }
+          : rec
+      ),
+      hasFetched ? true : false
+    );
+
+    setRecommendationsUser(
+      recommendationsUser.map((rec) =>
+        rec.id == recommendation.id
+          ? { ...rec, upvotesCount: deletedCount, userUpvoted: false }
+          : rec
+      ),
+      hasFetchedUser ? true : false
+    );
   }
 
   const isClient = useIsClient();

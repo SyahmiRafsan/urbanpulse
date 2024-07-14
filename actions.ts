@@ -320,6 +320,9 @@ export async function upvoteRecommendation(
 
       return upvotedUser;
     });
+
+    revalidatePath("/[category]/[stop_name]/[recommendationId]", "page");
+
     return upvote;
   }
 }
@@ -347,6 +350,9 @@ export async function removeUpvoteRecommendation(recommendationId: string) {
 
       return removedVoteUser;
     });
+
+    revalidatePath("/[category]/[stop_name]/[recommendationId]", "page");
+
     return removed;
   }
 }
