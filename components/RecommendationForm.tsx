@@ -426,7 +426,7 @@ export default function RecommendationForm({
         <div className="px-4 w-full">
           <Turnstile
             siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-            className="rounded-lg overflow-hidden"
+            className=""
             options={{ theme: "light" }}
             onSuccess={setToken}
           />
