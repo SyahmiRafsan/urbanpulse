@@ -61,6 +61,13 @@ export async function createRecommendation(
 
   const user = await getUser();
 
+  const verified = await verifyTurnstile(rawFormData.token as string);
+
+  if (!verified) {
+    console.log(`Turnstile verification failed for user: ${user?.id}`);
+    throw Error("Turnstile verification failed");
+  }
+
   if (user && stop) {
     const formObj = {
       id: rawFormData.id as string,
@@ -846,4 +853,28 @@ async function extractMediaFiles(formData: FormData, splitter: string) {
   }
 
   return mediaFiles;
+}
+
+async function verifyTurnstile(token: string): Promise<boolean> {
+  const verifyEndpoint =
+    "https://challenges.cloudflare.com/turnstile/v0/siteverify";
+  const secret = process.env.TURNSTILE_SECRET_KEY;
+
+  if (!secret) {
+    throw Error("No turnstile secret key detected");
+  }
+
+  const res = await fetch(verifyEndpoint, {
+    method: "POST",
+    body: `secret=${encodeURIComponent(secret)}&response=${encodeURIComponent(
+      token
+    )}`,
+    headers: {
+      "content-type": "application/x-www-form-urlencoded",
+    },
+  });
+
+  const data = await res.json();
+
+  return data.success as boolean;
 }

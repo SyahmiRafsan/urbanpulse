@@ -23,6 +23,7 @@ import {
 } from "@/lib/utils";
 import { useRecommendationStore } from "@/stores/RecommendationStore";
 import slugify from "slugify";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 export default function RecommendationForm({
   initialRecommendation,
@@ -80,6 +81,8 @@ export default function RecommendationForm({
           userId: user?.id || "",
         }
   );
+
+  const [token, setToken] = useState("");
 
   useEffect(() => {
     if (selectedStop) {
@@ -155,11 +158,17 @@ export default function RecommendationForm({
     try {
       e.preventDefault();
 
+      const formData = new FormData();
+
+      if (token == "") {
+        throw Error("Please complete Cloudflare Bot Prevention Verification.");
+      } else {
+        formData.append("token", token as string);
+      }
+
       if (recommendation.highlights.length == 0) {
         throw Error("Please select at least one highlight.");
       }
-
-      const formData = new FormData();
 
       // Append form fields
       Object.entries(recommendation).forEach(([key, value]) => {
@@ -412,6 +421,17 @@ export default function RecommendationForm({
           </div>
         )}
       </div>
+
+      {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
+        <div className="px-4 w-full">
+          <Turnstile
+            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+            className="rounded-lg overflow-hidden"
+            options={{ theme: "light" }}
+            onSuccess={setToken}
+          />
+        </div>
+      )}
 
       {isDraft ? (
         <div className="flex flex-col sm:flex-row justify-end gap-4 px-4">
