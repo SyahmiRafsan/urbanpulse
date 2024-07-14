@@ -17,6 +17,7 @@ import { useAuth } from "@/hooks/AuthContext";
 import DeletePostButton from "./DeletePostButton";
 import {
   capitalizeWords,
+  compressFile,
   getArrayDifferences,
   getBlobFromUrl,
 } from "@/lib/utils";
@@ -118,14 +119,15 @@ export default function RecommendationForm({
 
     if (user) {
       const newMediaPromises = filesToAdd.map(async (file) => {
+        const compressedFile: File = await compressFile(file);
         return {
           id: uuidv4(),
-          file: file,
-          url: URL.createObjectURL(file),
+          file: compressedFile,
+          url: URL.createObjectURL(compressedFile),
           recommendationId: recommendation.id,
           createdAt: DateTime.now().toJSDate(),
           userId: user.id,
-          mimeType: file.type,
+          mimeType: compressedFile.type,
         };
       });
 
@@ -386,7 +388,7 @@ export default function RecommendationForm({
         </div>
 
         {recommendation.media.length > 0 && (
-          <div className="flex flex-row gap-4 overflow-x-auto px-4 pb-4">
+          <div className="flex flex-row gap-4 overflow-x-auto px-4 pb-2">
             {recommendation.media.map((media) => (
               <div
                 key={media.id}

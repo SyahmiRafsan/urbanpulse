@@ -14,7 +14,7 @@ import { DateTime } from "luxon";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { createComment } from "@/actions";
-import { getBlobFromUrl } from "@/lib/utils";
+import { compressFile, getBlobFromUrl } from "@/lib/utils";
 
 export default function CommentInput({
   recommendationId,
@@ -43,14 +43,15 @@ export default function CommentInput({
 
     if (user) {
       const newMediaPromises = filesToAdd.map(async (file) => {
+        const compressedFile: File = await compressFile(file);
         return {
           id: uuidv4(),
-          file: file,
-          url: URL.createObjectURL(file),
+          file: compressedFile,
+          url: URL.createObjectURL(compressedFile),
           commentId: comment.id,
           createdAt: DateTime.now().toJSDate(),
           userId: user.id,
-          mimeType: file.type,
+          mimeType: compressedFile.type,
         };
       });
 
@@ -173,7 +174,11 @@ export default function CommentInput({
             </button>
 
             <button type="submit" disabled={isLoading}>
-              {!isLoading ? <PaperPlaneIcon /> : <UpdateIcon className="animate-spin" />}
+              {!isLoading ? (
+                <PaperPlaneIcon />
+              ) : (
+                <UpdateIcon className="animate-spin" />
+              )}
             </button>
           </div>
           <div>

@@ -20,6 +20,7 @@
     "arctic": "^1.9.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "compressorjs": "^1.2.1",
     "drizzle-orm": "^0.30.10",
     "leaflet": "^1.9.4",
     "lucia": "^3.2.0",

@@ -3,6 +3,8 @@ import { twMerge } from "tailwind-merge";
 import { METER_RADIUS_SEARCH } from "./constants";
 import { DateTime } from "luxon";
 import { validate } from "uuid";
+import Compressor from "compressorjs";
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -105,7 +107,6 @@ export function getClosestStops(
 
   return stopsInRadius;
 }
-
 
 /**
  * Converts a number to a string with 'k' suffix for thousands.
@@ -218,3 +219,24 @@ export async function getBlobFromUrl(url: string) {
   }
 }
 
+export async function compressFile(file: File): Promise<File> {
+  console.log("Original file size:", file.size / 1024, "KB");
+
+  const compressedResult = await new Promise((resolve, reject) => {
+    new Compressor(file, {
+      quality: 0.6,
+      maxHeight: 1920,
+      maxWidth: 1920,
+      success(result) {
+        resolve(result);
+
+        console.log("Compressed file size:", result.size / 1024, "KB");
+      },
+      error(err) {
+        reject(err);
+      },
+    });
+  });
+
+  return compressedResult as File;
+}
