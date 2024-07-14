@@ -1,7 +1,8 @@
 "use client";
 
-import { updateUserInfo } from "@/actions";
+import { deleteUser, updateUserInfo } from "@/actions";
 import BackButton from "@/components/BackButton";
+import DeleteAccountButton from "@/components/DeleteAccountButton";
 import DraftsButton from "@/components/DraftsButton";
 import Nav from "@/components/Nav";
 import RecommendationCard from "@/components/RecommendationCard";
@@ -10,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/AuthContext";
+import useIsClient from "@/hooks/useIsClient";
 import { getRecommendationsByUserId } from "@/services/recommendation";
 import { useRecommendationStore } from "@/stores/RecommendationStore";
 import {
@@ -66,11 +68,20 @@ export default function ProfilePage() {
     setIsLoading(false);
   }
 
+  async function handleDeleteAccount() {
+    if (user) {
+      const deleting = await deleteUser(user.id);
+      logout();
+    }
+  }
+
   const maskEmail = (email: string) => {
     const [localPart, domain] = email.split("@");
     const maskedLocalPart = localPart.replace(/./g, "*");
     return `${maskedLocalPart}@${domain}`;
   };
+
+  const isClient = useIsClient();
 
   return (
     <main className="flex flex-col items-center justify-between bg-neutral-50 pb-24 min-h-[100svh]">
@@ -159,12 +170,20 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {!isEditing && (
+            {!isEditing && isClient && (
               <div className="bg-card flex flex-col md:flex-row border-t md:border-t-0">
-                <ProfileButton
-                  icon={<ChatBubbleIcon className="w-5 h-5" />}
-                  label={"Send feedback"}
-                />
+                <Link
+                  target="_blank"
+                  href={
+                    "https://docs.google.com/forms/d/e/1FAIpQLSfD4PjkqkBcvdU5_gO502l8K2yyPHxJ2qKEH86gCX057Oi0xw/viewform"
+                  }
+                  className="w-full"
+                >
+                  <ProfileButton
+                    icon={<ChatBubbleIcon className="w-5 h-5" />}
+                    label={"Send feedback"}
+                  />
+                </Link>
 
                 <div onClick={() => logout()} className="w-full">
                   <ProfileButton
@@ -173,10 +192,12 @@ export default function ProfilePage() {
                   />
                 </div>
 
-                <ProfileButtonDestructive
-                  icon={<TrashIcon className="w-5 h-5" />}
-                  label={"Delete account"}
-                />
+                <DeleteAccountButton handleDelete={() => handleDeleteAccount()}>
+                  <ProfileButtonDestructive
+                    icon={<TrashIcon className="w-5 h-5" />}
+                    label={"Delete account"}
+                  />
+                </DeleteAccountButton>
               </div>
             )}
 
@@ -260,7 +281,7 @@ function ProfileButtonDestructive({
   label: string;
 }) {
   return (
-    <button className="p-4 px-8 gap-4 items-center md:justify-center md:px-4 text-red-600 first:border-t border-b md:border-t w-full flex flex-row">
+    <button className="p-4 px-8 gap-4 items-center md:justify-center md:px-4 text-red-600 border-b md:border-t w-full flex flex-row">
       {icon}
       <p className="font-medium">{label}</p>
     </button>

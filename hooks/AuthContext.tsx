@@ -130,7 +130,7 @@ function LoginModal({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="min-w-[50svw]">
-        <div className="">
+        <div className="my-2">
           <LoginCard />
         </div>
       </DialogContent>

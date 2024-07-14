@@ -678,7 +678,7 @@ export async function deleteComment(comment: RecommendationComment) {
     });
 
     revalidatePath("/[category]/[stop_name]/[recommendationId]", "page");
-   
+
     return deletedComment;
   } else {
     throw new Error("Unauthorized user");
@@ -694,6 +694,21 @@ export async function updateUserInfo(name: string) {
       .set({ name: encrypt(name) })
       .where(eq(userTable.id, user.id));
 
+    return updatedUser;
+  } else {
+    throw Error("User is not logged in");
+  }
+}
+
+export async function deleteUser(userId: string) {
+  const user = await getUser();
+
+  if (user) {
+    const updatedUser = await db
+      .delete(userTable)
+      .where(eq(userTable.id, user.id));
+
+    revalidatePath("/");
     return updatedUser;
   } else {
     throw Error("User is not logged in");
