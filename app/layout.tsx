@@ -7,10 +7,39 @@ import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
+const title = "UrbanPulse - Transforming Urban Living Together";
+const description =
+  "UrbanPulse is a community-driven platform designed to empower citizens to improve their urban environment, starting with public transport.";
+const image = {
+  url: "https://urbanpulse.asia/urbanpulse_og.png", // Must be an absolute URL
+  width: 1200,
+  height: 734,
+};
+
 export const metadata: Metadata = {
-  title: "UrbanPulse - Transforming Urban Living Together",
-  description:
-    "UrbanPulse is a community-driven platform designed to empower citizens to improve their urban environment, starting with public transport.",
+  title,
+  description,
+  openGraph: {
+    title,
+    description,
+    url: "https://urbanpulse.asia",
+    siteName: "UrbanPulse",
+    images: [image],
+    locale: "en_UK",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: [image],
+    site: "https://urbanpulse.asia",
+  },
+  keywords: [
+    "public transport malaysia",
+    "public transportation malaysia",
+    "public transport malaysia map",
+  ],
 };
 
 export const viewport: Viewport = {
